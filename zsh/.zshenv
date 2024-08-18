@@ -29,7 +29,7 @@ export PATH="$HOME/.local/bin:$PATH"
 # rust
 export RUSTUP_DIST_SERVER="https://rsproxy.cn"
 export RUSTUP_UPDATE_ROOT="https://rsproxy.cn/rustup"
-. "$HOME/.cargo/env"
+[ -f $HOME/.cargo/env ] && . "$HOME/.cargo/env"
 
 # repo
 export REPO_URL='https://mirrors.tuna.tsinghua.edu.cn/git/git-repo'
