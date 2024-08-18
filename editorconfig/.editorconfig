@@ -1,0 +1,37 @@
+# editorconfig            neovim
+#
+# end_of_line             fileformat: "unix", "dos" or "mac"
+# indent_size             shiftwidth & softtabstop
+# indent_style            expandtab
+# insert_final_newline    fixendofline & endofline
+# max_line_length         textwidth
+# tab_width               tabstop
+
+root = true
+
+# NOTE: Editorconfig overrides the ftplugin setting in neovim. But neovim
+# detects filetypes better than editorconfig.
+# So only set really necessary options for the files!
+[*]
+end_of_line = lf
+tab_width = 8
+
+[*.lua]
+indent_size = 2
+indent_style = space
+max_line_length = 120
+
+[*.{c,cpp,h}]
+indent_size = 4
+indent_style = space
+max_line_length = 80
+
+[*.{sh,zsh,zshrc}]
+indent_size = 2
+indent_style = space
+max_line_length = 100
+
+[*.{gitconfig}]
+indent_size = 2
+indent_style = space
+max_line_length = 80

@@ -1,0 +1,56 @@
+[user]
+  email = yuan.lijun@hotmail.com
+  name = YUAN Lijun
+[color]
+  ui = auto
+[filter "lfs"]
+  smudge = git-lfs smudge -- %f
+  process = git-lfs filter-process
+  required = true
+  clean = git-lfs clean -- %f
+[http]
+  sslVerify = false
+
+# delta
+[include]
+  path = ~/.config/delta/themes.gitconfig
+[core]
+  quotepath = off
+  pager = "{                                                         \
+    COLUMNS=$(tput cols);                                            \
+    if [ $COLUMNS -ge 80 ] && [ -z $FZF_PREVIEW_COLUMNS ]; then      \
+      delta --side-by-side -w $COLUMNS;                              \
+    elif [ $COLUMNS -ge 160 ] && [ ! -z $FZF_PREVIEW_COLUMNS ]; then \
+      delta --side-by-side -w $FZF_PREVIEW_COLUMNS;                  \
+    else                                                             \
+      delta;                                                         \
+    fi                                                               \
+    }"
+[interactive]
+  diffFilter = delta --color-only --features=interactive
+[delta]
+  side-by-side = false
+  features = mellow-barbet
+  syntax-theme = Catppuccin-macchiato # Use bat theme
+[delta "interactive"]
+  keep-plus-minus-markers = false
+
+# mergetool
+[merge]
+  tool = vimdiff
+[mergetool "vimdiff"]
+  path = nvim
+
+# alias
+[alias]
+  b = branch
+  c = commit
+  co = checkout
+  st = status
+  l = log
+  ls = log --pretty=format:"%C(auto)%h%d\\ %s\\ %C(black)%C(bold)%cr%Creset\\ %Cblue[%cn]"
+  ll = log --pretty=format:"%C(auto)%h%d\\ %s\\ %C(black)%C(bold)%cr%Creset\\ %Cblue[%cn]" --numstat
+
+# config
+[includeIf "gitdir:~/work/"]
+  path = ~/work/.gitconfig

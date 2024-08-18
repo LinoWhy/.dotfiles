@@ -1,0 +1,51 @@
+#compdef btm
+
+# zsh completions for 'btm'
+# automatically generated with http://github.com/RobSis/zsh-completion-generator
+local arguments
+
+arguments=(
+  '--autohide[_time]'
+  {-b,--basic}'[hides graphs and uses a more basic look. Design is largely inspired by htops.]'
+  '--battery[shows the battery widget in default or basic mode. No effect on custom layouts.]'
+  {-S,--case}'[_sensitive]'
+  {-c,--celsius}'[sets the temperature type to Celsius. This is the default option.]'
+  '--color[SCHEME>]'
+  {-C,--config}'[PATH>]'
+  {-u,--current}'[_usage]'
+  {-t,--default}'[_time_value <TIME>]'
+  '--default[_widget_count <INT>]'
+  '--default[_widget_type <WIDGET TYPE>]'
+  '--disable[_advanced_kill]'
+  '--disable[_click]'
+  {-m,--dot}'[_marker]'
+  '--enable[_cache_memory]'
+  '--enable[_gpu_memory]'
+  {-e,--expanded}'[expand the default widget upon starting the app. Same as pressing "e" inside the app. Use with "default_widget_type" and "default_widget_count" to select desired expanded widget. This flag has no effect]'
+  {-f,--fahrenheit}'[sets the temperature type to Fahrenheit.]'
+  {-g,--group}'[groups processes with the same name by default.]'
+  {-a,--hide}'[_avg_cpu]'
+  '--hide[_table_gap]'
+  '--hide[_time]'
+  {-k,--kelvin}'[sets the temperature type to Kelvin.]'
+  {-l,--left}'[_legend]'
+  '--mem[_as_value]'
+  '--network[_use_binary_prefix]'
+  '--network[_use_bytes]'
+  '--network[_use_log]'
+  '--process[_command]'
+  {-r,--rate}'[sets the data refresh rate. Takes a number in milliseconds or a human duration (e.g. 5s). The minimum is 250ms, and defaults to 1000ms. Smaller values may take more computer resources.]'
+  {-R,--regex}'[when searching for a process, enables regex by default.]'
+  '--retention[how much data is stored at once in terms of time. Takes a number in milliseconds or a human duration (e.g. 20m), with a minimum of 1 minute. Note higher values will take up more memory. Defaults to 10]'
+  '--show[_table_scroll_position]'
+  {-d,--time}'[_delta <TIME>]'
+  {-T,--tree}'[defaults to showing the process widget in tree mode.]'
+  {-n,--unnormalized}'[_cpu]'
+  '--use[_old_network_legend]'
+  {-V,--version}'[prints version information.]'
+  {-W,--whole}'[_word]'
+  {-h,--help}'[print help (see a summary with -h)]'
+  '*:filename:_files'
+)
+
+_arguments -s $arguments

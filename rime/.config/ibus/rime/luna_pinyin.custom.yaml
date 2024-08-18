@@ -1,0 +1,12 @@
+patch:
+  speller/algebra:
+    - derive/([ei])n$/$1ng/
+    - derive/([ei])ng$/$1n/
+  punctuator/full_shape:
+    "#" : "#"
+    "/" : "、"
+    "@": "@"
+  punctuator/half_shape:
+    "#" : "#"
+    "/" : "、"
+    "@": "@"

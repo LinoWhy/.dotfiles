@@ -1,0 +1,19 @@
+#compdef yazi
+
+# zsh completions for 'yazi'
+# automatically generated with http://github.com/RobSis/zsh-completion-generator
+local arguments
+
+arguments=(
+  '--cwd-file[write the cwd on exit to this file]'
+  '--chooser-file[write the selected files to this file on open fired]'
+  '--clear-cache[clear the cache directory]'
+  '--local-events[report the specified local events to stdout]'
+  '--remote-events[report the specified remote events to stdout]'
+  '--debug[print debug information]'
+  {-V,--version}'[print version]'
+  {-h,--help}'[print help]'
+  '*:filename:_files'
+)
+
+_arguments -s $arguments

@@ -1,0 +1,117 @@
+# Sets user-defined palette
+palette = "catppuccin_macchiato"
+
+format = """
+$directory\
+$git_branch\
+$git_commit\
+$git_state\
+$git_status\
+$fill\
+$status\
+$cmd_duration\
+$shell\
+$hostname\
+$line_break\
+$jobs\
+$sudo\
+$character"""
+
+command_timeout = 1000
+
+[directory]
+truncation_length = 3
+truncate_to_repo = false
+truncation_symbol = "…/"
+read_only = " 󰌾 "
+read_only_style = "fg:yellow"
+
+[git_branch]
+only_attached = true
+format = "[$symbol$branch(:$remote_branch)]($style) "
+symbol = "󰘬 "
+
+[git_commit]
+only_detached = true
+
+[git_status]
+format = '([$all_status$ahead_behind]($style))'
+conflicted = "${count} "
+ahead = "⇡${count} "
+behind = "⇣${count} "
+diverged = "⇕⇡${ahead_count}⇣${behind_count} "
+untracked = "?${count} "
+stashed = "*${count} "
+modified = "!${count} "
+staged = "+${count} "
+renamed = "»${count} "
+deleted = "✘${count} "
+style = "bold italic fg:rosewater"
+windows_starship = "/mnt/c/Program Files/starship/bin/starship.exe"
+
+[fill]
+symbol = "·"
+
+[status]
+format = ' [\[$common_meaning$signal_name$maybe_int\]]($style)'
+map_symbol = true
+disabled = false
+
+[cmd_duration]
+min_time = 500
+format = " [$duration]($style)"
+
+[shell]
+zsh_indicator = " "
+bash_indicator = " "
+powershell_indicator = " "
+style = "cyan bold"
+disabled = false
+
+[hostname]
+ssh_only = false
+ssh_symbol = '󰒃 '
+format = "[$ssh_symbol](bold blue)[$hostname](bold green)"
+disabled = false
+
+[jobs]
+symbol = '🌟'
+
+[sudo]
+disabled = false
+format = "[$symbol]($style)"
+symbol = "󰀄 "
+
+[character]
+success_symbol = "[](bold green)"
+error_symbol = "[](bold red)"
+vimcmd_symbol = "[](bold green)"
+
+# palette tables should be last in the config ⚓️
+[palettes.catppuccin_macchiato]
+rosewater = "#f4dbd6"
+flamingo = "#f0c6c6"
+pink = "#f5bde6"
+mauve = "#c6a0f6"
+red = "#ed8796"
+maroon = "#ee99a0"
+peach = "#f5a97f"
+yellow = "#eed49f"
+green = "#a6da95"
+teal = "#8bd5ca"
+sky = "#91d7e3"
+sapphire = "#7dc4e4"
+blue = "#8aadf4"
+lavender = "#b7bdf8"
+text = "#cad3f5"
+subtext1 = "#b8c0e0"
+subtext0 = "#a5adcb"
+overlay2 = "#939ab7"
+overlay1 = "#8087a2"
+overlay0 = "#6e738d"
+surface2 = "#5b6078"
+surface1 = "#494d64"
+surface0 = "#363a4f"
+base = "#24273a"
+mantle = "#1e2030"
+crust = "#181926"

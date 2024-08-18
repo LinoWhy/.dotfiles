@@ -1,0 +1,32 @@
+#compdef hexyl
+
+# zsh completions for 'hexyl'
+# automatically generated with http://github.com/RobSis/zsh-completion-generator
+local arguments
+
+arguments=(
+  {-n,--length}'[only read N bytes from the input. The N argument can]'
+  {-c,--bytes}'[an alias for -n/--length]'
+  {-s,--skip}'[skip the first N bytes of the input. The N argument can]'
+  '--block-size[sets the size of the `block` unit to SIZE (default is]'
+  {-v,--no-squeezing}'[displays all input data. Otherwise any number of groups]'
+  '--color[when to use colors. The auto mode only displays colors]'
+  '--border[whether to draw a border with Unicode characters, ASCII]'
+  {-p,--plain}'[display output with --no-characters, --no-position]'
+  '--border[and --color=never.]'
+  '--no-characters[do not show the character panel on the right.]'
+  {-C,--characters}'[show the character panel on the right. This is the]'
+  '--character-table[defines how bytes are mapped to characters:]'
+  {-P,--no-position}'[whether to display the position panel on the left.]'
+  {-o,--display-offset}'[add N bytes to the displayed file position. The N]'
+  '--panels[sets the number of hex data panels to be displayed.]'
+  {-g,--group-size}'[number of bytes/octets that should be grouped together.]'
+  '--endianness[whether to print out groups in little-endian or]'
+  {-b,--base}'[sets the base used for the bytes. The possible options]'
+  '--terminal-width[sets the number of terminal columns to be displayed.]'
+  {-h,--help}'[print help]'
+  {-V,--version}'[print version]'
+  '*:filename:_files'
+)
+
+_arguments -s $arguments
