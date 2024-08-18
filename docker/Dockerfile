@@ -23,8 +23,8 @@ USER ${USER}
 WORKDIR /home/${USER}
 
 # Install essential packages
-RUN sudo apt-get update && sudo apt-get install -y zsh pip python-is-python3 curl wget git \
-    make cmake stow xclip tmux iproute2 software-properties-common \
+RUN sudo apt-get update && sudo apt-get install -y zsh pip python-is-python3 python3-venv \
+    curl wget git make cmake stow xclip tmux unzip iproute2 software-properties-common \
     openssh-client openssh-server libssl-dev
     # duf not on ubuntu 20.04
 
@@ -47,7 +47,8 @@ RUN git clone https://github.com/LinoWhy/.dotfiles.git && \
     git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 
 # Setup configurations
-RUN zsh <(curl -s https://raw.githubusercontent.com/zap-zsh/zap/master/install.zsh) \
-    --branch release-v1 -k && \
+RUN wget https://raw.githubusercontent.com/zap-zsh/zap/master/install.zsh && \
+    zsh install.zsh --branch release-v1 -k && \
+    rm install.zsh && \
     mv ~/.bashrc ~/.bashrc.bak && cd ~/.dotfiles && stow */ && \
     sudo chsh -s $(which zsh)
