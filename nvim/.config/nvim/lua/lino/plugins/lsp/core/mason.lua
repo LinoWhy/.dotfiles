@@ -16,8 +16,7 @@ return {
     cmd = { "LspInstall", "LspUninstall" },
     opts = {
       ensure_installed = {},
-      -- "clangd" is installed system wide manually
-      automatic_installation = { exclude = { "clangd" } },
+      automatic_installation = true,
     },
   },
 
