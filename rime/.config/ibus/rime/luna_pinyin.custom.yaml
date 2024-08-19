@@ -1,4 +1,8 @@
 patch:
+  switches:
+    - name: simplification
+      reset: 1
+      states: [ 漢字, 汉字 ]
   speller/algebra:
     - derive/([ei])n$/$1ng/
     - derive/([ei])ng$/$1n/
