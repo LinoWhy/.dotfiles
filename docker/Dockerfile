@@ -51,4 +51,4 @@ RUN wget https://raw.githubusercontent.com/zap-zsh/zap/master/install.zsh && \
     zsh install.zsh --branch release-v1 -k && \
     rm install.zsh && \
     mv ~/.bashrc ~/.bashrc.bak && cd ~/.dotfiles && stow */ && \
-    sudo chsh -s $(which zsh)
+    sudo chsh -s $(which zsh) $USER
