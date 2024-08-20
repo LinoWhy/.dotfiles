@@ -47,7 +47,7 @@ alias cp='cp -i'
 alias mv='mv -i'
 
 # git
-local git_lot_format="%C(auto)%h%d %s %C(black)%C(bold)%cr%Creset %Cblue[%cn]"
+git_log_format="%C(auto)%h%d %s %C(black)%C(bold)%cr%Creset %Cblue[%cn]"
 alias gb='git branch'
 alias gc='git commit'
 alias gca='git commit --amend'
@@ -55,9 +55,9 @@ alias gcm='git commit -m'
 alias gcs='git commit -s'
 alias gch='git cherry-pick'
 alias gl='git log'
-alias gls='git log --pretty=format:$git_lot_format --graph'
-alias gla='git log --pretty=format:$git_lot_format --graph --all'
-alias gll='git log --pretty=format:$git_lot_format --graph --all --numstat'
+alias gls="git log --pretty=format:'$git_log_format' --graph"
+alias gla="git log --pretty=format:'$git_log_format' --graph --all"
+alias gll="git log --pretty=format:'$git_log_format' --graph --all --numstat"
 alias GP='git push'
 alias glf='git log --pretty=fuller'
 alias gp='git pull'
