@@ -23,6 +23,7 @@ HISTFILESIZE=2000
 ################################################################################
 alias cat='bat -p'
 alias f='fzf'
+alias fdd='fd --hidden --no-ignore'
 alias g='git'
 alias hex='hexyl'
 alias lzd='lazydocker'
