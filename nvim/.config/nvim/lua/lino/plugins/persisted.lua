@@ -15,6 +15,6 @@ return {
     { "<leader>Q", function() vim.cmd("SessionSave") vim.cmd("qa") end, desc = "Save Session & Quit" },
   },
   config = function()
-    require("persisted").setup({ autosave = false })
+    require("persisted").setup({ autostart = false })
   end,
 }
