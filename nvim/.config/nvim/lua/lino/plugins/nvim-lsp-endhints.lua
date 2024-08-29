@@ -11,8 +11,7 @@ return {
   config = function(_, opts)
     require("lsp-endhints").setup(opts)
 
-    -- remove LspInlayHint background
     local hl = vim.api.nvim_get_hl(0, { name = "LspInlayHint" })
-    vim.api.nvim_set_hl(0, "LspInlayHint", { fg = hl.fg })
+    vim.api.nvim_set_hl(0, "LspInlayHint", { fg = hl.fg, bg = hl.bg, italic = true })
   end,
 }
