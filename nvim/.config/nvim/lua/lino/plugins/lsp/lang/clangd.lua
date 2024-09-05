@@ -20,7 +20,7 @@ return {
             "--completion-style=detailed",
             "--function-arg-placeholders",
             "--fallback-style=llvm",
-            "--query-driver=**/*aarch64*,**/*riscv64*", -- whitelist for clangd to query
+            "--query-driver=**/**", -- whitelist for clangd to query
           },
           init_options = {
             usePlaceholders = true,
