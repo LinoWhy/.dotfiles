@@ -6,10 +6,6 @@ local function find_project_files()
   end
 end
 
-local function grep_word_under_cursor()
-  require("telescope-live-grep-args.shortcuts").grep_word_under_cursor()
-end
-
 local keys = {
   { "<leader>f", find_project_files, desc = "Find Files" },
   -- g
@@ -33,27 +29,29 @@ local keys = {
   -- <leader>s
   { "<leader>sb", "<cmd>Telescope builtin<cr>", desc = "Telescope Builtin" },
   { "<leader>sc", "<cmd>Telescope commands<cr>", desc = "Find Commands" },
-  { "<leader>sq", "<cmd>Telescope quickfix<cr>", desc = "Quickfix" },
-  {
-    "<leader>sf",
-    "<cmd>Telescope find_files find_command=fd,--no-ignore,--hidden<cr>",
-    desc = "Find All Files",
-  },
+  { "<leader>sf", "<cmd>Telescope find_files find_command=fd,-I,-H<cr>", desc = "Find All Files" },
   { "<leader>sh", "<cmd>Telescope help_tags<cr>", desc = "Find Helps" },
   { "<leader>sH", "<cmd>Telescope highlights<cr>", desc = "Find Highlights" },
   { "<leader>sk", "<cmd>Telescope keymaps<cr>", desc = "Find Keymaps" },
   { "<leader>sl", "<cmd>Telescope resume<cr>", desc = "Resume Last Search" },
+  { "<leader>sm", "<cmd>Telescope man_pages secionts=ALL<cr>", desc = "Man Pages" },
+  { "<leader>sq", "<cmd>Telescope quickfix<cr>", desc = "Quickfix" },
   { "<leader>sr", "<cmd>Telescope oldfiles<cr>", desc = "Open Recent File" },
   { "<leader>sR", "<cmd>Telescope registers<cr>", desc = "Registers" },
   { "<leader>su", "<cmd>Telescope undo<cr>", desc = "Undos" },
+  -- Symbols
   { "<leader>ss", "<cmd>Telescope lsp_document_symbols<cr>", desc = "Document Symbols" },
   { "<leader>sw", "<cmd>Telescope lsp_dynamic_workspace_symbols<cr>", desc = "Workspace Symbols" },
-  { "<leader>sW", grep_word_under_cursor, desc = "Grep Current Word" },
-  { "<leader>sg", '<cmd>Telescope live_grep search_dirs={"%"}<cr>', desc = "Grep Text Locally" },
-  -- stylua: ignore
-  { "<leader>st", function() require("telescope").extensions.live_grep_args.live_grep_args() end, desc = "Grep with args", },
-  -- stylua: ignore
-  { "<leader>sm", function() require("telescope.builtin").man_pages({ sections = { "ALL" } }) end, desc = "Man Pages", },
+  -- grep
+  { "<leader>sg", "<cmd>Telescope live_grep_args<cr>", desc = "Grep with args" },
+  { "<leader>sG", '<cmd>Telescope live_grep search_dirs={"%"}<cr>', desc = "Grep Locally" },
+  {
+    "<leader>sW",
+    function()
+      require("telescope-live-grep-args.shortcuts").grep_word_under_cursor()
+    end,
+    desc = "Grep Current Word",
+  },
 }
 
 local layout_config = {
