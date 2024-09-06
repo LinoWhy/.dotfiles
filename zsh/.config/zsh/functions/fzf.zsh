@@ -11,11 +11,11 @@ export FZF_DEFAULT_OPTS="-i --height 40% --layout=reverse --info=inline
 --bind='ctrl-s:toggle-sort'
 --bind='?:toggle-preview'
 --bind='alt-w:toggle-preview-wrap'"
-# --preview='$ZDOTDIR/fzf-previewer.sh ./{}'"
+# --preview='$ZDOTDIR/helpers/fzf-previewer.sh ./{}'"
 
 # default options
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
-export FZF_CTRL_T_OPTS="$FZF_DEFAULT_OPTS --preview='$ZDOTDIR/fzf-previewer.sh ./{}'"
+export FZF_CTRL_T_OPTS="$FZF_DEFAULT_OPTS --preview='$ZDOTDIR/helpers/fzf-previewer.sh ./{}'"
 
 # preview for long commands
 export FZF_CTRL_R_OPTS="--preview 'echo {}' --preview-window down:3:wrap --height ~50%"
@@ -73,22 +73,4 @@ function fm() {
 
 function ft() {
   tldr -l | fzf --preview "" --prompt='tldr > ' --bind "enter:become(echo tldr {} && tldr {})"
-}
-
-# git reflog
-function grl() {
-    local opts
-    opts="
-        $FORGIT_FZF_DEFAULT_OPTS
-        +s +m --tiebreak=index --ansi
-        --bind=\"enter:execute($FORGIT log_enter {})\"
-        --bind=\"ctrl-y:execute-silent($FORGIT yank_sha {})\"
-        --preview=\"$FORGIT log_preview {}\"
-        $FORGIT_LOG_FZF_OPTS
-    "
-    git reflog --color=always | FZF_DEFAULT_OPTS="$opts" fzf
-    fzf_exit_code=$?
-    # exit successfully on 130 (ctrl-c/esc)
-    [[ $fzf_exit_code == 130 ]] && return 0
-    return $fzf_exit_code
 }

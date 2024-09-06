@@ -7,9 +7,11 @@ source "$ZDOTDIR/env.zsh"
 source "$ZDOTDIR/options.zsh"
 source "$ZDOTDIR/keys.zsh"
 source "$ZDOTDIR/aliases.zsh"
-source "$ZDOTDIR/functions.zsh"
-source "$ZDOTDIR/fzf.zsh"
-source "$ZDOTDIR/extract.zsh"
+
+# Additional configuration files
+for file in $ZDOTDIR/functions/*; do
+  source $file
+done
 
 # Git commands with fzf
 plug "wfxr/forgit"
@@ -28,7 +30,7 @@ plug "Aloxaf/fzf-tab"
 plug "zsh-users/zsh-autosuggestions"
 
 # Load colorsheme before loading zsh-syntax-highlighting
-source "$ZDOTDIR/catppuccin_macchiato-zsh-syntax-highlighting.zsh"
+source "$ZDOTDIR/helpers/catppuccin_macchiato-zsh-syntax-highlighting.zsh"
 plug "zsh-users/zsh-syntax-highlighting"
 
 # End of Configuration

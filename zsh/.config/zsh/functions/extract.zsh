@@ -1,6 +1,6 @@
 alias x=extract
 
-extract() {
+function extract() {
   setopt localoptions noautopushd
 
   if (( $# == 0 )); then
