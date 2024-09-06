@@ -54,3 +54,5 @@
 # config
 [includeIf "gitdir:~/work/"]
   path = ~/work/.gitconfig
+[includeIf "gitdir:~/sda/work/"]
+  path = ~/work/.gitconfig
