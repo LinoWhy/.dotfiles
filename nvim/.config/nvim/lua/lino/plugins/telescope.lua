@@ -34,7 +34,7 @@ local keys = {
   { "<leader>sH", "<cmd>Telescope highlights<cr>", desc = "Find Highlights" },
   { "<leader>sk", "<cmd>Telescope keymaps<cr>", desc = "Find Keymaps" },
   { "<leader>sl", "<cmd>Telescope resume<cr>", desc = "Resume Last Search" },
-  { "<leader>sm", "<cmd>Telescope man_pages secionts=ALL<cr>", desc = "Man Pages" },
+  { "<leader>sm", "<cmd>Telescope man_pages sections=ALL<cr>", desc = "Man Pages" },
   { "<leader>sq", "<cmd>Telescope quickfix<cr>", desc = "Quickfix" },
   { "<leader>sr", "<cmd>Telescope oldfiles<cr>", desc = "Open Recent File" },
   { "<leader>sR", "<cmd>Telescope registers<cr>", desc = "Registers" },
@@ -43,8 +43,8 @@ local keys = {
   { "<leader>ss", "<cmd>Telescope lsp_document_symbols<cr>", desc = "Document Symbols" },
   { "<leader>sw", "<cmd>Telescope lsp_dynamic_workspace_symbols<cr>", desc = "Workspace Symbols" },
   -- grep
-  { "<leader>sg", "<cmd>Telescope live_grep_args<cr>", desc = "Grep with args" },
-  { "<leader>sG", '<cmd>Telescope live_grep search_dirs={"%"}<cr>', desc = "Grep Locally" },
+  { "<leader>st", "<cmd>Telescope live_grep_args<cr>", desc = "Grep with args" },
+  { "<leader>sg", '<cmd>Telescope live_grep search_dirs={"%"}<cr>', desc = "Grep Locally" },
   {
     "<leader>sW",
     function()
