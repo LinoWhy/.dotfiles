@@ -132,9 +132,10 @@ return {
     -- },
     update_focused_file = {
       enable = true,
-      debounce_delay = 15,
-      update_root = true,
-      ignore_list = {},
+      update_root = {
+        enable = true,
+        ignore_list = {},
+      },
     },
     diagnostics = {
       enable = false,
@@ -150,6 +151,7 @@ return {
       timeout = 200,
     },
     actions = {
+      change_dir = { enable = false },
       open_file = {
         quit_on_open = true,
         window_picker = {
