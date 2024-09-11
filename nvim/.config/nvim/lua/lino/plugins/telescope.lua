@@ -29,7 +29,7 @@ local keys = {
   -- <leader>s
   { "<leader>sb", "<cmd>Telescope builtin<cr>", desc = "Telescope Builtin" },
   { "<leader>sc", "<cmd>Telescope commands<cr>", desc = "Find Commands" },
-  { "<leader>sf", "<cmd>Telescope find_files find_command=fd,-I,-H<cr>", desc = "Find All Files" },
+  { "<leader>sf", "<cmd>Telescope find_files find_command=fd,-I,-H,-tf<cr>", desc = "Find All Files" },
   { "<leader>sh", "<cmd>Telescope help_tags<cr>", desc = "Find Helps" },
   { "<leader>sH", "<cmd>Telescope highlights<cr>", desc = "Find Highlights" },
   { "<leader>sk", "<cmd>Telescope keymaps<cr>", desc = "Find Keymaps" },
