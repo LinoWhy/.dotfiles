@@ -8,8 +8,8 @@ return {
     { "[t", function() require("todo-comments").jump_prev() end, desc = "Previous Todo Comment" },
     {
       "<leader>sT",
-      function() vim.api.nvim_command("TodoTrouble cwd=" .. vim.fn.expand("%:p")) end,
-      desc = "Show TODOs in current file",
+      function() vim.api.nvim_command("TodoTelescope cwd=" .. vim.fn.expand("%:p:h")) end,
+      desc = "Show TODOs in current directory",
     },
   },
   opts = {
