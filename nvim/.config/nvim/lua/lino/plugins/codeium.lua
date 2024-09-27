@@ -1,4 +1,5 @@
 return {
+  enabled = false,
   "Exafunction/codeium.nvim",
   event = { "InsertEnter", "CmdlineEnter" },
   dependencies = {
