@@ -51,8 +51,10 @@ return {
         },
         gersemi = {
           prepend_args = function()
-            local line_length = tostring(vim.bo.textwidth)
             local indent = vim.bo.expandtab and tostring(vim.bo.shiftwidth) or "tabs"
+            -- NOTE: Set default line length to avoid unintended line breaks
+            local line_length = tostring(vim.bo.textwidth == 0 and 80 or vim.bo.textwidth)
+
             return { "--line-length", line_length, "--indent", indent }
           end,
         },
