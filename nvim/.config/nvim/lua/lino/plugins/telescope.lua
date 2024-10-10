@@ -94,6 +94,23 @@ local file_ignore_patterns = {
   "^%.cache/",
 }
 
+local open_selected = function(prompt_bufnr)
+  local actions = require("telescope.actions")
+  local picker = require("telescope.actions.state").get_current_picker(prompt_bufnr)
+  local selected = picker:get_multi_selection()
+  if vim.tbl_isempty(selected) then
+    actions.select_default(prompt_bufnr)
+  else
+    actions.close(prompt_bufnr)
+    for _, file in pairs(selected) do
+      vim.cmd.badd(file.path)
+    end
+    vim.cmd.edit(selected[1].path)
+  end
+end
+
+local multi_open_mapping = { n = { ["<CR>"] = open_selected }, i = { ["<CR>"] = open_selected } }
+
 local function pickers(actions)
   return {
     lsp_references = { fname_width = 45, show_line = false },
@@ -108,7 +125,9 @@ local function pickers(actions)
     live_grep = { only_sort_text = true },
     grep_string = { only_sort_text = true },
     buffers = { mappings = { n = { ["dd"] = actions.delete_buffer + actions.move_to_top } } },
-    git_files = { show_untracked = true },
+    git_files = { show_untracked = true, mappings = multi_open_mapping },
+    find_files = { mappings = multi_open_mapping },
+    oldfiles = { mappings = multi_open_mapping },
   }
 end
 
