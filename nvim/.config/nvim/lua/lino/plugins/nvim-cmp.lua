@@ -39,6 +39,7 @@ return {
         ["<C-d>"] = cmp.mapping.scroll_docs(4), -- down
         ["<C-e>"] = cmp.mapping.abort(), -- close completion window
         ["<CR>"] = cmp.mapping.confirm({ select = false }), -- only confirm explicitly selected items
+        ["<C-y>"] = cmp.mapping.confirm({ select = true, behavior = cmp.ConfirmBehavior.Insert }),
         ["<Tab>"] = cmp.mapping(function(fallback)
           if luasnip.expand_or_locally_jumpable() then
             luasnip.expand_or_jump()
@@ -56,6 +57,7 @@ return {
       }),
       -- sources for autocompletion
       sources = cmp.config.sources({
+        { name = "supermaven" }, -- supermaven
         { name = "nvim_lsp" }, -- lsp
         { name = "luasnip" }, -- snippets
         { name = "buffer" }, -- text within current buffer
@@ -74,7 +76,10 @@ return {
           -- end
           item.kind = string.format(" %s %s", icons.kind[item.kind] or "", item.kind)
 
+          vim.api.nvim_set_hl(0, "CmpItemKindSupermaven", { fg = "#c6a0f6" })
+
           local menu = {
+            supermaven = "",
             buffer = icons.ui.File,
             luasnip = icons.ui.Code,
             nvim_lsp = icons.misc.Robot,
@@ -88,6 +93,7 @@ return {
         end,
       },
       sorting = defaults.sorting,
+      experimental = { ghost_text = { hl_group = "Identifier" } },
     })
 
     -- `/` cmdline setup.

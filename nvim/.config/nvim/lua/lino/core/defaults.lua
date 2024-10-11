@@ -45,6 +45,7 @@ Lino.icons = {
     Property = "",
     Reference = "󰈇",
     Snippet = "",
+    Supermaven = "󰘦",
     String = "",
     Struct = "",
     Text = "",

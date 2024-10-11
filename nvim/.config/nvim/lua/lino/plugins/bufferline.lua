@@ -8,8 +8,8 @@ return {
   keys = {
     { "<A-h>", "<cmd>BufferLineCyclePrev<cr>", desc = "Previous Buffer" },
     { "<A-l>", "<cmd>BufferLineCycleNext<cr>", desc = "Next Buffer" },
-    { "[b", "<cmd>BufferLineCyclePrev<cr>", desc = "Previous" },
-    { "]b", "<cmd>BufferLineCycleNext<cr>", desc = "Next" },
+    { "[b", "<cmd>BufferLineCyclePrev<cr>", desc = "Previous Buffer" },
+    { "]b", "<cmd>BufferLineCycleNext<cr>", desc = "Next Buffer" },
     { "<leader>bo", "<Cmd>BufferLineCloseOthers<CR>", desc = "Close Others" },
     { "<leader>bh", "<cmd>BufferLineCloseLeft<cr>", desc = "Close all to the left" },
     { "<leader>bl", "<cmd>BufferLineCloseRight<cr>", desc = "Close all to the right" },
