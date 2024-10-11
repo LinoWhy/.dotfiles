@@ -38,7 +38,6 @@ local keys = {
   { "<leader>sq", "<cmd>Telescope quickfix<cr>", desc = "Quickfix" },
   { "<leader>sr", "<cmd>Telescope oldfiles<cr>", desc = "Open Recent File" },
   { "<leader>sR", "<cmd>Telescope registers<cr>", desc = "Registers" },
-  { "<leader>su", "<cmd>Telescope undo<cr>", desc = "Undos" },
   -- Symbols
   { "<leader>ss", "<cmd>Telescope lsp_document_symbols<cr>", desc = "Document Symbols" },
   { "<leader>sw", "<cmd>Telescope lsp_dynamic_workspace_symbols<cr>", desc = "Workspace Symbols" },
@@ -140,7 +139,6 @@ return {
     "nvim-tree/nvim-web-devicons",
     { "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
     "nvim-telescope/telescope-live-grep-args.nvim",
-    "debugloop/telescope-undo.nvim",
   },
   keys = keys, -- lazy load on the keymaps
   opts = {
@@ -159,13 +157,6 @@ return {
         override_generic_sorter = true,
         override_file_sorter = true,
         case_mode = "smart_case",
-      },
-      undo = {
-        use_delta = true,
-        side_by_side = true,
-        layout_config = {
-          width = 0.8,
-        },
       },
     },
   },
@@ -205,6 +196,5 @@ return {
     telescope.setup(opts)
     telescope.load_extension("fzf")
     telescope.load_extension("live_grep_args")
-    telescope.load_extension("undo")
   end,
 }
