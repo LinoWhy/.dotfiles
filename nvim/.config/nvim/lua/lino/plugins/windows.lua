@@ -14,14 +14,20 @@ end
 return {
   "anuvyklack/windows.nvim",
   dependencies = "anuvyklack/middleclass",
-  event = { "BufRead", "BufNewFile" },
+  cmd = {
+    "WindowsMaximize",
+    "WindowsEqualize",
+    "WindowsToggleAutowidth",
+  },
   keys = {
-    { "<space>tr", toggle, desc = "Toggle Auto Resize" },
+    { "<leader>tr", toggle, desc = "Toggle Window Resize" },
+    { "<C-w>z", "<cmd>WindowsMaximize<cr>", desc = "Toggle Window Maximize" },
   },
   opts = {
     autowidth = {
       enable = enable_autowidth,
       winwidth = Lino.extra_width, -- textwidth + winwidth
     },
+    animation = false,
   },
 }
