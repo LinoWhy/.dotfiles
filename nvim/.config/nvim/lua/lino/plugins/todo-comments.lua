@@ -16,10 +16,10 @@ return {
     signs = true,
     sign_priority = 1, -- lowest priority
     highlight = {
-      --multiline = true,
+      multiline = false,
       keyword = "bg",
       after = "",
-      -- pattern = [[.*<(KEYWORDS)\s*]], -- match without the extra colon
+      pattern = [[.*<(KEYWORDS)\s*]], -- match without the extra colon
     },
     search = {
       args = {

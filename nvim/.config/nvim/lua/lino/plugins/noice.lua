@@ -82,6 +82,13 @@ return {
         },
         view = "mini",
       },
+      {
+        filter = {
+          event = "notify",
+          warning = true,
+          find = "todo comments",
+        },
+      },
     },
     presets = {
       long_message_to_split = true,
