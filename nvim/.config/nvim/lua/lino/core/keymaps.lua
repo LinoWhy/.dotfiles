@@ -141,7 +141,7 @@ local function toggle_option(option, values)
 end
 
 -- stylua: ignore
-map("n", "<leader>tc", function() toggle_option("cursorcolumn") end, { desc = "Toggle cursor column" })
+map("n", "<leader>tc", function() toggle_option("cursorcolumn") end, { desc = "Toggle Cursor Column" })
 -- stylua: ignore
 map("n", "<leader>ts", function() toggle_option("spell") end, { desc = "Toggle Spell" })
 -- stylua: ignore

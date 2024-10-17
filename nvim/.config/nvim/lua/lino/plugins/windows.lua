@@ -28,6 +28,6 @@ return {
       enable = enable_autowidth,
       winwidth = Lino.extra_width, -- textwidth + winwidth
     },
-    animation = false,
+    animation = { enable = false },
   },
 }
