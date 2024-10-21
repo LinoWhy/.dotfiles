@@ -39,6 +39,7 @@ vim.api.nvim_create_autocmd("FileType", {
     "dapui_hover",
     "floaterm",
     "gitsigns-*",
+    "grug-far*",
     "help",
     "lspinfo",
     "man",

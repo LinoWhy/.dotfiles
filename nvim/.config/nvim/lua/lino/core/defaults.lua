@@ -1,5 +1,6 @@
 -- A collection of global configs
 vim.g.mapleader = " "
+vim.g.maplocalleader = ","
 
 _G.Lino = {}
 
