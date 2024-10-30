@@ -1,5 +1,4 @@
 local icons = Lino.icons
-local window_width_limit = 100
 
 local colors = {
   bg = "#202328",
@@ -21,7 +20,10 @@ local conditions = {
     return vim.fn.empty(vim.fn.expand("%:t")) ~= 1
   end,
   hide_in_width = function()
-    return vim.o.columns > window_width_limit
+    return vim.o.columns > 100
+  end,
+  hide_in_width_wide = function()
+    return vim.o.columns > 160
   end,
 }
 
@@ -56,7 +58,7 @@ local components = {
       modified = { fg = colors.yellow },
       removed = { fg = colors.red },
     },
-    cond = nil,
+    cond = conditions.hide_in_width_wide,
   },
   diagnostics = {
     "diagnostics",
@@ -68,17 +70,6 @@ local components = {
       hint = icons.diagnostics.BoldHint .. " ",
     },
     -- cond = conditions.hide_in_width,
-  },
-  treesitter = {
-    function()
-      return icons.ui.Tree
-    end,
-    color = function()
-      local buf = vim.api.nvim_get_current_buf()
-      local ts = vim.treesitter.highlighter.active[buf]
-      return { fg = ts and not vim.tbl_isempty(ts) and colors.green or colors.red }
-    end,
-    cond = conditions.hide_in_width,
   },
   lsp = {
     function()
@@ -117,7 +108,7 @@ local components = {
       return string.format("[%s]", names)
     end,
     -- color = { gui = "bold" },
-    cond = conditions.hide_in_width,
+    cond = conditions.hide_in_width_wide,
   },
   progress = {
     function()
@@ -140,12 +131,12 @@ local components = {
     "o:encoding",
     fmt = string.upper,
     color = {},
-    cond = conditions.hide_in_width,
+    cond = conditions.hide_in_width_wide,
   },
   sep = { "%=" },
   filename = { "filename", path = 1, cond = conditions.hide_in_width, color = { gui = "italic" } },
-  filetype = { "filetype", cond = nil, padding = { left = 1, right = 1 } },
-  filesize = { "filesize", color = {}, cond = conditions.hide_in_width },
+  filetype = { "filetype", cond = conditions.hide_in_width_wide, padding = { left = 1, right = 1 } },
+  filesize = { "filesize", color = {}, cond = conditions.hide_in_width_wide },
   -- stylua: ignore
   recording = {
     function() return require("noice").api.status.mode.get() end,
