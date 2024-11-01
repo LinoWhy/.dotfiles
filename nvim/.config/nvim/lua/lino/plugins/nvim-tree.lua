@@ -1,7 +1,7 @@
 local icons = Lino.icons
 
 local start_telescope = function(telescope_mode)
-  local node = require("nvim-tree.lib").get_node_at_cursor()
+  local node = require("nvim-tree.api").tree.get_node_under_cursor()
   if node == nil then
     return
   end
