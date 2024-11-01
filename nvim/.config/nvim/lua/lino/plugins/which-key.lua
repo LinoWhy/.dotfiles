@@ -9,7 +9,7 @@ return {
   -- Define groups name here, keymaps to be defined in corresponding plugins
   opts = {
     preset = "modern",
-    icons = { rules = false },
+    icons = { mappings = false },
     spec = {
       mode = { "n", "v" },
       { "g", group = "goto" },
