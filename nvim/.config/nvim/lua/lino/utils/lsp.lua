@@ -3,7 +3,9 @@ local M = {}
 
 -- Default LSP keymaps
 M.keys = {
-  ["K"] = { mode = "n", rhs = vim.lsp.buf.hover, desc = "Show Hover" },
+  -- stylua: ignore
+  -- wrap hover in function, as it's overridden by noice
+  ["K"] = { mode = "n", rhs = function() return vim.lsp.buf.hover() end, desc = "Show Hover" },
   ["<leader>lr"] = { mode = "n", rhs = vim.lsp.buf.rename, desc = "Rename" },
 }
 
