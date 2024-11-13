@@ -5,5 +5,5 @@ function rstt() {
 
 # check repo project branch status
 function rsbb() {
-  repo forall -pc git branch -vv | rg "behind|ahead" -B1
+  repo forall -pc git branch -vv | rg "behind|ahead|change-" -B1
 }
