@@ -4,6 +4,7 @@ return {
     opts = {
       -- make sure mason installs the server
       servers = {
+        asm_lsp = {},
         bashls = {},
         -- jdtls = {}, -- java
         dockerls = {},
