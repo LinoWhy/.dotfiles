@@ -7,3 +7,8 @@ function rstt() {
 function rsbb() {
   repo forall -pc git branch -vv | rg "behind|ahead|change-" -B1
 }
+
+# fetch repo project and check branch status
+function rsff() {
+  repo forall -c git fetch && rsbb
+}
