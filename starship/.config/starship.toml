@@ -78,7 +78,7 @@ disabled = false
 symbol = '🌟'
 
 [sudo]
-disabled = false
+disabled = true
 format = "[$symbol]($style)"
 symbol = "󰀄 "
 
