@@ -16,7 +16,7 @@ mkdir -p ~/self && mkdir -p ~/.local/bin && cd ~/self &&
   rm rust_cli_tools.tar.gz
 
 # Clone dotfiles, fzf & tmux
-git clone https://github.com/LinoWhy/.dotfiles.git &&
+git clone https://github.com/LinoWhy/.dotfiles.git ~/.dotfiles &&
   git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf && ~/.fzf/install &&
   git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 
@@ -27,9 +27,15 @@ cd ~/self && wget http://ftp.gnu.org/gnu/stow/stow-latest.tar.gz && tar -xvf sto
   ln -s ~/.local/stow/bin/stow ~/.local/bin/stow
 
 # Setup configurations
-wget https://raw.githubusercontent.com/zap-zsh/zap/master/install.zsh &&
+cd ~/self && wget https://raw.githubusercontent.com/zap-zsh/zap/master/install.zsh &&
   zsh install.zsh --branch release-v1 -k &&
   rm install.zsh &&
   mv ~/.bashrc ~/.bashrc.bak && cd ~/.dotfiles && ~/.local/bin/stow -v */
 
 chsh -s $(which zsh)
+
+# Upgrade tmux to support copy/paste in neovim
+# WITH SUDO PRIVILEGE
+mkdir -p ~/self/tmux; cd ~/self/tmux &&
+  wget https://github.com/tmux/tmux/releases/download/3.5a/tmux-3.5a.tar.gz &&
+  cd tmux-3.5a && ./configure && make -j8 && sudo make install
