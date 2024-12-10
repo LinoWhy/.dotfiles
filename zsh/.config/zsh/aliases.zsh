@@ -25,7 +25,7 @@ alias cp='cp -i'
 alias mv='mv -i'
 
 # git
-git_log_format="%C(auto)%h%d %s %C(black)%C(bold)%cr%Creset %Cblue[%cn]"
+git_log_format="%C(auto)%h%d %s %C(black)%C(bold)%cr%Creset %Cblue[%an]" # relative commit data & author name
 alias gb='git branch'
 alias gc='git commit'
 alias gca='git commit --amend'
