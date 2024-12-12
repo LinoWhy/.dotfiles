@@ -20,6 +20,7 @@ opt.title = false -- leave title to be handled by terminal
 opt.pumheight = 15 -- maximum popup menu height
 opt.pumwidth = 15 -- minnimum popup menu width
 opt.winminwidth = 5 -- hard minimum window width
+opt.jumpoptions = "stack"
 
 -- line & column
 opt.number = true
