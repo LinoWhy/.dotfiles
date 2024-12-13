@@ -1,3 +1,13 @@
+# Clangd configuration file
+# - project configuration: a file named .clangd in the source tree.
+#   (clangd searches in all parent directories of the active file).
+# - user configuration: a config.yaml file in an OS-specific directory (this file).
+
 CompileFlags:
   Add: -Wno-unknown-warning-option
   Remove: [-m*, -f*] # [-m*]
+
+# Disable all diagnostics messages from ClangTidy
+# Diagnostics:
+#   ClangTidy:
+#     Remove: '*'
