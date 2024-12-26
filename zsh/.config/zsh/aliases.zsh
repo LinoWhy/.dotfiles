@@ -9,6 +9,7 @@ alias nv='nvim'
 alias open='xdg-open'
 alias sudoo='sudo -E'
 alias t='tmux'
+alias z='__zoxide_zi'
 
 # ls
 alias l='lsd -l'
