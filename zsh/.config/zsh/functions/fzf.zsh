@@ -44,14 +44,17 @@ export FORGIT_FZF_DEFAULT_OPTS="
 
 # fzf-tab configs
 # https://github.com/Aloxaf/fzf-tab#oh-my-zsh
-# disable preview
-zstyle ':fzf-tab:complete:*' fzf-flags --no-preview
 # set descriptions format to enable group support
 zstyle ':completion:*:descriptions' format '[%d]'
 # set list-colors to enable filename colorizing
 zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 # switch group using `,` and `.`
 zstyle ':fzf-tab:*' switch-group ',' '.'
+# custom fzf flags
+# NOTE: fzf-tab does not follow FZF_DEFAULT_OPTS by default
+zstyle ':fzf-tab:*' fzf-flags --color=bg+:#363a4f,bg:#24273a,spinner:#f4dbd6,hl:#ed8796 \
+  --color=fg:#cad3f5,header:#ed8796,info:#c6a0f6,pointer:#f4dbd6 \
+  --color=marker:#f4dbd6,fg+:#cad3f5,prompt:#c6a0f6,hl+:#ed8796
 
 # configs form https://github.com/junegunn/fzf/wiki/examples
 # using ripgrep combined with preview
