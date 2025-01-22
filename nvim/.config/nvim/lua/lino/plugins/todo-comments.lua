@@ -19,7 +19,7 @@ return {
       multiline = false,
       keyword = "bg",
       after = "",
-      pattern = [[.*<(KEYWORDS)\s*]], -- match without the extra colon
+      -- pattern = [[.*<(KEYWORDS)\s*]], -- match without the extra colon
     },
     search = {
       args = {
