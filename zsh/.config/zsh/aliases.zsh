@@ -48,7 +48,7 @@ alias gsw='git switch'
 
 # repo
 alias rsb='repo forall -pc git branch -vv'
-alias rss='repo sync -j$(nproc)'
+alias rss='repo sync'
 alias rst='repo status'
 
 # Directory Stack
