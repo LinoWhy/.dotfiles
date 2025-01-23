@@ -1,7 +1,3 @@
-function set_win_title() {
-  echo -ne "\033]0;$(basename "$PWD")\007"
-}
-
 # clone config in ~/.config/nvim-$config manually
 function nvs() {
   items=("default" "lazy" "kickstart" "mini")
