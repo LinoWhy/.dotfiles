@@ -62,5 +62,5 @@ function find_and_source_envsetup() {
     current_dir=$(dirname "$current_dir")
   done
 }
-
-chpwd_functions+=(find_and_source_envsetup)
+# too aggressive
+# chpwd_functions+=(find_and_source_envsetup)
