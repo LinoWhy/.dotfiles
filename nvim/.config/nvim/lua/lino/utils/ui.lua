@@ -72,18 +72,36 @@ function M.statuscolumn()
     local signs = M.get_signs(buf, vim.v.lnum)
 
     ---@type Sign?,Sign?,Sign?
-    local left, right
+    local left, right, fold, githl
     for _, s in ipairs(signs) do
       if s.name and (s.name:find("GitSign")) then
         right = s
+        githl = s["texthl"]
       else
         left = s
       end
     end
+
+    -- get fold sign for manual foldmethod
+    vim.api.nvim_win_call(win, function()
+      if vim.o.foldmethod ~= "manual" then
+        return
+      end
+
+      if vim.fn.foldclosed(vim.v.lnum) >= 0 then
+        fold = { text = "", texthl = githl or "Folded" }
+      elseif
+        vim.fn.foldlevel(vim.v.lnum) > vim.fn.foldlevel(vim.v.lnum - 1) -- fold start
+        and vim.fn.foldlevel(vim.v.lnum) <= vim.fn.foldlevel(vim.v.lnum + 1) -- foldminlines = 1
+      then
+        fold = { text = "", texthl = githl }
+      end
+    end)
+
     -- Left: mark or non-git sign
     components[1] = M.icon(M.get_mark(buf, vim.v.lnum) or left)
     -- Right: git sign (only if file)
-    components[3] = is_file and M.icon(right) or ""
+    components[3] = is_file and M.icon(fold or right) or ""
   end
 
   -- Numbers in Neovim are weird
