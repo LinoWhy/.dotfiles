@@ -146,6 +146,8 @@ map("n", "<leader>tc", function() toggle_option("cursorcolumn") end, { desc = "T
 map("n", "<leader>ts", function() toggle_option("spell") end, { desc = "Toggle Spell" })
 -- stylua: ignore
 map("n", "<leader>tw", function() toggle_option("wrap") end, { desc = "Toggle Word Wrap" })
+-- stylua: ignore
+map("n", "<leader>tz", function() toggle_option("foldmethod", {"indent", "manual"}) end, { desc = "Toggle Fold Method" })
 
 -- toggle diagnose text
 map("n", "<leader>td", function()
