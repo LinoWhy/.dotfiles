@@ -28,7 +28,7 @@ cd ~/self && wget http://ftp.gnu.org/gnu/stow/stow-latest.tar.gz && tar -xvf sto
 
 # Setup configurations
 cd ~/self && wget https://raw.githubusercontent.com/zap-zsh/zap/master/install.zsh &&
-  zsh install.zsh --branch release-v1 -k &&
+  touch ~/.zshrc && zsh install.zsh --branch release-v1 -k &&
   rm install.zsh &&
   mv ~/.bashrc ~/.bashrc.bak && cd ~/.dotfiles && ~/.local/bin/stow -v */
 
@@ -36,6 +36,7 @@ chsh -s $(which zsh)
 
 # Upgrade tmux to support copy/paste in neovim
 # WITH SUDO PRIVILEGE
+# manual install need libevent, ncurses and bison
 mkdir -p ~/self/tmux; cd ~/self/tmux &&
   wget https://github.com/tmux/tmux/releases/download/3.5a/tmux-3.5a.tar.gz &&
-  cd tmux-3.5a && ./configure && make -j8 && sudo make install
+  tar xzvf tmux-3.5a.tar.gz && cd tmux-3.5a && ./configure && make -j8 && sudo make install
