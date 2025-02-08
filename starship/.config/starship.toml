@@ -3,6 +3,7 @@ palette = "catppuccin_macchiato"
 
 format = """
 $directory\
+$custom\
 $git_branch\
 $git_commit\
 $git_state\
@@ -18,6 +19,11 @@ $sudo\
 $character"""
 
 command_timeout = 1000
+
+[custom.ssh]
+when = ''' [[ $SSH_CONNECTION ]] '''
+symbol = " "
+format = '[$symbol](blue bold)'
 
 [directory]
 truncation_length = 3
@@ -70,8 +76,7 @@ disabled = false
 
 [hostname]
 ssh_only = false
-ssh_symbol = ' '
-format = "[$ssh_symbol](bold blue)[$hostname](bold green)"
+format = "[$hostname](bold green)"
 disabled = false
 
 [jobs]
