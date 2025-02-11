@@ -44,7 +44,7 @@ RUN mkdir -p ~/self && mkdir -p ~/.local/bin && cd ~/self && \
 # Clone dotfiles, fzf & tmux
 RUN git clone https://github.com/LinoWhy/.dotfiles.git && \
     git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf && ~/.fzf/install && \
-    git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+    git clone https://github.com/tmux-plugins/tpm ~/.local/share/tmux/plugins/tpm
 
 # Setup configurations
 RUN wget https://raw.githubusercontent.com/zap-zsh/zap/master/install.zsh && \
