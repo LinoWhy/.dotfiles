@@ -37,9 +37,10 @@ return {
         ["<C-j>"] = cmp.mapping.select_next_item(), -- next suggestion
         ["<C-u>"] = cmp.mapping.scroll_docs(-4), -- up
         ["<C-d>"] = cmp.mapping.scroll_docs(4), -- down
-        ["<C-e>"] = cmp.mapping.abort(), -- close completion window
+        ["<C-q>"] = cmp.mapping.abort(), -- close completion window
         ["<CR>"] = cmp.mapping.confirm({ select = false }), -- only confirm explicitly selected items
-        ["<C-y>"] = cmp.mapping.confirm({ select = true, behavior = cmp.ConfirmBehavior.Insert }),
+        ["<C-y>"] = {},
+        ["<C-e>"] = cmp.mapping.confirm({ select = true, behavior = cmp.ConfirmBehavior.Insert }),
         ["<Tab>"] = cmp.mapping(function(fallback)
           if luasnip.expand_or_locally_jumpable() then
             luasnip.expand_or_jump()
