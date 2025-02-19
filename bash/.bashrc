@@ -44,8 +44,8 @@ alias lta='lsd --tree -a'
 alias ltt='lsd --tree --depth'
 
 # confirm before overwriting something
-alias cp='cp -i'
-alias mv='mv -i'
+# alias cp='cp -i'
+# alias mv='mv -i'
 
 # git
 git_log_format="%C(auto)%h%d %s %C(black)%C(bold)%cr%Creset %Cblue[%cn]"
