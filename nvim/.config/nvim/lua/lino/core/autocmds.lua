@@ -32,6 +32,7 @@ vim.api.nvim_create_autocmd("FileType", {
 vim.api.nvim_create_autocmd("FileType", {
   group = Utils.extra.augroup("close_with_q"),
   pattern = {
+    "Avante*",
     "DressingSelect",
     "PlenaryTestPopup",
     "checkhealth",
