@@ -94,7 +94,7 @@ return {
         end,
       },
       sorting = defaults.sorting,
-      experimental = { ghost_text = { hl_group = "Identifier" } },
+      experimental = { ghost_text = true },
     })
 
     -- `/` cmdline setup.
