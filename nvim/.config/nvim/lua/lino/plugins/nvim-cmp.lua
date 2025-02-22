@@ -15,6 +15,9 @@ return {
     local defaults = require("cmp.config.default")()
     local luasnip = require("luasnip")
 
+    -- set ghost text highlight group
+    vim.cmd([[hi MyGhostText cterm=italic gui=italic guibg=#a5adcb guifg=#363a4f]])
+
     -- loads vscode style snippets from installed plugins (e.g. friendly-snippets)
     require("luasnip.loaders.from_vscode").lazy_load()
 
@@ -94,7 +97,7 @@ return {
         end,
       },
       sorting = defaults.sorting,
-      experimental = { ghost_text = { hl_group = "Identifier" } },
+      experimental = { ghost_text = { hl_group = "MyGhostText" } },
     })
 
     -- `/` cmdline setup.
