@@ -15,6 +15,7 @@ return {
       { "g", group = "goto" },
       { "]", group = "next" },
       { "[", group = "prev" },
+      { "<leader>a", group = "AI" },
       { "<leader>b", group = "Buffer" },
       { "<leader>d", group = "Debug" },
       { "<leader>g", group = "Git" },

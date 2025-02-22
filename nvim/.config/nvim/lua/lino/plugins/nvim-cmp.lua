@@ -83,13 +83,15 @@ return {
           vim.api.nvim_set_hl(0, "CmpItemKindSupermaven", { fg = "#c6a0f6" })
 
           local menu = {
-            supermaven = "",
+            supermaven = icons.misc.Robot,
             buffer = icons.ui.File,
             luasnip = icons.ui.Code,
-            nvim_lsp = icons.misc.Robot,
+            nvim_lsp = icons.misc.Server,
             path = icons.misc.Path,
             cmdline = icons.misc.Command,
-            codeium = "",
+            avante_commands = icons.misc.Magic,
+            avante_mentions = icons.misc.Magic,
+            codeium = icons.misc.Magic,
           }
           item.menu = (menu[entry.source.name] or entry.source.name or "") .. " "
 
