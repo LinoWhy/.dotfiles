@@ -36,3 +36,4 @@ plug "zsh-users/zsh-syntax-highlighting"
 # End of Configuration
 eval "$(zoxide init zsh --no-cmd)"
 eval "$(starship init zsh)"
+eval "$(direnv hook zsh)"
