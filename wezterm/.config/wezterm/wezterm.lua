@@ -31,6 +31,7 @@ local config = {
   font = wezterm.font_with_fallback({
     {
       family = "Recursive Mono Casual Static Freeze",
+      weight = "Medium",
     },
     {
       family = "Recursive Mono Casual Static",
