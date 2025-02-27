@@ -1,3 +1,20 @@
+# Select SSH host from ~/.ssh/config using fzf
+function sshs() {
+  local ssh_host=$(awk '
+    /^Host / {
+      for (i=2; i<=NF; i++) {
+        if ($i !~ /[*?]/) {
+          print $i
+        }
+      }
+    }
+  ' ~/.ssh/config | sort | fzf --prompt=" SSH Host > " --height=~50% --layout=reverse --border --exit-0 --no-preview)
+
+  if [[ -n $ssh_host ]]; then
+    ssh "$ssh_host" $@
+  fi
+}
+
 # clone config in ~/.config/nvim-$config manually
 function nvs() {
   items=("default" "lazy" "kickstart" "mini")
