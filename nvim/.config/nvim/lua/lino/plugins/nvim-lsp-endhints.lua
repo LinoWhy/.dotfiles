@@ -1,10 +1,19 @@
 return {
   "chrisgrieser/nvim-lsp-endhints",
   event = "LspAttach",
+  keys = {
+    {
+      "<leader>te",
+      function()
+        require("lsp-endhints").toggle()
+      end,
+      desc = "Toggle End InlayHints",
+    },
+  },
   opts = {
     icons = {
-      type = "=> ",
-      parameter = "-> ",
+      type = " ",
+      parameter = " ",
     },
     autoEnableHints = false, -- controlled in lsp on_attach
   },
