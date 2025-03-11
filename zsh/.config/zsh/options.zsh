@@ -33,34 +33,13 @@ export LS_COLORS="$(vivid generate catppuccin-mocha)"
 
 # Set window title according to directory
 function set_win_title() {
-  echo -ne "\033]0;$(basename "$PWD")\007"
+  if [[ -n "$SSH_CONNECTION" ]]; then
+    echo -ne "\033]0;$(basename "$PWD") @$(hostname)\007"
+  else
+    echo -ne "\033]0;$(basename "$PWD")\007"
+  fi
 }
 
 if [[ ! -v TMUX ]]; then
   precmd_functions+=(set_win_title)
 fi
-
-# Source file on directory change
-typeset -A sourced_envsetup_files
-
-function find_and_source_envsetup() {
-  local current_dir="$PWD"
-  local file=".envsetup"
-  local envsetup_file
-
-  while [[ "$current_dir" != "/" ]]; do
-    envsetup_file="$current_dir/$file"
-
-    if [[ -f "$envsetup_file" ]]; then
-      if [[ -z "${sourced_envsetup_files[$envsetup_file]}" ]]; then
-        source "$envsetup_file" && echo "\033[1;34mSourced $envsetup_file!\033[0m"
-        sourced_envsetup_files[$envsetup_file]=1
-      fi
-      return 0
-    fi
-
-    current_dir=$(dirname "$current_dir")
-  done
-}
-# too aggressive
-# chpwd_functions+=(find_and_source_envsetup)
