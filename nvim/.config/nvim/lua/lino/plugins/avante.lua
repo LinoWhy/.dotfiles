@@ -1,6 +1,7 @@
 return {
   {
     "yetone/avante.nvim",
+    enabled = Lino.use_ai,
     event = "VeryLazy",
     build = "make",
     -- Dependencies are not necessary, as these modules are loaded on-demand

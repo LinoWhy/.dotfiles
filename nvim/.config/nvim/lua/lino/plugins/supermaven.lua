@@ -1,6 +1,7 @@
 return {
   {
     "supermaven-inc/supermaven-nvim",
+    enabled = Lino.use_ai,
     event = { "InsertEnter" },
     opts = {
       log_level = "off",

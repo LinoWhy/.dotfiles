@@ -10,6 +10,7 @@ Lino.diagnose_severity_level = vim.diagnostic.severity.HINT
 Lino.inlay_hints = true
 Lino.extra_width = 10
 Lino.watch_and_dispatch = false
+Lino.use_ai = os.getenv("AI_IN_NEOVIM") and true or false
 
 -- configuration for each file type
 Lino.format_on_save = {
