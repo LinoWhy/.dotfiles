@@ -210,4 +210,4 @@ map("n", "<leader>rw", function()
 end, { desc = "Watch & Dispatch" })
 
 -- dec2hex the word under the cursor
-map("n", "<leader>H", ':echo printf("0x%x", <c-r><c-w>)<cr>', { desc = "Hex Value", silent = true })
+map("n", "<leader>N", Utils.number.show_number, { desc = "Show Number", silent = true })

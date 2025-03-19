@@ -6,6 +6,7 @@
 ---@field format Utils.format
 ---@field lsp Utils.lsp
 ---@field make Utils.make
+---@field number Utils.number
 ---@field ui Utils.ui
 _G.Utils = setmetatable({}, {
   __index = function(t, k)
