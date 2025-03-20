@@ -7,7 +7,8 @@ local M = {}
 ---@param plugin string
 ---@return boolean
 function M.has(plugin)
-  return require("lazy.core.config").spec.plugins[plugin] ~= nil
+  local success, _ = pcall(require, "lazy.core.config")
+  return success and require("lazy.core.config").spec.plugins[plugin] ~= nil
 end
 
 ---

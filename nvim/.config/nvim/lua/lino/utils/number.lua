@@ -13,7 +13,11 @@ local function convert_number(num)
 end
 
 local function show_in_float(content)
-  local Popup = require("nui.popup")
+  local success, Popup = pcall(require, "nui.popup")
+  if not success then
+    print(vim.inspect(content))
+    return
+  end
 
   local function find_max_str_length(tbl)
     local maxLength = 30

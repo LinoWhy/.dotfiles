@@ -1,5 +1,7 @@
 require("lino.core.defaults")
-require("lino.core.lazy")
+if os.getenv("PLUGIN_IN_NEOVIM") then
+  require("lino.core.lazy")
+end
 require("lino.core.options")
 require("lino.core.keymaps")
 require("lino.core.autocmds")
