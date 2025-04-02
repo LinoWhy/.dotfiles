@@ -42,10 +42,33 @@ return {
         },
         move = {
           enable = true,
-          goto_next_start = { ["]f"] = "@function.outer", ["]a"] = "@parameter.inner" },
-          goto_next_end = { ["]F"] = "@function.outer", ["]A"] = "@parameter.inner" },
-          goto_previous_start = { ["[f"] = "@function.outer", ["[a"] = "@parameter.inner" },
-          goto_previous_end = { ["[F"] = "@function.outer", ["[A"] = "@parameter.inner" },
+          goto_next_start = {
+            ["]f"] = "@function.outer",
+            ["]a"] = "@parameter.inner",
+          },
+          goto_next_end = {
+            ["]F"] = "@function.outer",
+            ["]A"] = "@parameter.inner",
+          },
+          goto_previous_start = {
+            ["[f"] = "@function.outer",
+            ["[a"] = "@parameter.inner",
+          },
+          goto_previous_end = {
+            ["[F"] = "@function.outer",
+            ["[A"] = "@parameter.inner",
+          },
+        },
+        swap = {
+          enable = true,
+          swap_next = {
+            [">F"] = "@function.outer",
+            [">A"] = "@parameter.inner",
+          },
+          swap_previous = {
+            ["<F"] = "@function.outer",
+            ["<A"] = "@parameter.inner",
+          },
         },
       },
       matchup = {
