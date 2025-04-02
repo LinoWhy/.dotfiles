@@ -1,10 +1,22 @@
 local keys = {
   -- ]/[
-  { "]c", "<cmd>Gitsigns next_hunk<cr>", desc = "Next Hunk" },
-  { "[c", "<cmd>Gitsigns prev_hunk<cr>", desc = "Prev Hunk" },
+  {
+    "]c",
+    function()
+      return vim.wo.diff and vim.cmd("normal! ]c") or vim.cmd("Gitsigns next_hunk")
+    end,
+    desc = "Next Change",
+  },
+  {
+    "[c",
+    function()
+      return vim.wo.diff and vim.cmd("normal! [c") or vim.cmd("Gitsigns prev_hunk")
+    end,
+    desc = "Prev Change",
+  },
   -- <leader>g
-  { "<leader>gj", "<cmd>Gitsigns next_hunk<cr>", desc = "Next Hunk" },
-  { "<leader>gk", "<cmd>Gitsigns prev_hunk<cr>", desc = "Prev Hunk" },
+  { "<leader>gj", "<cmd>Gitsigns next_hunk<cr>", desc = "Next Change" },
+  { "<leader>gk", "<cmd>Gitsigns prev_hunk<cr>", desc = "Prev Change" },
   { "<leader>gD", "<cmd>Gitsigns toggle_deleted<cr>", desc = "Toggle Deleted" },
   { "<leader>gB", "<cmd>Gitsigns blame<cr>", desc = "Blame" },
   { "<leader>gl", "<cmd>Gitsigns blame_line<cr>", desc = "Blame Line" },
