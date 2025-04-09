@@ -6,13 +6,13 @@ GH_SITE="https://github.com"
 
 # Install neovim & other cli tools
 mkdir -p ~/self && mkdir -p ~/.local/bin && cd ~/self &&
-  wget ${GH_SITE}/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz &&
+  wget ${GH_SITE}/neovim/neovim/releases/v0.10.4/download/nvim-linux-x86_64.tar.gz &&
   tar xzf nvim-linux-x86_64.tar.gz && ln -sf ~/self/nvim-linux-x86_64/bin/nvim ~/.local/bin/nvim &&
   rm nvim-linux-x86_64.tar.gz &&
   wget ${GH_SITE}/muesli/duf/releases/download/v0.8.1/duf_0.8.1_linux_amd64.deb &&
   sudo dpkg -i duf_0.8.1_linux_amd64.deb &&
   rm duf_0.8.1_linux_amd64.deb &&
-  curl -sfL https://direnv.net/install.sh | bash &&
+  curl -sfL https://direnv.net/install.sh | sudo bash &&
   wget ${GH_SITE}/LinoWhy/cli-tools/releases/latest/download/rust_cli_tools.tar.gz &&
   tar xzf rust_cli_tools.tar.gz -C ~/.local/bin &&
   rm rust_cli_tools.tar.gz
@@ -39,9 +39,6 @@ cd ~/self && wget https://raw.githubusercontent.com/zap-zsh/zap/master/install.z
   mv ~/.bashrc ~/.bashrc.bak && cd ~/.dotfiles && ${STOW:-stow} -v */
 
 chsh -s $(which zsh)
-
-# NOTE: personal neovim config might be too aggressive!
-rm -rf ~/.config/nvim
 
 # Upgrade tmux to support copy/paste in neovim
 # WITH SUDO PRIVILEGE
