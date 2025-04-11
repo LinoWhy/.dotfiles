@@ -2,8 +2,8 @@ return {
   {
     "yetone/avante.nvim",
     enabled = Lino.use_ai,
-    event = "VeryLazy",
     build = "make",
+    cmd = { "AvanteAsk", "AvanteChat" },
     -- Dependencies are not necessary, as these modules are loaded on-demand
     -- dependencies = {
     --   "stevearc/dressing.nvim",
