@@ -27,6 +27,13 @@ else
   export FORGIT_COPY_CMD="xclip -selection clipboard"
 fi
 
+# disable git graph for faster reaction in huge git repository
+export FORGIT_LOG_GRAPH_ENABLE=0
+
+export FORGIT_STASH_FZF_OPTS='
+--bind="ctrl-d:reload(git stash drop $(cut -d: -f1 <<<{}) 1>/dev/null && git stash list)"
+'
+
 export FORGIT_FZF_DEFAULT_OPTS="
 --height='80%'
 --layout=reverse

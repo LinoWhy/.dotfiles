@@ -34,11 +34,11 @@ alias gcm='git commit -m'
 alias gcs='git commit -s'
 alias gch='git cherry-pick'
 alias gl='git log'
-alias gls="git log --pretty=format:'$git_log_format' --graph"
-alias gla="git log --pretty=format:'$git_log_format' --graph --all"
-alias gll="git log --pretty=format:'$git_log_format' --graph --all --numstat"
-alias GP='git push'
+alias gls="git log --pretty=format:'$git_log_format'"
+alias gla="git log --pretty=format:'$git_log_format' --all"
+alias gll="git log --pretty=format:'$git_log_format' --all --numstat"
 alias glf='git log --pretty=fuller'
+alias GP='git push'
 alias gp='git pull'
 alias gpra='git pull --rebase --autostash'
 alias gr='git remote'
