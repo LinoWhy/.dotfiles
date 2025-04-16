@@ -13,6 +13,11 @@ bindkey -M emacs "${terminfo[kpp]}" up-line-or-history
 # [PageDown] - Down a line of history
 bindkey -M emacs "${terminfo[knp]}" down-line-or-history
 
+# [Home], [End] & [Delete]
+bindkey "^[[H"  beginning-of-line
+bindkey "^[[F"  end-of-line
+bindkey "^[[3~" delete-char
+
 # [Ctrl-RightArrow] - move forward one word
 bindkey -M emacs '^[[1;5C' forward-word
 bindkey -M viins '^[[1;5C' forward-word
