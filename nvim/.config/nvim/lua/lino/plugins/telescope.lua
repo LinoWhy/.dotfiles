@@ -163,6 +163,7 @@ return {
   config = function(_, opts)
     local telescope = require("telescope")
     local actions = require("telescope.actions")
+    local lga_actions = require("telescope-live-grep-args.actions")
 
     local function send_to_qflist_and_open_trouble(prompt_bufnr)
       actions.smart_send_to_qflist(prompt_bufnr)
@@ -192,6 +193,15 @@ return {
     }
 
     opts.pickers = pickers(actions)
+
+    opts.extensions.live_grep_args = {
+      auto_quoting = false,
+      mappings = {
+        i = {
+          ["<C-k>"] = lga_actions.quote_prompt(),
+        },
+      },
+    }
 
     telescope.setup(opts)
     telescope.load_extension("fzf")
