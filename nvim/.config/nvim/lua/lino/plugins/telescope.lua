@@ -11,7 +11,7 @@ local keys = {
   -- g
   { "gd", "<cmd>Telescope lsp_definitions<cr>", desc = "Goto Definition" },
   { "gs", "<cmd>split<cr><cmd>Telescope lsp_definitions<cr>", desc = "Goto Definition (split)" },
-  { "ga", "<cmd>vsplit<cr><cmd>Telescope lsp_definitions<cr>", desc = "Goto Definition (vsplit)" },
+  { "gv", "<cmd>vsplit<cr><cmd>Telescope lsp_definitions<cr>", desc = "Goto Definition (vsplit)" },
   { "gr", "<cmd>Telescope lsp_references<cr>", desc = "Goto Reference" },
   { "gC", "<cmd>Telescope lsp_incoming_calls<cr>", desc = "Goto Caller" },
   { "gI", "<cmd>Telescope lsp_implementations<cr>", desc = "Goto Implementation" },

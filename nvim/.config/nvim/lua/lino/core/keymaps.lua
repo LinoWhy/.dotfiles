@@ -73,9 +73,11 @@ map({ "n", "x" }, "D", '"dD')
 map("x", "P", "p") -- swap yanked text with register via "P" in visual_block_mode
 map("x", "p", "P")
 
--- Better indenting
+-- Reselect visual area after indenting
 map("v", "<", "<gv")
 map("v", ">", ">gv")
+-- Reselect visual area with 'gV', 'gv' would be remapped
+map("n", "gV", "gv")
 
 -- % to \
 map({ "n", "x" }, "\\", "%")
