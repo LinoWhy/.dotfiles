@@ -1,59 +1,24 @@
 local wezterm = require("wezterm")
 local act = wezterm.action
-local default_prog
-local launch_menu = {}
-local gitbash = { "D:\\programs\\Git\\bin\\bash.exe", "-i", "-l" }
-local msys2 = { "D:\\programs\\msys64\\msys2_shell.cmd", "-defterm", "-here", "-no-start", "-ucrt64" }
 
--- Shell
-if wezterm.target_triple == "x86_64-pc-windows-msvc" then
-  default_prog = { "wsl.exe", "--cd", "~" }
-  table.insert(launch_menu, {
-    label = "PowerShell",
-    args = { "powershell.exe", "-NoLogo" },
-  })
-  table.insert(launch_menu, {
-    label = "Git Bash",
-    args = gitbash,
-  })
-  table.insert(launch_menu, {
-    label = "msys2 ucrt64",
-    args = msys2,
-  })
-else
-  default_prog = { "zsh", "-l" }
-end
+local color_scheme = "Catppuccin Macchiato"
+local use_color_scheme = true
+
+wezterm.on("toggle-color-scheme", function(window, _)
+  use_color_scheme = not use_color_scheme
+  local scheme = use_color_scheme and color_scheme or ""
+  window:set_config_overrides({ color_scheme = scheme })
+end)
 
 local config = {
-  default_prog = default_prog,
-  launch_menu = launch_menu,
+  color_scheme = color_scheme,
+
+  default_prog = { "zsh", "-l" },
 
   font = wezterm.font_with_fallback({
     {
       family = "Recursive Mono Casual Static Freeze",
       weight = "Medium",
-    },
-    {
-      family = "Recursive Mono Casual Static",
-      weight = "Medium",
-      scale = 1,
-      harfbuzz_features = {
-        "dlig", -- code ligatures
-        -- for CRSV<=0.5 (Roman/normal styles)
-        -- "ss01", -- Single-story a
-        -- "ss02", -- Single-story g
-        "ss03", -- Simplified f
-        "ss04", -- Simplified i
-        "ss05", -- Simplified l
-        "ss06", -- Simplified r
-        -- for both Roman & Cursive styles
-        -- "ss07", -- Simplified italic diagonals (kwxyz)
-        "ss08", -- No-serif L and Z
-        -- "ss09", -- Simplified 6 and 9
-        "ss10", -- Dotted 0
-        -- "ss11", -- Simplified 1
-        "ss12", -- Simplified @
-      },
     },
     {
       family = "Cascadia Code",
@@ -67,11 +32,9 @@ local config = {
     },
     { family = "Symbols Nerd Font Mono", scale = 0.75 },
     "Noto Color Emoji",
-    { family = "Delugia", scale = 1.1 },
   }),
   font_size = 10.5,
   cell_width = 1.0,
-  -- line_height = 0.95,
 
   warn_about_missing_glyphs = false,
   adjust_window_size_when_changing_font_size = false,
@@ -97,14 +60,6 @@ local config = {
     { key = "l", mods = "SHIFT|CTRL", action = act.ActivatePaneDirection("Right") },
     { key = "k", mods = "SHIFT|CTRL", action = act.ActivatePaneDirection("Up") },
     { key = "j", mods = "SHIFT|CTRL", action = act.ActivatePaneDirection("Down") },
-    -- scroll
-    { key = "UpArrow", mods = "SHIFT", action = act.ScrollByLine(-1) },
-    { key = "DownArrow", mods = "SHIFT", action = act.ScrollByLine(1) },
-    { key = "PageUp", mods = "SHIFT", action = act.ScrollByPage(-1) },
-    { key = "PageDown", mods = "SHIFT", action = act.ScrollByPage(1) },
-    -- search & copy mode
-    { key = "F", mods = "SHIFT|CTRL", action = act.Search({ CaseSensitiveString = "" }) },
-    { key = "Q", mods = "SHIFT|CTRL", action = act.ActivateCopyMode },
     -- command palette
     { key = "P", mods = "SHIFT|CTRL", action = act.ActivateCommandPalette },
     -- font size
@@ -113,43 +68,54 @@ local config = {
     { key = "0", mods = "CTRL", action = act.ResetFontSize },
     -- toggle full screen
     { key = "Enter", mods = "ALT", action = act.ToggleFullScreen },
+    -- toggle color scheme
+    { key = "R", mods = "SHIFT|CTRL", action = act.EmitEvent("toggle-color-scheme") },
   },
-
-  -- disable_default_mouse_bindings = true,
-  -- mouse_bindings = {
-  --   -- Bind 'Up' event of CTRL-Click to open hyperlinks
-  --   {
-  --     event = { Up = { streak = 1, button = "Left" } },
-  --     mods = "CTRL",
-  --     action = act.OpenLinkAtMouseCursor,
-  --   },
-  -- },
-
-  color_scheme = "Catppuccin Macchiato", -- or Macchiato, Frappe, Latte
 
   hide_tab_bar_if_only_one_tab = true,
   use_fancy_tab_bar = false,
-  tab_max_width = 36,
+  tab_max_width = 60,
 
   window_decorations = "RESIZE",
   window_padding = {
-    left = 2,
-    right = 6,
+    left = 0,
+    right = 0,
     top = 0,
     bottom = 0,
   },
 
-  enable_scroll_bar = true,
-  scrollback_lines = 9999999,
+  scrollback_lines = 9999,
 }
 
-local use_color_scheme = true
-wezterm.on("toggle-color-scheme", function(window, _)
-  use_color_scheme = not use_color_scheme
-  local scheme = use_color_scheme and config.color_scheme or ""
-  window:set_config_overrides({ color_scheme = scheme })
-end)
+-- Configuration for Windows
+if wezterm.target_triple == "x86_64-pc-windows-msvc" then
+  local powershell = { "powershell.exe", "-NoLogo" }
+  local wsl = { "wsl.exe", "--cd", "~" }
 
-table.insert(config.keys, { key = "R", mods = "SHIFT|CTRL", action = act.EmitEvent("toggle-color-scheme") })
+  local launch_menu = {
+    {
+      label = "PowerShell",
+      args = powershell,
+    },
+    {
+      label = "wsl",
+      args = wsl,
+    },
+  }
+
+  local success, stdout, _ = wezterm.run_child_process({ "where.exe", "git.exe" })
+  if success then
+    local git_path = wezterm.split_by_newlines(stdout)[1]
+    local bash_path = git_path:gsub("cmd\\git.exe", "bin\\bash.exe")
+
+    table.insert(launch_menu, {
+      label = "git bash",
+      args = { bash_path, "-i", "-l" },
+    })
+  end
+
+  config.default_prog = powershell
+  config.launch_menu = launch_menu
+end
 
 return config
