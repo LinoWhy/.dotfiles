@@ -33,6 +33,9 @@ plug "zsh-users/zsh-autosuggestions"
 source "$ZDOTDIR/helpers/catppuccin_macchiato-zsh-syntax-highlighting.zsh"
 plug "zsh-users/zsh-syntax-highlighting"
 
+# Setup zsh hooks
+source "$ZDOTDIR/hooks.zsh"
+
 # End of Configuration
 eval "$(zoxide init zsh --no-cmd)"
 eval "$(starship init zsh)"

@@ -28,15 +28,12 @@ function nvs() {
   fi
 }
 
-# change the current working directory when exiting Yazi
-function ya() {
-  local tmp="$(mktemp -t "yazi-cwd.XXXXX")"
-  echo "$tmp"
-  yazi "$@" --cwd-file="$tmp"
-  if cwd="$(cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
-    cd -- "$cwd"
-  fi
-  rm -f -- "$tmp"
+# Select a tmux session and change or attach to
+function tt() {
+  [[ -n "$TMUX" ]] && change="switch-client" || change="attach-session"
+  session=$(tmux list-sessions -F "#{session_name}" | \
+    fzf --query="$1" --select-1 --exit-0) &&
+  tmux $change -t "$session"
 }
 
 function mdcd() {

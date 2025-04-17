@@ -30,16 +30,3 @@ setopt PUSHD_SILENT              # Do not print the directory stack after pushd 
 
 # Use vivid to generate colorized output
 export LS_COLORS="$(vivid generate catppuccin-mocha)"
-
-# Set window title according to directory
-function set_win_title() {
-  if [[ -n "$SSH_CONNECTION" ]]; then
-    echo -ne "\033]0;$(basename "$PWD") @$(hostname)\007"
-  else
-    echo -ne "\033]0;$(basename "$PWD")\007"
-  fi
-}
-
-if [[ ! -v TMUX ]]; then
-  precmd_functions+=(set_win_title)
-fi
