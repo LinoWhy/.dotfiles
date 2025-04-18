@@ -8,6 +8,7 @@ $git_branch\
 $git_commit\
 $git_state\
 $git_status\
+$conda\
 $fill\
 $status\
 $cmd_duration\
@@ -54,6 +55,9 @@ renamed = "»${count} "
 deleted = "✘${count} "
 style = "bold italic fg:rosewater"
 windows_starship = "/mnt/c/Program Files/starship/bin/starship.exe"
+
+[conda]
+format = '[$symbol$environment](green) '
 
 [fill]
 symbol = "·"
