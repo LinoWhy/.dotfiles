@@ -51,6 +51,7 @@ return {
             CursorLineNr = { fg = c.rosewater, style = { "bold", "italic" } },
             CursorColumn = { bg = c.surface1 },
             CmpItemMenu = { fg = c.rosewater },
+            MatchParen = { fg = c.red, bg = "none", style = { "bold" } }, -- The character under the cursor or just before it, if it is a paired bracket, and its match. |pi_paren.txt|
             -- ["@parameter"] = { fg = c.maroon, style = { "italic" } },
           }
         end,
