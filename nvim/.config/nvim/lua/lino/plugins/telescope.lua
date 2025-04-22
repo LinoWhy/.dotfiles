@@ -176,6 +176,7 @@ return {
 
     opts.defaults.mappings = {
       i = {
+        ["<C-a>"] = actions.select_all,
         ["<C-j>"] = actions.move_selection_next,
         ["<C-k>"] = actions.move_selection_previous,
         ["<C-s>"] = actions.select_horizontal,
@@ -184,6 +185,7 @@ return {
         ["<C-q>"] = send_to_qflist_and_open_trouble,
       },
       n = {
+        ["<C-a>"] = actions.select_all,
         ["<C-s>"] = actions.select_horizontal,
         ["<C-x>"] = false,
         ["<C-f>"] = actions.to_fuzzy_refine,
