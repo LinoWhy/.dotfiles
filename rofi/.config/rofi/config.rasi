@@ -1,0 +1,21 @@
+configuration {
+    modi: "window,drun";
+    show-icons: true;
+    sidebar-mode: true;
+    line-padding: 5;
+    hide-scrollbar: true;
+    window-format: "{c}		{t}";
+
+    display-window: "󱂬 window:";
+    display-drun:   "󱓞 drun:";
+    display-combi:  "󰕘 combi:";
+
+    kb-remove-char-back: "BackSpace";
+    kb-accept-entry: "Return";
+    kb-remove-to-eol: "";
+    kb-mode-complete: "";
+    kb-row-down: "Ctrl+j,Down";
+    kb-row-up: "Ctrl+k,Up";
+    kb-mode-previous: "Ctrl+h";
+    kb-mode-next: "Ctrl+l";
+}
