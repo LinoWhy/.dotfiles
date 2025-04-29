@@ -28,7 +28,7 @@ local keys = {
   { "<leader>gS", "<cmd>Gitsigns stage_buffer<cr>", desc = "Stage Buffer" },
   { "<leader>gu", "<cmd>Gitsigns undo_stage_hunk<cr>", desc = "Undo Stage Hunk" },
   -- <leader>t
-  { "<leader>tl", "<cmd>Gitsigns toggle_current_line_blame<cr>", desc = "Toggle Git Blame" },
+  { "<leader>tg", "<cmd>Gitsigns toggle_current_line_blame<cr>", desc = "Toggle Git Blame" },
 }
 
 return {
