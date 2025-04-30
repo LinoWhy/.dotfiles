@@ -127,6 +127,7 @@ local function pickers(actions)
     git_files = { show_untracked = true, mappings = multi_open_mapping },
     find_files = { mappings = multi_open_mapping },
     oldfiles = { mappings = multi_open_mapping },
+    git_status = { mappings = multi_open_mapping },
   }
 end
 
