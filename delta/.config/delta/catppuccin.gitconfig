@@ -1,6 +1,6 @@
 [delta "catppuccin-latte"]
 	blame-palette = "#eff1f5 #e6e9ef #dce0e8 #ccd0da #bcc0cc"
-	commit-decoration-style = "#9ca0b0" bold box ul
+	commit-decoration-style = "#9ca0b0" bold
 	light = true
 	file-decoration-style = "#9ca0b0"
 	file-style = "#4c4f69"
@@ -31,7 +31,7 @@
 
 [delta "catppuccin-frappe"]
 	blame-palette = "#303446 #292c3c #232634 #414559 #51576d"
-	commit-decoration-style = "#737994" bold box ul
+	commit-decoration-style = "#737994" bold
 	dark = true
 	file-decoration-style = "#737994"
 	file-style = "#c6d0f5"
@@ -62,7 +62,7 @@
 
 [delta "catppuccin-macchiato"]
 	blame-palette = "#24273a #1e2030 #181926 #363a4f #494d64"
-	commit-decoration-style = "#6e738d" bold box ul
+	commit-decoration-style = "#6e738d" bold
 	dark = true
 	file-decoration-style = "#6e738d"
 	file-style = "#cad3f5"
@@ -93,7 +93,7 @@
 
 [delta "catppuccin-mocha"]
 	blame-palette = "#1e1e2e #181825 #11111b #313244 #45475a"
-	commit-decoration-style = "#6c7086" bold box ul
+	commit-decoration-style = "#6c7086" bold
 	dark = true
 	file-decoration-style = "#6c7086"
 	file-style = "#cdd6f4"
