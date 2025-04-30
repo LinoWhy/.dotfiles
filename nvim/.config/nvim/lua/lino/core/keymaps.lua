@@ -114,42 +114,33 @@ map("n", "]d", Utils.diag.next_diagnostic, { desc = "Next Diagnostic" })
 map("n", "[d", Utils.diag.prev_diagnostic, { desc = "Prev Diagnostic" })
 map("n", "<leader>lj", Utils.diag.next_diagnostic, { desc = "Next Diagnostic" })
 map("n", "<leader>lk", Utils.diag.prev_diagnostic, { desc = "Prev Diagnostic" })
-map("n", "<leader>l1", function()
-  Utils.diag.set_level(vim.diagnostic.severity.ERROR)
-end, { desc = "Severity Level Error" })
-map("n", "<leader>l2", function()
-  Utils.diag.set_level(vim.diagnostic.severity.WARN)
-end, { desc = "Severity Level Warn" })
-map("n", "<leader>l3", function()
-  Utils.diag.set_level(vim.diagnostic.severity.INFO)
-end, { desc = "Severity Level Info" })
-map("n", "<leader>l4", function()
-  Utils.diag.set_level(vim.diagnostic.severity.HINT)
-end, { desc = "Severity Level Hint" })
+map("n", "<leader>l1", Utils.diag.set_level(vim.diagnostic.severity.ERROR), { desc = "Severity Level Error" })
+map("n", "<leader>l2", Utils.diag.set_level(vim.diagnostic.severity.WARN), { desc = "Severity Level Warn" })
+map("n", "<leader>l3", Utils.diag.set_level(vim.diagnostic.severity.INFO), { desc = "Severity Level Info" })
+map("n", "<leader>l4", Utils.diag.set_level(vim.diagnostic.severity.HINT), { desc = "Severity Level Hint" })
 
 -- Toggle options
 local function toggle_option(option, values)
-  if values then
-    if vim.opt_local[option]:get() == values[1] then
-      vim.opt_local[option] = values[2]
+  return function()
+    if values then
+      if vim.opt_local[option]:get() == values[1] then
+        vim.opt_local[option] = values[2]
+      else
+        vim.opt_local[option] = values[1]
+      end
     else
-      vim.opt_local[option] = values[1]
+      vim.opt_local[option] = not vim.opt_local[option]:get()
     end
-  else
-    vim.opt_local[option] = not vim.opt_local[option]:get()
+    -- show option result
+    vim.cmd("set " .. option .. "?")
   end
-  -- show option result
-  vim.cmd("set " .. option .. "?")
 end
 
--- stylua: ignore
-map("n", "<leader>tc", function() toggle_option("cursorcolumn") end, { desc = "Toggle Cursor Column" })
--- stylua: ignore
-map("n", "<leader>ts", function() toggle_option("spell") end, { desc = "Toggle Spell" })
--- stylua: ignore
-map("n", "<leader>tw", function() toggle_option("wrap") end, { desc = "Toggle Word Wrap" })
--- stylua: ignore
-map("n", "<leader>tz", function() toggle_option("foldmethod", {"indent", "manual"}) end, { desc = "Toggle Fold Method" })
+map("n", "<leader>tc", toggle_option("cursorcolumn"), { desc = "Toggle Cursor Column" })
+map("n", "<leader>ts", toggle_option("spell"), { desc = "Toggle Spell" })
+map("n", "<leader>tw", toggle_option("wrap"), { desc = "Toggle Word Wrap" })
+map("n", "<leader>tz", toggle_option("foldmethod", { "indent", "manual" }), { desc = "Toggle Fold Method" })
+map("n", "<leader>tn", toggle_option("relativenumber"), { desc = "Toggle Relative Number" })
 
 -- toggle diagnose text
 map("n", "<leader>td", function()

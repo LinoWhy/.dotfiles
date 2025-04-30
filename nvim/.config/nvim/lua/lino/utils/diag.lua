@@ -27,8 +27,10 @@ end
 
 -- Set minimum diagnostic severity level
 function M.set_level(level)
-  Lino.diagnose_severity_level = level
-  M.config()
+  return function()
+    Lino.diagnose_severity_level = level
+    M.config()
+  end
 end
 
 -- Jump to next diagnostic
