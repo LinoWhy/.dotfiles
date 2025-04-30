@@ -21,11 +21,7 @@ return {
       },
     },
     config = function()
-      local hl = require("actions-preview.highlight")
       require("actions-preview").setup({
-        highlight_command = {
-          hl.delta("delta --side-by-side"),
-        },
         telescope = {}, -- use telescope default config
       })
     end,

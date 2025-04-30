@@ -13,27 +13,20 @@
 
 # delta
 [include]
-  path = ~/.config/delta/themes.gitconfig
+  path = ~/.config/delta/catppuccin.gitconfig
 [core]
   quotepath = off
-  pager = "{                                                         \
-    COLUMNS=$(tput cols);                                            \
-    if [ $COLUMNS -ge 80 ] && [ -z $FZF_PREVIEW_COLUMNS ]; then      \
-      delta --side-by-side -w $COLUMNS;                              \
-    elif [ $COLUMNS -ge 160 ] && [ ! -z $FZF_PREVIEW_COLUMNS ]; then \
-      delta --side-by-side -w $FZF_PREVIEW_COLUMNS;                  \
-    else                                                             \
-      delta;                                                         \
-    fi                                                               \
+  pager = "{                                                                   \
+    COLUMNS=$(tput cols);                                                      \
+    if [ $COLUMNS -ge 160 ] ; then                                             \
+      delta --side-by-side --features=catppuccin-macchiato -w $COLUMNS;        \
+    else                                                                       \
+      delta --features=catppuccin-macchiato;                                   \
+    fi                                                                         \
     }"
-[interactive]
-  diffFilter = delta --color-only --features=interactive
 [delta]
-  side-by-side = false
-  features = mellow-barbet
-  syntax-theme = Catppuccin-macchiato # Use bat theme
-[delta "interactive"]
-  keep-plus-minus-markers = false
+  navigate = true
+  features = catppuccin-macchiato
 
 # mergetool
 [merge]
