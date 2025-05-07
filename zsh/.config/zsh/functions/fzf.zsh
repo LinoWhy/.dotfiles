@@ -3,9 +3,11 @@
 # preview files and directories as default
 export FZF_DEFAULT_COMMAND="fd --hidden --no-ignore"
 export FZF_DEFAULT_OPTS="-i --height 40% --layout=reverse --info=inline
---color=bg+:#363a4f,bg:#24273a,spinner:#f4dbd6,hl:#ed8796
---color=fg:#cad3f5,header:#ed8796,info:#c6a0f6,pointer:#f4dbd6
---color=marker:#f4dbd6,fg+:#cad3f5,prompt:#c6a0f6,hl+:#ed8796
+--color=bg+:#363A4F,bg:#24273A,spinner:#F4DBD6,hl:#ED8796
+--color=fg:#CAD3F5,header:#ED8796,info:#C6A0F6,pointer:#F4DBD6
+--color=marker:#B7BDF8,fg+:#CAD3F5,prompt:#C6A0F6,hl+:#ED8796
+--color=selected-bg:#494D64
+--color=border:#363A4F,label:#CAD3F5
 --bind='alt-k:preview-up'
 --bind='alt-j:preview-down'
 --bind='ctrl-s:toggle-sort'
@@ -38,9 +40,6 @@ export FORGIT_FZF_DEFAULT_OPTS="
 --height='80%'
 --layout=reverse
 --info=inline
---color=bg+:#363a4f,bg:#24273a,spinner:#f4dbd6,hl:#ed8796
---color=fg:#cad3f5,header:#ed8796,info:#c6a0f6,pointer:#f4dbd6
---color=marker:#f4dbd6,fg+:#cad3f5,prompt:#c6a0f6,hl+:#ed8796
 --bind='alt-k:preview-up'
 --bind='alt-j:preview-down'
 --bind='ctrl-r:toggle-all'
@@ -59,9 +58,12 @@ zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 zstyle ':fzf-tab:*' switch-group ',' '.'
 # custom fzf flags
 # NOTE: fzf-tab does not follow FZF_DEFAULT_OPTS by default
-zstyle ':fzf-tab:*' fzf-flags --color=bg+:#363a4f,bg:#24273a,spinner:#f4dbd6,hl:#ed8796 \
-  --color=fg:#cad3f5,header:#ed8796,info:#c6a0f6,pointer:#f4dbd6 \
-  --color=marker:#f4dbd6,fg+:#cad3f5,prompt:#c6a0f6,hl+:#ed8796
+zstyle ':fzf-tab:*' fzf-flags \
+--color=bg+:#363A4F,bg:#24273A,spinner:#F4DBD6,hl:#ED8796 \
+--color=fg:#CAD3F5,header:#ED8796,info:#C6A0F6,pointer:#F4DBD6 \
+--color=marker:#B7BDF8,fg+:#CAD3F5,prompt:#C6A0F6,hl+:#ED8796 \
+--color=selected-bg:#494D64 \
+--color=border:#363A4F,label:#CAD3F5
 
 # configs form https://github.com/junegunn/fzf/wiki/examples
 # using ripgrep combined with preview
