@@ -16,7 +16,8 @@ return {
     cmd = { "LspInstall", "LspUninstall" },
     opts = {
       ensure_installed = {},
-      automatic_installation = true,
+      automatic_enable = false,
+      -- automatic_installation = true,
     },
   },
 
