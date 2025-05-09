@@ -106,6 +106,8 @@ function gplfs() {
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 
+export PATH="$HOME/.local/bin:$PATH"
+
 # vivid to generate colorized output
 export LS_COLORS="$(vivid generate catppuccin-mocha)"
 

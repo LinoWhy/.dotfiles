@@ -1,7 +1,7 @@
 # Select a docker image to run interactively & attach to
 function drun() {
   image=$(docker image ls | tail -n +2 | fzf | sed -n 's/\(\S*\) *\(\S*\).*/\1:\2/p')
-  [ -n  "$image" ] && docker run -dit $image $@ && docker attach $(docker ps -lq)
+  [ -n  "$image" ] && docker run -dit $@ $image && docker attach $(docker ps -lq)
 
 }
 
@@ -30,4 +30,3 @@ function drm() {
 function drmi() {
   docker images | sed 1d | fzf -q "$1" --no-sort -m --tac | awk '{ print $3 }' | xargs -r docker rmi
 }
-
