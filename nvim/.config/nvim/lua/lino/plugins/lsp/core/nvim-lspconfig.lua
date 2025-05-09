@@ -39,21 +39,8 @@ return {
   config = function(_, opts)
     local common_config = Utils.lsp
 
-    -- Change symbols in the sign column
-    local signs = {
-      Error = Lino.icons.diagnostics.Error,
-      Warn = Lino.icons.diagnostics.Warning,
-      Hint = Lino.icons.diagnostics.Hint,
-      Info = Lino.icons.diagnostics.Information,
-    }
-
-    for type, icon in pairs(signs) do
-      local hl = "DiagnosticSign" .. type
-      vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
-    end
-
-    -- NOTE: Set rounded border for diagnostic, not handled by noice
-    vim.diagnostic.config({ float = { border = "rounded" } })
+    -- -- NOTE: Set rounded border for diagnostic, not handled by noice
+    -- vim.diagnostic.config({ float = { border = "rounded" } })
 
     -- Merge cmp & server configured capabilities
     local has_cmp, cmp_nvim_lsp = pcall(require, "cmp_nvim_lsp")
