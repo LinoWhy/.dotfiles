@@ -13,7 +13,7 @@ return {
 
       -- add keymap to accept word completions, other keymaps are managed by nvim-cmp
       local completion_preview = require("supermaven-nvim.completion_preview")
-      vim.keymap.set("i", "<A-w>", completion_preview.on_accept_suggestion_word, { noremap = true, silent = true })
+      vim.keymap.set("i", "<C-y>", completion_preview.on_accept_suggestion_word, { noremap = true, silent = true })
     end,
   },
 }
