@@ -21,10 +21,11 @@ return {
     {
       "<C-q>",
       function()
+        if vim.fn.empty(vim.fn.getqflist()) == 1 then
+          vim.diagnostic.setqflist({ open = false })
+        end
         if vim.fn.empty(vim.fn.getqflist()) == 0 then
           vim.cmd([[Trouble quickfix toggle]])
-        else
-          vim.cmd([[Trouble diagnostics toggle filter.buf=0]])
         end
       end,
       desc = "Toggle Quickfix or Diagnostics",
@@ -33,7 +34,7 @@ return {
       "[q",
       function()
         if require("trouble").is_open() then
-          require("trouble").previous({ skip_groups = true, jump = true })
+          require("trouble").prev({ skip_groups = true, jump = true })
         else
           pcall(vim.cmd.cprev)
         end
