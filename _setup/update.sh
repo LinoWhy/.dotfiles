@@ -45,10 +45,11 @@ fi
 # neovim
 if [ -d ~/self/neovim ]; then
   tmux split-window
-  tmux send-keys "cd ~/self/neovim && git checkout release-0.10 && git pull" Enter
-  tmux send-keys "make CMAKE_BUILD_TYPE=RelWithDebInfo" Enter
-  tmux send-keys "cd build && cpack -G DEB && sudo dpkg -i nvim-linux64.deb && exit" Enter
+  tmux send-keys "cd ~/self/neovim && git checkout release-0.11 && git pull" Enter
+  tmux send-keys "make CMAKE_BUILD_TYPE=Release" Enter
+  tmux send-keys "cd build && cpack -G DEB && sudo dpkg -i nvim-linux-x86_64.deb && exit" Enter
 fi
 
 tmux select-layout tiled
+tmux select-window -t 1
 tmux attach-session -t $SESSION_NAME
