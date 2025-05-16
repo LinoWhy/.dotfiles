@@ -20,6 +20,7 @@ return {
           model = "deepseek-v3-241226",
           api_key_name = "ARK_API_KEY",
           disable_tools = true,
+          max_completion_tokens = 8192,
         },
         ["deepseek-R1"] = {
           __inherited_from = "openai",
@@ -27,6 +28,7 @@ return {
           model = "ep-20250221160409-ltwbr",
           api_key_name = "ARK_API_KEY",
           disable_tools = true,
+          max_completion_tokens = 8192,
         },
       },
       hints = { enabled = false },
