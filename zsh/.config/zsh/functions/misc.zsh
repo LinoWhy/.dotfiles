@@ -1,3 +1,19 @@
+# Run command on each remote host
+function ssh-run() {
+  local command="$*"
+
+  if [[ -z "$command" ]]; then
+    echo "Usage: ssh-run <command>"
+    return 1
+  fi
+
+  local hosts=$(grep -E '^Host ' ~/.ssh/config | awk '{print $2}')
+  while read -r host; do
+    echo -e "\n\e[1;31m$host\e[0m: \e[1;32m$command\e[0m"
+    ssh -n "$host" "$command"
+  done <<< "$hosts"
+}
+
 # Select SSH host from ~/.ssh/config using fzf
 function sshs() {
   local ssh_host=$(awk '
