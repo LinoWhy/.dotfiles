@@ -14,7 +14,7 @@ _fd() {
     fi
 
     local context curcontext="$curcontext" state line
-    _arguments "${_arguments_options[@]}" \
+    _arguments "${_arguments_options[@]}" : \
 '*--and=[Additional search patterns that need to be matched]:pattern: ' \
 '-d+[Set maximum search depth (default\: none)]:depth: ' \
 '--max-depth=[Set maximum search depth (default\: none)]:depth: ' \
@@ -22,7 +22,7 @@ _fd() {
 '(-d --max-depth --min-depth)--exact-depth=[Only show search results at the exact given depth]:depth: ' \
 '*-E+[Exclude entries that match the given glob pattern]:pattern: ' \
 '*--exclude=[Exclude entries that match the given glob pattern]:pattern: ' \
-'*-t+[Filter by type\: file (f), directory (d), symlink (l), executable (x), empty (e), socket (s), pipe (p), char-device (c), block-device (b)]:filetype:((file\:""
+'*-t+[Filter by type\: file (f), directory (d/dir), symlink (l), executable (x), empty (e), socket (s), pipe (p), char-device (c), block-device (b)]:filetype:((file\:""
 directory\:""
 symlink\:""
 block-device\:""
@@ -31,7 +31,7 @@ executable\:"A file which is executable by the current effective user"
 empty\:""
 socket\:""
 pipe\:""))' \
-'*--type=[Filter by type\: file (f), directory (d), symlink (l), executable (x), empty (e), socket (s), pipe (p), char-device (c), block-device (b)]:filetype:((file\:""
+'*--type=[Filter by type\: file (f), directory (d/dir), symlink (l), executable (x), empty (e), socket (s), pipe (p), char-device (c), block-device (b)]:filetype:((file\:""
 directory\:""
 symlink\:""
 block-device\:""
@@ -48,6 +48,7 @@ pipe\:""))' \
 '--changed-before=[Filter by file modification time (older than)]:date|dur: ' \
 '-o+[Filter by owning user and/or group]:user:group: ' \
 '--owner=[Filter by owning user and/or group]:user:group: ' \
+'(-l --list-details)--format=[Print results according to template]:fmt: ' \
 '(-l --list-details)*-x+[Execute a command for each search result]:cmd: ' \
 '(-l --list-details)*--exec=[Execute a command for each search result]:cmd: ' \
 '(-x --exec -l --list-details)*-X+[Execute a command with all search results at once]:cmd: ' \
@@ -60,6 +61,7 @@ never\:"do not use colorized output"))' \
 '--color=[When to use colors]:when:((auto\:"show colors if the output goes to an interactive console (default)"
 always\:"always use colorized output"
 never\:"do not use colorized output"))' \
+'--hyperlink=[Add hyperlinks to output paths]' \
 '-j+[Set number of threads to use for searching & executing (default\: number of available CPU cores)]:num: ' \
 '--threads=[Set number of threads to use for searching & executing (default\: number of available CPU cores)]:num: ' \
 '--max-buffer-time=[Milliseconds to buffer before streaming search results to console]:MAX_BUFFER_TIME: ' \
@@ -67,6 +69,7 @@ never\:"do not use colorized output"))' \
 '--base-directory=[Change current working directory]:path:_files' \
 '--path-separator=[Set path separator when printing file paths]:separator: ' \
 '()*--search-path=[Provides paths to search as an alternative to the positional <path> argument]:search-path:_files' \
+'(--search-path)--strip-cwd-prefix=[By default, relative paths are prefixed with '\''./'\'' when -x/--exec, -X/--exec-batch, or -0/--print0 are given, to reduce the risk of a path starting with '\''-'\'' being treated as a command line option. Use this flag to change this behavior. If this flag is used without a value, it is equivalent to passing "always"]' \
 '--gen-completions=[]' \
 '-H[Search hidden files and directories]' \
 '--hidden[Search hidden files and directories]' \
@@ -108,7 +111,6 @@ never\:"do not use colorized output"))' \
 '(--max-results)-q[Print nothing, exit code 0 if match found, 1 otherwise]' \
 '(--max-results)--quiet[Print nothing, exit code 0 if match found, 1 otherwise]' \
 '--show-errors[Show filesystem errors]' \
-'(--search-path)--strip-cwd-prefix[By default, relative paths are prefixed with '\''./'\'' when -x/--exec, -X/--exec-batch, or -0/--print0 are given, to reduce the risk of a path starting with '\''-'\'' being treated as a command line option. Use this flag to disable this behaviour]' \
 '--one-file-system[By default, fd will traverse the file system tree as far as other options dictate. With this flag, fd ensures that it does not descend into a different file system than the one it started in. Comparable to the -mount or -xdev filters of find(1)]' \
 '-h[Print help (see more with '\''--help'\'')]' \
 '--help[Print help (see more with '\''--help'\'')]' \

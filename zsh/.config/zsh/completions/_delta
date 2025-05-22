@@ -14,7 +14,7 @@ _delta() {
     fi
 
     local context curcontext="$curcontext" state line
-    _arguments "${_arguments_options[@]}" : \
+    _arguments "${_arguments_options[@]}" \
 '--blame-code-style=[Style string for the code section of a git blame line]:STYLE: ' \
 '--blame-format=[Format string for git blame commit metadata]:FMT: ' \
 '--blame-palette=[Background colors used for git blame lines (space-separated string)]:COLORS: ' \
@@ -27,11 +27,6 @@ _delta() {
 '--commit-regex=[Regular expression used to identify the commit line when parsing git output]:REGEX: ' \
 '--commit-style=[Style string for the commit hash line]:STYLE: ' \
 '--default-language=[Default language used for syntax highlighting]:LANG: ' \
-'--detect-dark-light=[Detect whether or not the terminal is dark or light by querying for its colors]:DETECT_DARK_LIGHT:((auto\:"Only query the terminal for its colors if the output is not redirected"
-always\:"Always query the terminal for its colors"
-never\:"Never query the terminal for its colors"))' \
-'-@+[Extra arguments to pass to \`git diff\` when using delta to diff two files]:STRING: ' \
-'--diff-args=[Extra arguments to pass to \`git diff\` when using delta to diff two files]:STRING: ' \
 '--diff-stat-align-width=[Width allocated for file paths in a diff stat section]:N: ' \
 '--features=[Names of delta features to activate (space-separated)]:FEATURES: ' \
 '--file-added-label=[Text to display before an added file path]:STRING: ' \
@@ -72,7 +67,6 @@ never\:"Never query the terminal for its colors"))' \
 '--line-numbers-zero-style=[Style string for line numbers in unchanged (zero) lines]:STYLE: ' \
 '--map-styles=[Map styles encountered in raw input to desired output styles]:STYLES_MAP: ' \
 '--max-line-distance=[Maximum line pair distance parameter in within-line diff algorithm]:DIST: ' \
-'--max-syntax-highlighting-length=[Stop syntax highlighting lines after this many characters]:N: ' \
 '--max-line-length=[Truncate lines longer than this]:N: ' \
 '--merge-conflict-begin-symbol=[String marking the beginning of a merge conflict region]:STRING: ' \
 '--merge-conflict-end-symbol=[String marking the end of a merge conflict region]:STRING: ' \
@@ -132,8 +126,8 @@ never\:"Never query the terminal for its colors"))' \
 '--help[Print help (see more with '\''--help'\'')]' \
 '-V[Print version]' \
 '--version[Print version]' \
-'::minus_file -- First file to be compared when delta is being used to diff two files:_files' \
-'::plus_file -- Second file to be compared when delta is being used to diff two files:_files' \
+'::minus_file -- First file to be compared when delta is being used in diff mode:_files' \
+'::plus_file -- Second file to be compared when delta is being used in diff mode:_files' \
 && ret=0
 }
 
