@@ -1,4 +1,4 @@
-# Run command on each remote host
+# Run command on each remote host concurrently using parallel
 function ssh-run() {
   local command="$*"
 
@@ -8,10 +8,8 @@ function ssh-run() {
   fi
 
   local hosts=$(grep -E '^Host ' ~/.ssh/config | awk '{print $2}')
-  while read -r host; do
-    echo -e "\n\e[1;31m$host\e[0m: \e[1;32m$command\e[0m"
-    ssh -n "$host" "$command"
-  done <<< "$hosts"
+  echo "$hosts" | parallel -j0 --keep-order \
+    'ssh -n {} "'"$command"'" 2>&1 | awk "NF {if(!header) {print \"\"; print \"\033[1;34m{}\033[0m\"; header=1} print}"'
 }
 
 # Select SSH host from ~/.ssh/config using fzf
