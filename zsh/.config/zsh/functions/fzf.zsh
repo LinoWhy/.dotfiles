@@ -65,14 +65,31 @@ zstyle ':fzf-tab:*' fzf-flags \
 --color=selected-bg:#494D64 \
 --color=border:#363A4F,label:#CAD3F5
 
-# configs form https://github.com/junegunn/fzf/wiki/examples
-# using ripgrep combined with preview
 # find-in-file - usage: fif <searchTerm>
-function fif() {
-  if [ ! "$#" -gt 0 ]; then echo "Need a string to search for!"; return 1; fi
-  IFS=$'\n' files=($(rg --max-count=1 --ignore-case --files-with-matches --no-messages "$*" \
-    | fzf --multi --select-1 --preview="rg --ignore-case --pretty --context 10 '"$*"' {}"))
-  [[ -n "$files" ]] && ${EDITOR:-nvim} "${files[@]}"
+# 1. grep strings with ripgrep
+# 2. filter with fzf, preview and multi-select enabled
+# 3. send selected locations to nvim quickfix and open it
+fif() {
+  local rg_results
+  rg_results=$(rg -. --color=always --line-number --column --no-heading --smart-case -F -- "${*:-}")
+  [[ -z $rg_results ]] && return 0
+
+  local selected
+  selected=$(echo "$rg_results" |
+    fzf --prompt="rg \"${*:-}\" >" --ansi \
+        --multi --bind ctrl-a:select-all \
+        --color "hl:-1:underline,hl+:-1:underline:reverse" \
+        --delimiter : \
+        --preview 'bat -p --color=always {1} --highlight-line {2}' \
+        --preview-window '+{2}-5'
+  )
+  [[ -z $selected ]] && return 0
+
+  local qf_file
+  qf_file=$(mktemp /tmp/fif_qf.XXXXXX)
+  echo "$selected" | sed 's/\x1b\[[0-9;]*m//g' > "$qf_file"
+
+  nvim -q "$qf_file"; rm -f "$qf_file"
 }
 
 function fa() {
