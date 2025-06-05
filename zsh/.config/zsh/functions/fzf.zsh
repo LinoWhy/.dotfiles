@@ -71,7 +71,7 @@ zstyle ':fzf-tab:*' fzf-flags \
 # 3. send selected locations to nvim quickfix and open it
 fif() {
   local rg_results
-  rg_results=$(rg -. --color=always --line-number --column --no-heading --smart-case -F -- "${*:-}")
+  rg_results=$(rg -. --color=always --vimgrep -F -- "${*:-}")
   [[ -z $rg_results ]] && return 0
 
   local selected
@@ -85,11 +85,7 @@ fif() {
   )
   [[ -z $selected ]] && return 0
 
-  local qf_file
-  qf_file=$(mktemp /tmp/fif_qf.XXXXXX)
-  echo "$selected" | sed 's/\x1b\[[0-9;]*m//g' > "$qf_file"
-
-  nvim -q "$qf_file"; rm -f "$qf_file"
+  nvim -q <(echo "$selected")
 }
 
 function fa() {
