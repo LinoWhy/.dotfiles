@@ -1,7 +1,8 @@
 local icons = Lino.icons
 
 local start_telescope = function(telescope_mode)
-  local node = require("nvim-tree.api").tree.get_node_under_cursor()
+  local tree = require("nvim-tree.api").tree
+  local node = tree.get_node_under_cursor()
   if node == nil then
     return
   end
@@ -9,6 +10,7 @@ local start_telescope = function(telescope_mode)
   local abspath = node.link_to or node.absolute_path
   local is_folder = node.open ~= nil
   local basedir = is_folder and abspath or vim.fn.fnamemodify(abspath, ":h")
+  tree.close()
   require("telescope.builtin")[telescope_mode]({
     cwd = basedir,
   })
