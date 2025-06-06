@@ -174,6 +174,18 @@ return {
       end
     end
 
+    local function insert_path_to_prompt(prompt_bufnr)
+      local action_state = require("telescope.actions.state")
+      local picker = action_state.get_current_picker(prompt_bufnr)
+
+      local bufname = vim.api.nvim_buf_get_name(picker.original_bufnr)
+      local path = vim.fn.isdirectory(bufname) == 1 and bufname or vim.fn.fnamemodify(bufname, ":h")
+
+      local prompt = picker:_get_prompt()
+      prompt = prompt .. " " .. path
+      picker:set_prompt(prompt)
+    end
+
     opts.defaults.mappings = {
       i = {
         ["<C-a>"] = actions.select_all,
@@ -183,6 +195,7 @@ return {
         ["<C-x>"] = false,
         ["<C-f>"] = actions.to_fuzzy_refine,
         ["<C-q>"] = send_to_qflist_and_open_trouble,
+        ["<C-p>"] = insert_path_to_prompt,
       },
       n = {
         ["<C-a>"] = actions.select_all,
@@ -190,6 +203,7 @@ return {
         ["<C-x>"] = false,
         ["<C-f>"] = actions.to_fuzzy_refine,
         ["<C-q>"] = send_to_qflist_and_open_trouble,
+        ["<C-p>"] = insert_path_to_prompt,
       },
     }
 
