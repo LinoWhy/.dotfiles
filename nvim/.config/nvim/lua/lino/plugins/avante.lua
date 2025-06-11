@@ -1,7 +1,7 @@
 return {
   {
     "yetone/avante.nvim",
-    enabled = Lino.use_ai,
+    enabled = false and Lino.use_ai,
     build = "make",
     cmd = { "AvanteAsk", "AvanteChat" },
     -- Dependencies are not necessary, as these modules are loaded on-demand
