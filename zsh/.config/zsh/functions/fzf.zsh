@@ -70,12 +70,16 @@ zstyle ':fzf-tab:*' fzf-flags \
 # 2. filter with fzf, preview and multi-select enabled
 # 3. send selected locations to nvim quickfix and open it
 fif() {
-  local rg_results
-  rg_results=$(rg -. --color=always --vimgrep -F -- "${*:-}")
+  if [[ $# -eq 0 ]]; then
+    echo "Usage: fif <searchTerm>"
+    return 1
+  fi
+
+  # use "@" to get each parameter as a separate word
+  local rg_results=$(rg -. --color=always --vimgrep "$@")
   [[ -z $rg_results ]] && return 0
 
-  local selected
-  selected=$(echo "$rg_results" |
+  local selected=$(echo "$rg_results" |
     fzf --prompt="rg \"${*:-}\" >" --ansi \
         --multi --bind ctrl-a:select-all \
         --color "hl:-1:underline,hl+:-1:underline:reverse" \
