@@ -1,7 +1,8 @@
 # Set window title according to directory
 function set_win_title() {
   if [[ -n "$SSH_CONNECTION" ]]; then
-    echo -ne "\033]0;$(basename "$PWD") @$(hostname)\007"
+    local my_hostname="${MY_HOSTNAME:-$(hostname)}"
+    echo -ne "\033]0;$(basename "$PWD") @${my_hostname}\007"
   else
     echo -ne "\033]0;$(basename "$PWD")\007"
   fi
