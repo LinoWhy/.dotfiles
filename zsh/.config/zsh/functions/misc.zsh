@@ -29,17 +29,11 @@ function sshs() {
   fi
 }
 
-# clone config in ~/.config/nvim-$config manually
+# Setup configuration directory in ~/.config/nvim-<config> manually
 function nvs() {
-  items=("default" "lazy" "kickstart" "mini")
-  config=$(printf "%s\n" "${items[@]}" | fzf --prompt=" Neovim Config > " --height=~50% --layout=reverse --border --exit-0 --no-preview)
-  if [[ -z $config ]]; then
-    return 0
-  elif [[ $config == "default" ]]; then
-    nvim $@
-  else
-    NVIM_APPNAME="nvim-$config" nvim $@
-  fi
+  fd -td -tl -d1 'nvim' ~/.config -x basename | sort | \
+    fzf --prompt=" Neovim Config > " --height=~50% --layout=reverse --border --no-preview \
+        --bind "enter:become(NVIM_APPNAME={} nvim $@)"
 }
 
 # Select a tmux session and change or attach to
