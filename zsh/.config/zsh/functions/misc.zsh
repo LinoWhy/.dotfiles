@@ -32,8 +32,7 @@ function sshs() {
 # Setup configuration directory in ~/.config/nvim-<config> manually
 function nvs() {
   fd -td -tl -d1 'nvim' ~/.config -x basename | sort | \
-    fzf --prompt=" Neovim Config > " --height=~50% --layout=reverse --border --no-preview \
-        --bind "enter:become(NVIM_APPNAME={} nvim $@)"
+    fzf --prompt=" Neovim Config > " --bind "enter:become(NVIM_APPNAME={} nvim $@)"
 }
 
 # Select a tmux session and change or attach to
