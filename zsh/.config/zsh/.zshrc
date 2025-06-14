@@ -37,6 +37,7 @@ plug "zsh-users/zsh-syntax-highlighting"
 source "$ZDOTDIR/hooks.zsh"
 
 # End of Configuration
+export _ZO_FZF_OPTS="$FZF_DEFAULT_OPTS -1" # Jump to the only match directly
 eval "$(zoxide init zsh --no-cmd)"
 eval "$(starship init zsh)"
 eval "$(direnv hook zsh)"
