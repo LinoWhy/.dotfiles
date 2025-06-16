@@ -44,3 +44,6 @@ export QT_IM_MODULE=ibus
 
 # ensure compile_commands.json is always generated
 export CMAKE_EXPORT_COMPILE_COMMANDS=1
+
+# ensure truecolor over SSH
+export COLORTERM=truecolor
