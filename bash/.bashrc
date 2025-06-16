@@ -100,7 +100,13 @@ function gplfs() {
 }
 
 function bell() {
-  echo -n -e '\a'
+  printf '\a'
+}
+
+function bell_checked() {
+  if [[ -n "$NOTIFY_BELL" ]]; then
+    bell
+  fi
 }
 ################################################################################
 # Other tools
@@ -116,3 +122,4 @@ export LS_COLORS="$(vivid generate catppuccin-mocha)"
 
 eval "$(zoxide init --hook prompt bash)"
 eval "$(starship init bash)"
+PROMPT_COMMAND="bell_checked; $PROMPT_COMMAND"

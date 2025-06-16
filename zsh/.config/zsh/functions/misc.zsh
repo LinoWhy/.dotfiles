@@ -74,7 +74,3 @@ function gen_editorconfig() {
   ')
   echo "$editorconfig_content"
 }
-
-function bell() {
-  echo -n -e '\a'
-}

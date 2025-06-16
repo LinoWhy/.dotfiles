@@ -13,8 +13,21 @@ function renv() {
   eval $(tmux show-env -s)
 }
 
+# Beep notification, better used with tmux "monitor-bell" option
+function bell() {
+  printf '\a'
+}
+
+function bell_checked() {
+  if [[ -n "$NOTIFY_BELL" ]]; then
+    bell
+  fi
+}
+
 if [[ ! -v TMUX ]]; then
   precmd_functions+=(set_win_title)
 else
   preexec_functions+=(renv)
 fi
+
+precmd_functions+=(bell_checked)
