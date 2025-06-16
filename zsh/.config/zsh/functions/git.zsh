@@ -30,21 +30,3 @@ function gsf() {
   git fetch --depth=1 origin "$1:$1"
   git switch "$1"
 }
-
-# git reflog
-function grl() {
-    local opts
-    opts="
-        $FORGIT_FZF_DEFAULT_OPTS
-        +s +m --tiebreak=index --ansi
-        --bind=\"enter:execute($FORGIT log_enter {})\"
-        --bind=\"ctrl-y:execute-silent($FORGIT yank_sha {})\"
-        --preview=\"$FORGIT log_preview {}\"
-        $FORGIT_LOG_FZF_OPTS
-    "
-    git reflog --color=always | FZF_DEFAULT_OPTS="$opts" fzf
-    fzf_exit_code=$?
-    # exit successfully on 130 (ctrl-c/esc)
-    [[ $fzf_exit_code == 130 ]] && return 0
-    return $fzf_exit_code
-}
