@@ -22,7 +22,7 @@ function sshs() {
         }
       }
     }
-  ' ~/.ssh/config | sort | fzf --prompt=" SSH Host > " --height=~50% --layout=reverse --border --exit-0 --no-preview)
+  ' ~/.ssh/config | sort | fzf --prompt=" SSH Host > " --exit-0 --no-preview)
 
   if [[ -n $ssh_host ]]; then
     ssh "$ssh_host" $@
