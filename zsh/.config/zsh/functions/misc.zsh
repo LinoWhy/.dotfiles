@@ -7,7 +7,7 @@ function ssh-run() {
     return 1
   fi
 
-  local hosts=$(grep -E '^Host ' ~/.ssh/config | awk '{print $2}')
+  local hosts=$(rg '^Host ' ~/.ssh/config | awk '{print $2}')
   echo "$hosts" | parallel -j0 --keep-order \
     'ssh -n {} "'"$command"'" 2>&1 | awk "NF {if(!header) {print \"\"; print \"\033[1;34m{}\033[0m\"; header=1} print}"'
 }

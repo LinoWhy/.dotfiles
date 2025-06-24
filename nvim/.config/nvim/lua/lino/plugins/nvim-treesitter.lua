@@ -17,6 +17,7 @@ return {
       },
       indent = { enable = true },
       auto_install = true,
+      ignore_install = { "tmux" },
       incremental_selection = {
         enable = true,
         keymaps = {
