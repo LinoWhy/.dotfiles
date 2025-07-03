@@ -45,6 +45,7 @@ alias gr='git remote'
 alias gsh='git stash'
 alias gst='git status'
 alias gsw='git switch'
+alias gwt='git worktree'
 
 # repo
 alias rsb='repo forall -pc git branch -vv'
