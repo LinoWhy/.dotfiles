@@ -46,7 +46,7 @@ export FORGIT_FZF_DEFAULT_OPTS="
 --bind='ctrl-s:toggle-sort'
 --bind='?:toggle-preview'
 --bind='alt-w:toggle-preview-wrap'
---preview-window='right:60%'"
+--preview-window='right:50%'"
 
 # fzf-tab configs
 # https://github.com/Aloxaf/fzf-tab#oh-my-zsh
@@ -93,7 +93,7 @@ fif() {
 }
 
 function fa() {
-  alias | fzf --preview "" --prompt='alias > '
+  alias | fzf -m --preview "" --prompt='alias > ' --bind ctrl-a:select-all
 }
 
 function fm() {
