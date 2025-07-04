@@ -76,7 +76,7 @@ local config = {
   use_fancy_tab_bar = false,
   tab_max_width = 60,
 
-  window_decorations = "RESIZE",
+  window_decorations = "NONE",
   window_padding = {
     left = 0,
     right = 0,
