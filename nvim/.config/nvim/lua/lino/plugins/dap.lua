@@ -110,24 +110,24 @@ local function dap_configurations()
           },
         },
       },
-      -- {
-      --   name = "Attach to gdb-multiarch server",
-      --   type = "cppdbg",
-      --   request = "launch",
-      --   MIMode = "gdb",
-      --   miDebuggerServerAddress = "localhost:1234",
-      --   -- miDebuggerPath = "/usr/bin/gdb-multiarch",
-      --   cwd = "${workspaceFolder}",
-      --   stopAtEntry = false,
-      --   program = pick_program,
-      --   setupCommands = {
-      --     {
-      --       text = "-enable-pretty-printing",
-      --       description = "enable pretty printing",
-      --       ignoreFailures = false,
-      --     },
-      --   },
-      -- },
+      {
+        name = "Attach to gdb-multiarch server",
+        type = "cppdbg",
+        request = "launch",
+        MIMode = "gdb",
+        miDebuggerServerAddress = "localhost:1234",
+        miDebuggerPath = "gdb-multiarch",
+        cwd = "${workspaceFolder}",
+        stopAtEntry = false,
+        program = pick_program,
+        setupCommands = {
+          {
+            text = "-enable-pretty-printing",
+            description = "enable pretty printing",
+            ignoreFailures = false,
+          },
+        },
+      },
       -- build gdb from source with "--enable-targets=all" for all target triplets
       {
         name = "Attach to gdb server - cppdbg",
