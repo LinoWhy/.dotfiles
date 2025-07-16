@@ -198,6 +198,7 @@ map("n", "<leader>re", Utils.make.edit, { desc = "Edit commands" })
 map("n", "<leader>rs", Utils.make.set_run, { desc = "Set run command" })
 map("n", "<leader>rS", Utils.make.set_dispatch, { desc = "Set dispatch command" })
 map("n", "<leader>rr", Utils.make.run, { desc = "Run command" })
+map("n", "<leader>ro", Utils.make.oneshot, { desc = "Run command once" })
 map("n", "<leader>rd", Utils.make.dispatch, { desc = "Dispatch command" })
 map("n", "<leader>rw", function()
   Lino.watch_and_dispatch = not Lino.watch_and_dispatch

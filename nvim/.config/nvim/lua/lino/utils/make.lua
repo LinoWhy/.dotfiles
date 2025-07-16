@@ -112,6 +112,35 @@ function M.add()
 end
 
 ---
+---Run a command once without saving it.
+---
+function M.oneshot()
+  local oneshot_command = {}
+
+  local function set_make(val, completion, callback)
+    local opts = {
+      prompt = "Oneshot make " .. val .. ": ",
+      completion = completion,
+      relative = "editor",
+    }
+    vim.ui.input(opts, function(input)
+      if input then
+        oneshot_command[val] = input
+        callback()
+      end
+    end)
+  end
+
+  local function run_oneshot()
+    do_with_make(oneshot_command)
+  end
+
+  set_make("program", "shellcmd", function()
+    set_make("argument", "file", run_oneshot)
+  end)
+end
+
+---
 ---Run command. Select is called if option is not passed.
 ---
 function M.run(option)
