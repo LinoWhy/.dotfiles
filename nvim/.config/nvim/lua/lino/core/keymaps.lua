@@ -3,6 +3,7 @@ if vim.fn.has("nvim-0.11") == 1 then
   vim.keymap.del("n", "grr")
   vim.keymap.del("n", "gri")
   vim.keymap.del("n", "gra")
+  vim.keymap.del("n", "grt")
 end
 
 -- default opts is { expr = false, remap = false }
