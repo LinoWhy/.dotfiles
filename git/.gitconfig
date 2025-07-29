@@ -44,8 +44,6 @@
   ls = log --pretty=format:"%C(auto)%h%d\\ %s\\ %C(black)%C(bold)%cr%Creset\\ %Cblue[%cn]"
   ll = log --pretty=format:"%C(auto)%h%d\\ %s\\ %C(black)%C(bold)%cr%Creset\\ %Cblue[%cn]" --numstat
 
-# config
-[includeIf "gitdir:~/work/"]
-  path = ~/work/.gitconfig
-[includeIf "gitdir:~/sda/work/"]
-  path = ~/work/.gitconfig
+# private work config with "includeif"
+[include]
+  path = ~/.gitconfig_work
