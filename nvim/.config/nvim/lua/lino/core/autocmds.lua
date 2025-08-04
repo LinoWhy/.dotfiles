@@ -28,7 +28,7 @@ vim.api.nvim_create_autocmd("FileType", {
   end,
 })
 
--- close some filetypes with <q>
+-- close some filetypes with "q"
 vim.api.nvim_create_autocmd("FileType", {
   group = Utils.extra.augroup("close_with_q"),
   pattern = {
@@ -58,17 +58,6 @@ vim.api.nvim_create_autocmd("FileType", {
   callback = function(event)
     vim.bo[event.buf].buflisted = false
     vim.keymap.set("n", "q", "<cmd>close<cr>", { buffer = event.buf, silent = true })
-  end,
-})
-
--- set colorcolumn according to textwidth
-vim.api.nvim_create_autocmd("BufEnter", {
-  group = Utils.extra.augroup("set_cc"),
-  callback = function()
-    local tw = vim.opt.textwidth:get()
-    if tw ~= 0 then
-      vim.cmd("setlocal cc=" .. tostring(tw))
-    end
   end,
 })
 

@@ -8,6 +8,8 @@ opt.mouse = "a" -- allow the mouse to be used in neovim
 opt.swapfile = false -- no swapfile
 opt.undofile = true -- enable persistent undo
 opt.updatetime = 100 -- faster completion, also for CursorHold autocommand event
+opt.jumpoptions = "stack"
+opt.inccommand = "split"
 
 -- appearance
 opt.cursorline = true -- highlight the current line
@@ -18,9 +20,8 @@ opt.termguicolors = true -- set term gui colors (most terminals support this)
 opt.title = false -- leave title to be handled by terminal
 -- opt.conceallevel = 3 -- Hide * markup for bold and italic
 opt.pumheight = 15 -- maximum popup menu height
-opt.pumwidth = 15 -- minnimum popup menu width
+opt.pumwidth = 15 -- minimum popup menu width
 opt.winminwidth = 5 -- hard minimum window width
-opt.jumpoptions = "stack"
 
 -- line & column
 opt.number = true
@@ -37,7 +38,8 @@ opt.tabstop = 8 -- default 8
 opt.shiftwidth = 4 -- spaces for <<, >>
 opt.expandtab = true -- expand tab to spaces
 opt.autoindent = true -- copy indent from current line when starting new one
--- opt.textwidth = 80 -- not suitable for every file
+opt.textwidth = 80 -- overridden by "max_line_length" in editorconfig
+opt.colorcolumn = "+0" -- set colorcolumn as textwidth
 
 -- show whitespace
 opt.list = true
@@ -66,15 +68,11 @@ opt.splitbelow = true
 opt.splitright = true
 opt.wrap = false
 
--- edit
-opt.inccommand = "split"
--- opt.virtualedit = "block"
-
 Utils.lsp.config()
 Utils.diag.config()
 
 -- neovide options
 if vim.g.neovide then
-  opt.guifont = { "Recursive Mono Casual Static", "Cascadia Code", "Symbols Nerd Font Mono", "Delugia", ":h10.5" }
+  opt.guifont = { "Recursive Mono Casual Static Freeze", "Cascadia Code", "Symbols Nerd Font Mono", ":h10.5" }
   vim.g.neovide_cursor_vfx_mode = "pixiedust"
 end
