@@ -43,7 +43,7 @@ return {
         ["<C-q>"] = cmp.mapping.abort(), -- close completion window
         ["<CR>"] = cmp.mapping.confirm({ select = false }), -- only confirm explicitly selected items
         ["<C-y>"] = {},
-        ["<C-e>"] = cmp.mapping.confirm({ select = true, behavior = cmp.ConfirmBehavior.Insert }),
+        ["<C-e>"] = cmp.mapping.confirm({ select = true }), -- may lead to horizontal scroll by ghost_text & 'wrap' option
         ["<Tab>"] = cmp.mapping(function(fallback)
           if luasnip.expand_or_locally_jumpable() then
             luasnip.expand_or_jump()
