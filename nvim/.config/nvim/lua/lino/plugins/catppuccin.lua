@@ -44,6 +44,7 @@ return {
           local u = require("catppuccin.utils.colors")
           return {
             Macro = { fg = c.sky },
+            ["@lsp.type.enumMember"] = { link = "@constant" },
             DiffAdd = { bg = u.darken(c.green, 0.38, c.base) },
             DiffChange = { bg = u.darken(c.blue, 0.27, c.base) },
             DiffDelete = { bg = u.darken(c.red, 0.38, c.base) },
