@@ -32,6 +32,7 @@ alias nv='nvim'
 alias open='xdg-open'
 alias sudoo='sudo -E'
 alias t='tmux'
+alias z='__zoxide_zi'
 
 # ls
 alias l='lsd -l'
@@ -48,7 +49,7 @@ alias ltt='lsd --tree --depth'
 # alias mv='mv -i'
 
 # git
-git_log_format="%C(auto)%h%d %s %C(black)%C(bold)%cr%Creset %Cblue[%cn]"
+git_log_format="%C(auto)%h%d %s %C(black)%C(bold)%cr%Creset %Cblue[%an]" # relative commit data & author name
 alias gb='git branch'
 alias gc='git commit'
 alias gca='git commit --amend'
@@ -56,17 +57,18 @@ alias gcm='git commit -m'
 alias gcs='git commit -s'
 alias gch='git cherry-pick'
 alias gl='git log'
-alias gls="git log --pretty=format:'$git_log_format' --graph"
-alias gla="git log --pretty=format:'$git_log_format' --graph --all"
-alias gll="git log --pretty=format:'$git_log_format' --graph --all --numstat"
-alias GP='git push'
+alias gls="git log --pretty=format:'$git_log_format'"
+alias gla="git log --pretty=format:'$git_log_format' --all"
+alias gll="git log --pretty=format:'$git_log_format' --all --numstat"
 alias glf='git log --pretty=fuller'
 alias gp='git pull'
+alias GP='git push'
 alias gpra='git pull --rebase --autostash'
 alias gr='git remote'
 alias gsh='git stash'
 alias gst='git status'
 alias gsw='git switch'
+alias gwt='git worktree'
 
 # repo
 alias rsb='repo forall -pc git branch -vv'
