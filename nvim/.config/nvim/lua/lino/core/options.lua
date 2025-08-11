@@ -68,6 +68,10 @@ opt.splitbelow = true
 opt.splitright = true
 opt.wrap = false
 
+if vim.env.SSH_CONNECTION and not vim.env.TMUX then
+  vim.g.clipboard = "osc52"
+end
+
 Utils.lsp.config()
 Utils.diag.config()
 
