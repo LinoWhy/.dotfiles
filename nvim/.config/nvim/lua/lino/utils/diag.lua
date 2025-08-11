@@ -56,34 +56,20 @@ end
 
 -- Jump to next diagnostic
 function M.next_diagnostic()
-  if vim.fn.has("nvim-0.11") == 1 then
-    vim.diagnostic.jump({
-      count = 1,
-      float = not Lino.diagnose_virtual_text,
-      severity = { min = Lino.diagnose_severity_level },
-    })
-  else
-    vim.diagnostic.goto_next({
-      float = not Lino.diagnose_virtual_text,
-      severity = { min = Lino.diagnose_severity_level },
-    })
-  end
+  vim.diagnostic.jump({
+    count = 1,
+    float = not Lino.diagnose_virtual_text,
+    severity = { min = Lino.diagnose_severity_level },
+  })
 end
 
 -- Jump to previous diagnostic
 function M.prev_diagnostic()
-  if vim.fn.has("nvim-0.11") == 1 then
-    vim.diagnostic.jump({
-      count = -1,
-      float = not Lino.diagnose_virtual_text,
-      severity = { min = Lino.diagnose_severity_level },
-    })
-  else
-    vim.diagnostic.goto_prev({
-      float = not Lino.diagnose_virtual_text,
-      severity = { min = Lino.diagnose_severity_level },
-    })
-  end
+  vim.diagnostic.jump({
+    count = -1,
+    float = not Lino.diagnose_virtual_text,
+    severity = { min = Lino.diagnose_severity_level },
+  })
 end
 
 return M

@@ -6,7 +6,7 @@ GH_SITE="https://github.com"
 
 # Install neovim & other cli tools
 mkdir -p ~/self && mkdir -p ~/.local/bin && cd ~/self &&
-  wget ${GH_SITE}/neovim/neovim/releases/download/v0.10.4/nvim-linux-x86_64.tar.gz &&
+  wget ${GH_SITE}/neovim/neovim-releases/releases/latest/download/nvim-linux-x86_64.tar.gz &&
   tar xzf nvim-linux-x86_64.tar.gz && ln -sf ~/self/nvim-linux-x86_64/bin/nvim ~/.local/bin/nvim &&
   rm nvim-linux-x86_64.tar.gz &&
   wget ${GH_SITE}/muesli/duf/releases/download/v0.8.1/duf_0.8.1_linux_amd64.deb &&

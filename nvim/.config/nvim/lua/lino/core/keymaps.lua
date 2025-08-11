@@ -1,10 +1,9 @@
-if vim.fn.has("nvim-0.11") == 1 then
-  vim.keymap.del("n", "grn")
-  vim.keymap.del("n", "grr")
-  vim.keymap.del("n", "gri")
-  vim.keymap.del("n", "gra")
-  vim.keymap.del("n", "grt")
-end
+-- remove some default keymaps involved in 0.11
+vim.keymap.del("n", "grn")
+vim.keymap.del("n", "grr")
+vim.keymap.del("n", "gri")
+vim.keymap.del("n", "gra")
+vim.keymap.del("n", "grt")
 
 -- default opts is { expr = false, remap = false }
 local map = vim.keymap.set
