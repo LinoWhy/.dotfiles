@@ -20,16 +20,6 @@ local config = {
       family = "Recursive Mono Casual Static Freeze",
       weight = "Medium",
     },
-    {
-      family = "Cascadia Code",
-      scale = 1,
-      harfbuzz_features = {
-        -- "ss01", -- sytlistic italic
-        "ss02", -- alternate ~=
-        "ss03", -- serbian locl forms
-        -- "ss19", -- slashed zero
-      },
-    },
     { family = "Symbols Nerd Font Mono", scale = 0.75 },
     "Noto Color Emoji",
   }),
@@ -78,44 +68,20 @@ local config = {
 
   window_decorations = "NONE",
   window_padding = {
-    left = 0,
-    right = 0,
+    left = 1,
+    right = 1,
     top = 0,
     bottom = 0,
   },
 
   scrollback_lines = 9999,
+  max_fps = 120,
 }
 
--- Configuration for Windows
 if wezterm.target_triple == "x86_64-pc-windows-msvc" then
-  local powershell = { "powershell.exe", "-NoLogo" }
-  local wsl = { "wsl.exe", "--cd", "~" }
-
-  local launch_menu = {
-    {
-      label = "PowerShell",
-      args = powershell,
-    },
-    {
-      label = "wsl",
-      args = wsl,
-    },
-  }
-
-  local success, stdout, _ = wezterm.run_child_process({ "where.exe", "git.exe" })
-  if success then
-    local git_path = wezterm.split_by_newlines(stdout)[1]
-    local bash_path = git_path:gsub("cmd\\git.exe", "bin\\bash.exe")
-
-    table.insert(launch_menu, {
-      label = "git bash",
-      args = { bash_path, "-i", "-l" },
-    })
-  end
-
-  config.default_prog = powershell
-  config.launch_menu = launch_menu
+  require("windows").setup(config)
+elseif wezterm.target_triple == "aarch64-apple-darwin" then
+  require("macos").setup(config)
 end
 
 return config

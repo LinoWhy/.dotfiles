@@ -1,4 +1,4 @@
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+source <(fzf --zsh)
 
 # preview files and directories as default
 export FZF_DEFAULT_COMMAND="fd --hidden --no-ignore"
@@ -23,9 +23,9 @@ export FZF_CTRL_T_OPTS="$FZF_DEFAULT_OPTS --preview='$ZDOTDIR/helpers/fzf-previe
 export FZF_CTRL_R_OPTS="--preview 'echo {}' --preview-window down:3:wrap --height ~50%"
 
 # enable copy with "Ctrl-Y"
-if isWsl; then
+if [[ ostype == "wsl" ]]; then
   export FORGIT_COPY_CMD="win32yank.exe -i --crlf"
-else
+elif [[ ostype == "linux" ]]; then
   export FORGIT_COPY_CMD="xclip -selection clipboard"
 fi
 
@@ -97,7 +97,7 @@ function fa() {
 }
 
 function fm() {
-  man -k . | fzf --preview "" --prompt='man > ' --bind "enter:become(echo man {1}{2} && man {1}{2})"
+  man -k . | fzf --preview "" --prompt='man > ' | tr '()' ' ' | awk '{print $2, $1}' | xargs -r man
 }
 
 function ft() {

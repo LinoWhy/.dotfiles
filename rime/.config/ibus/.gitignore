@@ -1,1 +1,3 @@
-bus/**
+*
+!rime/default.custom.yaml
+!rime/luna_pinyin.custom.yaml

@@ -21,6 +21,9 @@ GENCOMPL_FPATH="$ZDOTDIR/completions"
 zstyle :plugin:zsh-completion-generator programs btm duf fzf hexyl lsd procs yazi
 plug "RobSis/zsh-completion-generator"
 
+# homebrew completion
+eval "$(brew shellenv)"
+
 # Set, load and initialise completion system
 source "$ZDOTDIR/completions.zsh"
 

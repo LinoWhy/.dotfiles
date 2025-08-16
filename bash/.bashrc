@@ -115,7 +115,7 @@ function bell_checked() {
 ################################################################################
 [ -f $HOME/.cargo/env ] && . "$HOME/.cargo/env"
 
-[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+eval "$(fzf --bash)"
 
 export PATH="$HOME/.local/bin:$PATH"
 
