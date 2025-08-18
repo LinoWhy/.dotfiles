@@ -17,10 +17,10 @@ mkdir -p ~/self && mkdir -p ~/.local/bin && cd ~/self &&
   tar xzf rust_cli_tools.tar.gz -C ~/.local/bin &&
   rm rust_cli_tools.tar.gz
 
-# Clone dotfiles, fzf & tmux
+# Clone dotfiles, fzf
 git clone https://github.com/LinoWhy/.dotfiles.git ~/.dotfiles &&
   git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf && ~/.fzf/install &&
-  git clone https://github.com/tmux-plugins/tpm ~/.local/share/tmux/plugins/tpm
+  ln -s ~/.fzf/bin/fzf ~/.local/bin
 
 # Install stow without root
 cd ~/self && wget http://ftp.gnu.org/gnu/stow/stow-latest.tar.gz && tar -xvf stow-latest.tar.gz &&

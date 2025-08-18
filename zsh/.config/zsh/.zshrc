@@ -22,7 +22,9 @@ zstyle :plugin:zsh-completion-generator programs btm duf fzf hexyl lsd procs yaz
 plug "RobSis/zsh-completion-generator"
 
 # homebrew completion
-eval "$(brew shellenv)"
+if [[ ostype == "macos" ]]; then
+  eval "$(brew shellenv)"
+fi
 
 # Set, load and initialise completion system
 source "$ZDOTDIR/completions.zsh"
