@@ -97,7 +97,7 @@ function fa() {
 }
 
 function fm() {
-  man -k . | fzf --preview "" --prompt='man > ' | tr '()' ' ' | awk '{print $2, $1}' | xargs -r man
+ man -k . | fzf -d "-" -n 1 --preview "" --prompt='man > ' | tr '()' ' ' | awk '{print $2, $1}' | xargs -r man
 }
 
 function ft() {
