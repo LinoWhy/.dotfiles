@@ -1,6 +1,6 @@
 return {
   "MeanderingProgrammer/render-markdown.nvim",
-  build = "pip install pylatexenc",
+  build = "pip3 install pylatexenc",
   dependencies = { "nvim-treesitter/nvim-treesitter" },
   ft = { "markdown" },
   keys = { { "<leader>tm", "<cmd>RenderMarkdown toggle<cr>", desc = "Toggle Markdown" } },
