@@ -163,8 +163,9 @@ return {
   config = function(_, opts)
     local telescope = require("telescope")
     local actions = require("telescope.actions")
+    local lga_actions = require("telescope-live-grep-args.actions")
 
-    local function send_to_qflist_and_open_trouble(prompt_bufnr)
+    local send_to_qflist_and_open_trouble = function(prompt_bufnr)
       actions.smart_send_to_qflist(prompt_bufnr)
       local ok, trouble = pcall(require, "trouble")
       if ok then
@@ -174,7 +175,7 @@ return {
       end
     end
 
-    local function insert_path_to_prompt(prompt_bufnr)
+    local insert_path_to_prompt = function(prompt_bufnr)
       local action_state = require("telescope.actions.state")
       local picker = action_state.get_current_picker(prompt_bufnr)
 
@@ -196,6 +197,7 @@ return {
         ["<C-f>"] = actions.to_fuzzy_refine,
         ["<C-q>"] = send_to_qflist_and_open_trouble,
         ["<C-p>"] = insert_path_to_prompt,
+        ["<M-q>"] = false,
       },
       n = {
         ["<C-a>"] = actions.select_all,
@@ -204,10 +206,17 @@ return {
         ["<C-f>"] = actions.to_fuzzy_refine,
         ["<C-q>"] = send_to_qflist_and_open_trouble,
         ["<C-p>"] = insert_path_to_prompt,
+        ["<M-q>"] = false,
       },
     }
 
     opts.pickers = pickers(actions)
+
+    opts.extensions.live_grep_args = {
+      mappings = {
+        i = { ["<M-q>"] = lga_actions.quote_prompt() },
+      },
+    }
 
     telescope.setup(opts)
     telescope.load_extension("fzf")
