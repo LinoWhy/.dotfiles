@@ -24,6 +24,7 @@
       delta --features=catppuccin-macchiato;                                   \
     fi                                                                         \
     }"
+  excludesfile = ~/.gitignore_global
 [delta]
   navigate = true
   features = catppuccin-macchiato
