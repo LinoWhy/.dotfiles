@@ -14,14 +14,13 @@ export HOMEBREW_BOTTLE_DOMAIN="https://mirrors.tuna.tsinghua.edu.cn/homebrew-bot
 
 /bin/bash -c "$(curl -fsSL https://github.com/Homebrew/install/raw/master/install.sh)"
 
-brew install fontconfig font-noto-nerd-font font-symbols-only-nerd-font font-noto-color-emoji
+brew install stow
+cd ~/.dotfiles && stow -v -t ~ homebrew/
+brew bundle --global
+
 mkdir -p ~/self && git clone git@github.com:LinoWhy/Recursive-Fonts.git
 cd Recursive-Fonts && cp -r fonts/ ~/Library/Fonts/
 fc-cache -fv
-
-brew install wget make cmake python node luarocks tmux fzf duf direnv stow neovim wezterm@nightly
-brew install rg lsd vivid git-delta bat zoxide fd dust hexyl tealdeer starship procs bottom
-brew install Karabiner-Elements
 
 mkdir -p ~/.config
 stow -nv -t ~ */
