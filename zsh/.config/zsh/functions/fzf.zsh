@@ -76,7 +76,7 @@ fif() {
   fi
 
   # use "@" to get each parameter as a separate word
-  local rg_results=$(rg -. --color=always --vimgrep "$@")
+  local rg_results=$(rg --color=always --vimgrep "$@")
   [[ -z $rg_results ]] && return 0
 
   local selected=$(echo "$rg_results" |
