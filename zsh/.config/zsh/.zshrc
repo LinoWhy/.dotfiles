@@ -24,7 +24,7 @@ plug "RobSis/zsh-completion-generator"
 # homebrew completion
 if [[ $(ostype) == "macos" ]]; then
   eval "$(brew shellenv)"
-elif [[ $(ostype) == "linux" ]]; then
+elif [[ $(ostype) == "linux" && -d /home/linuxbrew ]]; then
   eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 fi
 
