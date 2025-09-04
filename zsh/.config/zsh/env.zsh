@@ -14,7 +14,7 @@ function ostype {
   fi
 }
 
-if [[ ostype == "wsl" ]]; then
+if [[ $(ostype) == "wsl" ]]; then
   alias start='wslview'
 fi
 

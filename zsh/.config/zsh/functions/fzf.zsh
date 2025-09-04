@@ -23,9 +23,9 @@ export FZF_CTRL_T_OPTS="$FZF_DEFAULT_OPTS --preview='$ZDOTDIR/helpers/fzf-previe
 export FZF_CTRL_R_OPTS="--preview 'echo {}' --preview-window down:3:wrap --height ~50%"
 
 # enable copy with "Ctrl-Y"
-if [[ ostype == "wsl" ]]; then
+if [[ $(ostype) == "wsl" ]]; then
   export FORGIT_COPY_CMD="win32yank.exe -i --crlf"
-elif [[ ostype == "linux" ]]; then
+elif [[ $(ostype) == "linux" ]]; then
   export FORGIT_COPY_CMD="xclip -selection clipboard"
 fi
 

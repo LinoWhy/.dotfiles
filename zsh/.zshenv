@@ -32,6 +32,12 @@ export HOMEBREW_CORE_GIT_REMOTE="https://mirrors.tuna.tsinghua.edu.cn/git/homebr
 export HOMEBREW_API_DOMAIN="https://mirrors.tuna.tsinghua.edu.cn/homebrew-bottles/api"
 export HOMEBREW_BOTTLE_DOMAIN="https://mirrors.tuna.tsinghua.edu.cn/homebrew-bottles"
 
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  eval "$(brew shellenv)"
+elif [[ "$OSTYPE" == "linux-gnu"* && -d /home/linuxbrew ]]; then
+  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+fi
+
 # rust
 export RUSTUP_DIST_SERVER="https://rsproxy.cn"
 export RUSTUP_UPDATE_ROOT="https://rsproxy.cn/rustup"
@@ -44,9 +50,11 @@ export REPO_URL='https://mirrors.tuna.tsinghua.edu.cn/git/git-repo'
 export RIPGREP_CONFIG_PATH="$HOME/.ripgreprc"
 
 # linux input method
-export GTK_IM_MODULE=ibus
-export XMODIFIERS=@im=ibus
-export QT_IM_MODULE=ibus
+if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+  export GTK_IM_MODULE=ibus
+  export XMODIFIERS=@im=ibus
+  export QT_IM_MODULE=ibus
+fi
 
 # ensure compile_commands.json is always generated
 export CMAKE_EXPORT_COMPILE_COMMANDS=1

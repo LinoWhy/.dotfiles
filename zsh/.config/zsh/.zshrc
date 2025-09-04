@@ -21,13 +21,6 @@ GENCOMPL_FPATH="$ZDOTDIR/completions"
 zstyle :plugin:zsh-completion-generator programs btm duf fzf hexyl lsd procs yazi
 plug "RobSis/zsh-completion-generator"
 
-# homebrew completion
-if [[ $(ostype) == "macos" ]]; then
-  eval "$(brew shellenv)"
-elif [[ $(ostype) == "linux" && -d /home/linuxbrew ]]; then
-  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-fi
-
 # Set, load and initialise completion system
 source "$ZDOTDIR/completions.zsh"
 
