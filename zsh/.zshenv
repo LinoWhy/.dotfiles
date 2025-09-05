@@ -32,8 +32,8 @@ export HOMEBREW_CORE_GIT_REMOTE="https://mirrors.tuna.tsinghua.edu.cn/git/homebr
 export HOMEBREW_API_DOMAIN="https://mirrors.tuna.tsinghua.edu.cn/homebrew-bottles/api"
 export HOMEBREW_BOTTLE_DOMAIN="https://mirrors.tuna.tsinghua.edu.cn/homebrew-bottles"
 
-if [[ "$OSTYPE" == "darwin"* ]]; then
-  eval "$(brew shellenv)"
+if [[ "$OSTYPE" == "darwin"* && -d /opt/homebrew ]]; then
+  eval "$(/opt/homebrew/bin/brew shellenv)"
 elif [[ "$OSTYPE" == "linux-gnu"* && -d /home/linuxbrew ]]; then
   eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 fi
