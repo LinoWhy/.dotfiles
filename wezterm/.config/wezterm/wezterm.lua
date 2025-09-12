@@ -82,6 +82,8 @@ if wezterm.target_triple == "x86_64-pc-windows-msvc" then
   require("windows").setup(config)
 elseif wezterm.target_triple == "aarch64-apple-darwin" then
   require("macos").setup(config)
+elseif wezterm.target_triple == "x86_64-unknown-linux-gnu" then
+  require("linux").setup(config)
 end
 
 return config
