@@ -27,7 +27,7 @@ return {
     keys = {
       -- stylua: ignore
       { "<leader>lf", function() require("conform").format(format_opts) end, desc = "Format" },
-      { "<leader>lc", "<cmd>ConformInfo<cr>", desc = "Conform Info" },
+      { "<leader>lC", "<cmd>ConformInfo<cr>", desc = "Conform Info" },
     },
     opts = {
       formatters_by_ft = {
