@@ -3,6 +3,13 @@
 # Detect environment first
 source "$ZDOTDIR/env.zsh"
 
+# Homebrew shellenv
+if command -v brew >/dev/null 2>&1; then
+  eval "$($(brew --prefix)/bin/brew shellenv)"
+elif [[ -f /home/linuxbrew/.linuxbrew/bin/brew ]]; then
+  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+fi
+
 # Personal configurations
 source "$ZDOTDIR/options.zsh"
 source "$ZDOTDIR/keys.zsh"
