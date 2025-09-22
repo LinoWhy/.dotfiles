@@ -79,7 +79,8 @@ return {
       if type(server_opts.server_setup) == "function" then
         server_opts.server_setup(opt)
       else
-        require("lspconfig")[server].setup(opt)
+        vim.lsp.config(server, opt)
+        vim.lsp.enable(server)
       end
 
       ::continue::
