@@ -2,7 +2,7 @@ return {
   {
     "neovim/nvim-lspconfig",
     keys = {
-      { "<leader>ls", "<cmd>ClangdSwitchSourceHeader <cr>", desc = "Switch Source/Header" },
+      { "<leader>ls", "<cmd>LspClangdSwitchSourceHeader <cr>", desc = "Switch Source/Header" },
     },
     opts = {
       servers = {

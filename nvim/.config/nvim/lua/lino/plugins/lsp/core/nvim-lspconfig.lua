@@ -59,7 +59,7 @@ return {
       end
 
       -- Invoke common_on_attach first, then server specific callback if configured
-      server_opts.on_attach = function(client, bufnr)
+      local on_attach = function(client, bufnr)
         common_config.on_attach(client, bufnr)
 
         if type(server_opts.server_attach) == "function" then
@@ -71,6 +71,18 @@ return {
         common_config.buf_map(bufnr, keys)
       end
 
+      -- NOTE: The on_attach will override nvim-lspconfig's on_attach function. So create an autocmd to call the
+      -- on_attach function. Need to refine the complete lsp config later.
+      vim.api.nvim_create_autocmd("LspAttach", {
+        callback = function(args)
+          local buffer = args.buf ---@type number
+          local client = vim.lsp.get_client_by_id(args.data.client_id)
+          if client then
+            return on_attach(client, buffer)
+          end
+        end,
+      })
+
       -- NOTE: deepcopy fix some weird behavior with cmp capabilities
       local opt = vim.tbl_deep_extend("force", {
         capabilities = vim.deepcopy(capabilities),
@@ -79,7 +91,7 @@ return {
       if type(server_opts.server_setup) == "function" then
         server_opts.server_setup(opt)
       else
-        vim.lsp.config(server, opt)
+        vim.lsp.config(server, server_opts)
         vim.lsp.enable(server)
       end
 
