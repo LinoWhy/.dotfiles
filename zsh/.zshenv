@@ -55,3 +55,8 @@ export CMAKE_EXPORT_COMPILE_COMMANDS=1
 
 # ensure truecolor over SSH
 export COLORTERM=truecolor
+
+# set locale
+export LC_ALL=en_US.utf8
+export LANG=en_US.UTF-8
+export LANGUAGE=en_US:en
