@@ -58,8 +58,8 @@ alias gcs='git commit -s'
 alias gch='git cherry-pick'
 alias gl='git log'
 alias gls="git log --pretty=format:'$git_log_format'"
-alias gla="git log --pretty=format:'$git_log_format' --all"
-alias gll="git log --pretty=format:'$git_log_format' --all --numstat"
+alias gla="git log --pretty=format:'$git_log_format' --all --graph"
+alias gll="git log --pretty=format:'$git_log_format' --numstat"
 alias glf='git log --pretty=fuller'
 alias gp='git pull'
 alias GP='git push'
