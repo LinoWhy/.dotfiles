@@ -2,7 +2,6 @@ return {
   "akinsho/bufferline.nvim",
   dependencies = {
     "nvim-tree/nvim-web-devicons",
-    "echasnovski/mini.bufremove",
   },
   event = { "BufRead", "BufNewFile" },
   keys = {
@@ -26,9 +25,9 @@ return {
       left_mouse_command = "buffer %d",
       right_mouse_command = "vert sbuffer %d",
       -- stylua: ignore
-      close_command = function(n) require("mini.bufremove").delete(n, false) end,
+      close_command = function(n) Utils.buffer.delete(n, false) end,
       -- stylua: ignore
-      middle_mouse_command = function(n) require("mini.bufremove").delete(n, false) end,
+      middle_mouse_command = function(n) Utils.buffer.delete(n, false) end,
       indicator = {
         style = "icon", -- can also be 'underline'|'none',
       },

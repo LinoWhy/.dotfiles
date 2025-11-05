@@ -1,5 +1,6 @@
 -- Use Utils.mod instead of require("lino.utils.mod")
 ---@class Utils
+---@field buffer Utils.buffer
 ---@field cmp Utils.cmp
 ---@field diag Utils.diag
 ---@field extra Utils.extra

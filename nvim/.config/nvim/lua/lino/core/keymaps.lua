@@ -93,6 +93,7 @@ map({ "n", "x" }, "\\", "%")
 map("n", "<leader>w", "<cmd>w!<cr>", { desc = "Save" })
 map("n", "<leader>q", "<cmd>confirm q<cr>", { desc = "Quit" })
 map("n", "<leader>x", Utils.extra.execute_current_file, { desc = "Execute" })
+map("n", "<leader>c", function() Utils.buffer.remove_buffer() end, { desc = "Close Buffer" })
 map("i", "<C-l>", "<End>")
 
 -- Sudo write file
