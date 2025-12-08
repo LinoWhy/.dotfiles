@@ -3,17 +3,15 @@ palette = "catppuccin_macchiato"
 
 format = """
 $directory\
-$custom\
+${custom.ssh}\
+$shell\
 $git_branch\
 $git_commit\
 $git_state\
 $git_status\
-$conda\
-$fill\
+${custom.fill}\
 $status\
 $cmd_duration\
-$shell\
-$hostname\
 $line_break\
 $jobs\
 $sudo\
@@ -21,17 +19,24 @@ $character"""
 
 command_timeout = 1000
 
-[custom.ssh]
-when = ''' [[ $SSH_CONNECTION ]] '''
-symbol = " "
-format = '[$symbol](blue bold)'
-
 [directory]
 truncation_length = 3
 truncate_to_repo = false
 truncation_symbol = "…/"
 read_only = " 󰌾 "
 read_only_style = "fg:yellow"
+
+[custom.ssh]
+when = ''' [[ $SSH_CONNECTION ]] '''
+symbol = " "
+format = '[$symbol](blue bold)'
+
+[shell]
+zsh_indicator = ""
+bash_indicator = " "
+powershell_indicator = " "
+format = '[$indicator](blue bold)'
+disabled = false
 
 [git_branch]
 only_attached = true
@@ -56,32 +61,18 @@ deleted = "✘${count} "
 style = "bold italic fg:rosewater"
 windows_starship = "/mnt/c/Program Files/starship/bin/starship.exe"
 
-[conda]
-format = '[$symbol$environment](green) '
-
-[fill]
-symbol = "·"
+[custom.fill]
+when = true
+symbol = "		"
 
 [status]
-format = ' [\[$common_meaning$signal_name$maybe_int\]]($style)'
+format = '[\[$common_meaning$signal_name$maybe_int\]]($style) '
 map_symbol = true
 disabled = false
 
 [cmd_duration]
 min_time = 500
-format = " [$duration]($style)"
-
-[shell]
-zsh_indicator = " "
-bash_indicator = " "
-powershell_indicator = " "
-style = "cyan bold"
-disabled = false
-
-[hostname]
-ssh_only = false
-format = "[$hostname](bold green)"
-disabled = false
+format = "[$duration]($style) "
 
 [jobs]
 symbol = '🌟'
