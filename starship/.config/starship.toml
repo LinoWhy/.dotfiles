@@ -9,6 +9,7 @@ $git_branch\
 $git_commit\
 $git_state\
 $git_status\
+$python\
 ${custom.fill}\
 $status\
 $cmd_duration\
@@ -33,8 +34,8 @@ format = '[$symbol](blue bold)'
 
 [shell]
 zsh_indicator = ""
-bash_indicator = " "
-powershell_indicator = " "
+bash_indicator = "bsh "
+powershell_indicator = "psh "
 format = '[$indicator](blue bold)'
 disabled = false
 
@@ -60,6 +61,10 @@ renamed = "»${count} "
 deleted = "✘${count} "
 style = "bold italic fg:rosewater"
 windows_starship = "/mnt/c/Program Files/starship/bin/starship.exe"
+
+[python]
+symbol = "󰌠 "
+format = '[${symbol}${pyenv_prefix}(${version} )]($style)'
 
 [custom.fill]
 when = true
