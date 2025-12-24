@@ -27,8 +27,22 @@ function M.setup(config)
     })
   end
 
+  config.window_decorations = "RESIZE"
   config.default_prog = powershell
   config.launch_menu = launch_menu
+end
+
+function M.ime_switch(value)
+  if value == "EN" then
+    local home = os.getenv("USERPROFILE") or os.getenv("HOME")
+    local im_select_path = home .. "\\.bin\\im-select.exe"
+
+    wezterm.background_child_process({
+      "cmd.exe",
+      "/C",
+      im_select_path .. " 1033",
+    })
+  end
 end
 
 return M
