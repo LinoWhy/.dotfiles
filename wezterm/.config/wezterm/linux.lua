@@ -16,9 +16,9 @@ end
 function M.ime_switch(value)
   if value == "EN" then
     wezterm.background_child_process({
-      "ibus",
-      "engine",
-      "xkb:us::eng",
+      "bash",
+      "-c",
+      "ibus engine | grep -iq eng || xdotool key super+space",
     })
   end
 end
