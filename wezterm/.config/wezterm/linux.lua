@@ -13,4 +13,14 @@ function M.setup(config)
   })
 end
 
+function M.ime_switch(value)
+  if value == "EN" then
+    wezterm.background_child_process({
+      "ibus",
+      "engine",
+      "xkb:us::eng",
+    })
+  end
+end
+
 return M

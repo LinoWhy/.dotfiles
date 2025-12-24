@@ -78,12 +78,23 @@ local config = {
   max_fps = 120,
 }
 
+local switch_ime = nil
+
 if wezterm.target_triple == "x86_64-pc-windows-msvc" then
   require("windows").setup(config)
+  switch_ime = require("windows").ime_switch
 elseif wezterm.target_triple == "aarch64-apple-darwin" then
   require("macos").setup(config)
+  switch_ime = require("macos").ime_switch
 elseif wezterm.target_triple == "x86_64-unknown-linux-gnu" then
   require("linux").setup(config)
+  switch_ime = require("linux").ime_switch
 end
+
+wezterm.on("user-var-changed", function(window, pane, name, value)
+  if name == "wez_ime" and type(switch_ime) == "function" then
+    switch_ime(value)
+  end
+end)
 
 return config
