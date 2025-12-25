@@ -18,7 +18,11 @@ function M.ime_switch(value)
     wezterm.background_child_process({
       "bash",
       "-c",
-      "ibus engine | grep -iq eng || xdotool key super+space",
+      -- NOTE: may be triggered more than once, especially with "vim-tmux-navigator"
+      -- "ibus engine | grep -iq eng || xdotool key super+space",
+      --
+      -- install gnome shell extension: madhead/shyriiwook
+      'gdbus call --session --dest org.gnome.Shell --object-path /me/madhead/Shyriiwook --method me.madhead.Shyriiwook.activate "us"',
     })
   end
 end
