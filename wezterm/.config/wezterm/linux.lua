@@ -13,7 +13,7 @@ function M.setup(config)
   })
 end
 
-function M.ime_switch(value)
+function M.switch_ime(value)
   if value == "EN" then
     wezterm.background_child_process({
       "bash",

@@ -7,7 +7,7 @@ function M.setup(config)
   config.native_macos_fullscreen_mode = true
 end
 
-function M.ime_switch(value)
+function M.switch_ime(value)
   if value == "EN" then
     wezterm.background_child_process({
       "/opt/homebrew/bin/macism",

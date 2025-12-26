@@ -32,7 +32,7 @@ function M.setup(config)
   config.launch_menu = launch_menu
 end
 
-function M.ime_switch(value)
+function M.switch_ime(value)
   if value == "EN" then
     local home = os.getenv("USERPROFILE") or os.getenv("HOME")
     local im_select_path = home .. "\\.bin\\im-select.exe"
