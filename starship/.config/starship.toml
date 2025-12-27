@@ -21,7 +21,7 @@ $character"""
 command_timeout = 1000
 
 [directory]
-truncation_length = 3
+truncation_length = 8
 truncate_to_repo = false
 truncation_symbol = "…/"
 read_only = " 󰌾 "
@@ -64,11 +64,12 @@ windows_starship = "/mnt/c/Program Files/starship/bin/starship.exe"
 
 [python]
 symbol = "󰌠 "
+style = "sky"
 format = '[${symbol}${pyenv_prefix}(${version} )]($style)'
 
 [custom.fill]
 when = true
-symbol = "		"
+symbol = "			"
 
 [status]
 format = '[\[$common_meaning$signal_name$maybe_int\]]($style) '
@@ -76,7 +77,7 @@ map_symbol = true
 disabled = false
 
 [cmd_duration]
-min_time = 500
+min_time = 1000
 format = "[$duration]($style) "
 
 [jobs]
