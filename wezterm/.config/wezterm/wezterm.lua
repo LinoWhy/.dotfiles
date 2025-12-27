@@ -34,6 +34,13 @@ local function toggle_color_scheme()
   end)
 end
 
+local function toggle_tab_bar()
+  return wezterm.action_callback(function(window, _)
+    c.enable_tab_bar = not c.enable_tab_bar
+    window:set_config_overrides({ enable_tab_bar = c.enable_tab_bar })
+  end)
+end
+
 -- Common settings
 c.default_prog = { "zsh", "-l" }
 c.scrollback_lines = 9999
@@ -41,7 +48,8 @@ c.max_fps = 120
 
 -- Appearance
 c.color_scheme = "Catppuccin Macchiato"
-c.hide_tab_bar_if_only_one_tab = true
+c.enable_tab_bar = false
+c.hide_tab_bar_if_only_one_tab = false
 c.use_fancy_tab_bar = false
 c.tab_max_width = 60
 
@@ -80,6 +88,7 @@ c.keys = {
   -- tab navigate
   { key = "Tab", mods = "CTRL", action = switch_tab_and_ime(1) },
   { key = "Tab", mods = "SHIFT|CTRL", action = switch_tab_and_ime(-1) },
+  { key = "S", mods = "SHIFT|CTRL", action = act.ShowLauncherArgs({ flags = "FUZZY|TABS", title = "Tabs" }) },
   -- copy & paste
   { key = "C", mods = "SHIFT|CTRL", action = act.CopyTo("Clipboard") },
   { key = "V", mods = "SHIFT|CTRL", action = act.PasteFrom("Clipboard") },
@@ -100,6 +109,7 @@ c.keys = {
   { key = "Enter", mods = "ALT", action = act.ToggleFullScreen },
   -- toggle color scheme
   { key = "R", mods = "SHIFT|CTRL", action = toggle_color_scheme() },
+  { key = "B", mods = "SHIFT|CTRL", action = toggle_tab_bar() },
 }
 
 -- Platform specific settings
