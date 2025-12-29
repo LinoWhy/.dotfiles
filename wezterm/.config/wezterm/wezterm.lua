@@ -10,6 +10,12 @@ local platform_modules = {
 local platform = require(platform_modules[wezterm.target_triple])
 local switch_ime = platform.switch_ime or nil
 
+wezterm.on("gui-attached", function()
+  if type(switch_ime) == "function" then
+    switch_ime("EN")
+  end
+end)
+
 wezterm.on("user-var-changed", function(_, _, name, value)
   if name == "wez_ime" and type(switch_ime) == "function" then
     switch_ime(value)
