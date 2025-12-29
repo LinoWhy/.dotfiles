@@ -9,7 +9,7 @@ $git_branch\
 $git_commit\
 $git_state\
 $git_status\
-$python\
+${custom.python}\
 ${custom.fill}\
 $status\
 $cmd_duration\
@@ -62,10 +62,12 @@ deleted = "✘${count} "
 style = "bold italic fg:rosewater"
 windows_starship = "/mnt/c/Program Files/starship/bin/starship.exe"
 
-[python]
+[custom.python]
+when = ''' [[ -n "$VIRTUAL_ENV" && "$VIRTUAL_ENV" != "$HOME"/.direnv/* ]] '''
+command = "python -c 'import sys; print(f\"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}\")'"
 symbol = "󰌠 "
 style = "sky"
-format = '[${symbol}${pyenv_prefix}(${version} )]($style)'
+format = '[${symbol}${output}]($style)'
 
 [custom.fill]
 when = true
