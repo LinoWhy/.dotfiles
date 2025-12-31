@@ -9,6 +9,7 @@ local platform_modules = {
 }
 local platform = require(platform_modules[wezterm.target_triple])
 local switch_ime = platform.switch_ime or nil
+local tmux_windows = require("tmux_windows")
 
 wezterm.on("gui-attached", function()
   if type(switch_ime) == "function" then
@@ -20,6 +21,11 @@ wezterm.on("user-var-changed", function(_, _, name, value)
   if name == "wez_ime" and type(switch_ime) == "function" then
     switch_ime(value)
   end
+  tmux_windows.on_user_var_changed(name, value)
+end)
+
+wezterm.on("update-status", function(window, pane)
+  tmux_windows.on_update_status(window, pane)
 end)
 
 local function switch_tab_and_ime(relative)
@@ -54,7 +60,7 @@ c.max_fps = 120
 
 -- Appearance
 c.color_scheme = "Catppuccin Macchiato"
-c.enable_tab_bar = false
+c.enable_tab_bar = true
 c.hide_tab_bar_if_only_one_tab = false
 c.use_fancy_tab_bar = false
 c.tab_max_width = 60
