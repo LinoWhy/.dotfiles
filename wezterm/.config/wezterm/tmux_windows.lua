@@ -2,116 +2,196 @@ local wezterm = require("wezterm")
 
 local M = {}
 
-local tmux_windows_cache = {}
+local tmux_windows_by_session = {}
+local tmux_stats_text = ""
 
-local function update_tmux_cache(value)
-  if not value or value == "" then
-    return
-  end
-
+local function parse_tmux_windows(value)
   local sessions = {}
+
   for line in value:gmatch("[^\n]+") do
-    local session, win_idx, active, path, flags = line:match("([^\t]*)\t([^\t]*)\t([^\t]*)\t([^\t]*)\t(.*)")
-    if session and win_idx and active and path then
-      sessions[session] = sessions[session] or {}
-      table.insert(sessions[session], {
-        win_idx = win_idx,
-        active = (active == "1"),
-        path = path,
-        flags = flags or "",
-      })
-    end
-  end
-
-  for session, windows in pairs(sessions) do
-    tmux_windows_cache[session] = windows
-  end
-end
-
-local function extract_session(title)
-  if not title or title == "" then
-    return ""
-  end
-
-  local match = ""
-  for session, _ in pairs(tmux_windows_cache) do
-    if title:find(session, 1, true) then
-      if #session > #match then
-        match = session
-      end
-    end
-  end
-
-  return match
-end
-
-local function format_tmux_windows_for_session(session)
-  if not session or session == "" then
-    return ""
-  end
-
-  local windows = tmux_windows_cache[session]
-  if not windows or #windows == 0 then
-    return ""
-  end
-
-  local parts = {}
-  for i, win in ipairs(windows) do
-    if i > 1 then
-      table.insert(parts, { Text = " " })
+    local fields = {}
+    for field in (line .. "\t"):gmatch("([^\t]*)\t") do
+      table.insert(fields, field)
     end
 
-    local tail = win.path:gsub(".*/", "")
-    local flags = win.flags:gsub("^%s+", ""):gsub("%s+$", "")
-    local text = string.format(" %s: %s ", win.win_idx, tail)
-    if flags ~= "" then
-      text = string.format(" %s: %s %s ", win.win_idx, tail, flags)
-    end
-    if win.active then
-      table.insert(parts, { Attribute = { Intensity = "Bold" } })
-      table.insert(parts, { Attribute = { Underline = "Single" } })
-      table.insert(parts, { Attribute = { Foreground = { PaletteIndex = 6 } } })
-      table.insert(parts, { Text = text })
-      table.insert(parts, { Attribute = { Intensity = "Normal" } })
-      table.insert(parts, { Attribute = { Underline = "None" } })
-      table.insert(parts, { Attribute = { Foreground = "Default" } })
-    else
-      table.insert(parts, { Text = text })
-    end
+    local session, win_idx, active, path, flags = fields[1], fields[2], fields[3], fields[4], fields[5]
+    local bell = flags:find("󰂞", 1, true) ~= nil
+    local activity = flags:find("󱅫", 1, true) ~= nil
+
+    sessions[session] = sessions[session] or {}
+    table.insert(sessions[session], {
+      win_idx = win_idx,
+      active = (active == "1"),
+      path = path:gsub(".*/", ""),
+      flags = flags,
+      bell = bell,
+      activity = activity,
+    })
   end
 
-  return wezterm.format(parts) .. " |  "
+  return sessions
 end
 
 function M.on_user_var_changed(name, value)
   if name == "tmux_windows" then
-    update_tmux_cache(value)
+    local parsed = parse_tmux_windows(value) or {}
+    for session, windows in pairs(parsed) do
+      tmux_windows_by_session[session] = windows
+    end
+  elseif name == "tmux_stats" then
+    tmux_stats_text = value or ""
   end
 end
 
-function M.on_update_status(window, pane)
-  local title = ""
-  if pane and type(pane.get_title) == "function" then
-    title = pane:get_title()
-  end
-  if title == "" then
-    local tab = window:active_tab()
-    if tab and type(tab.active_pane) == "function" then
-      local active_pane = tab:active_pane()
-      if active_pane and active_pane.title then
-        title = active_pane.title
-      end
-    end
-    if title == "" and tab and type(tab.get_title) == "function" then
-      title = tab:get_title()
-    end
-  end
-  if title == "" and type(window.get_title) == "function" then
-    title = window:get_title()
+local function compute_tab_bar_width(window)
+  local mux = window:mux_window()
+  local cfg = window:effective_config()
+  local max_width = cfg.tab_max_width
+
+  local width = 0
+  for _, info in ipairs(mux:tabs_with_info()) do
+    local label = info.tab:active_pane():get_title()
+    label = " " .. label .. " "
+    label = wezterm.truncate_right(label, max_width)
+    width = width + wezterm.column_width(label)
   end
 
-  local session = extract_session(title)
-  window:set_left_status(format_tmux_windows_for_session(session))
+  return width
+end
+
+local function format_status(windows, available_cols, window)
+  local scheme = wezterm.get_builtin_color_schemes()[window:effective_config().color_scheme]
+  local colors = {
+    active = { Color = scheme.ansi[7] },
+    bell = { Color = scheme.ansi[4] },
+    activity = { Color = scheme.ansi[6] },
+    low = { Color = scheme.ansi[3] },
+    medium = { Color = scheme.ansi[4] },
+    high = { Color = scheme.ansi[2] },
+  }
+
+  local function build_left_status()
+    local parts = {}
+
+    local sep = " | "
+    table.insert(parts, { Text = sep })
+    local width = wezterm.column_width(sep)
+
+    for i, win in ipairs(windows) do
+      if i > 1 then
+        table.insert(parts, { Text = " " })
+        width = width + 1
+      end
+      local flags = win.flags
+      local label = string.format(" %s: %s%s", win.win_idx, win.path, flags)
+
+      if win.active then
+        table.insert(parts, { Attribute = { Intensity = "Bold" } })
+        table.insert(parts, { Attribute = { Underline = "Single" } })
+        table.insert(parts, { Foreground = colors.active })
+        table.insert(parts, { Text = label })
+        table.insert(parts, "ResetAttributes")
+      elseif win.bell then
+        table.insert(parts, { Foreground = colors.bell })
+        table.insert(parts, { Text = label })
+        table.insert(parts, "ResetAttributes")
+      elseif win.activity then
+        table.insert(parts, { Foreground = colors.activity })
+        table.insert(parts, { Text = label })
+        table.insert(parts, "ResetAttributes")
+      else
+        table.insert(parts, { Text = label })
+      end
+      width = width + wezterm.column_width(label)
+    end
+
+    return parts, width
+  end
+
+  local function build_right_status()
+    local parts = {}
+    local width = 0
+
+    local function level_color(value)
+      if value >= 80 then
+        return colors.high
+      end
+      if value >= 30 then
+        return colors.medium
+      end
+      return colors.low
+    end
+
+    local cpu = tmux_stats_text:match("cpu=([%d%.]+)")
+    local mem = tmux_stats_text:match("mem=([%d%.]+)")
+    if cpu or mem then
+      local cpu_value = cpu and tonumber(cpu) or nil
+      local mem_value = mem and tonumber(mem) or nil
+      if cpu_value then
+        local text = string.format("  %.1f%% ", cpu_value)
+        table.insert(parts, { Foreground = level_color(cpu_value) })
+        table.insert(parts, { Text = text })
+        table.insert(parts, "ResetAttributes")
+        width = width + wezterm.column_width(text)
+      end
+      if mem_value then
+        local text = string.format("  %.1f%% ", mem_value)
+        table.insert(parts, { Foreground = level_color(mem_value) })
+        table.insert(parts, { Text = text })
+        table.insert(parts, "ResetAttributes")
+        width = width + wezterm.column_width(text)
+      end
+      local sep = " | "
+      table.insert(parts, { Text = " | " })
+      width = width + wezterm.column_width(sep)
+    end
+
+    local batteries = wezterm.battery_info()
+    if #batteries > 0 then
+      local text = string.format("  %.0f%% ", batteries[1].state_of_charge * 100)
+      table.insert(parts, { Foreground = colors.active })
+      table.insert(parts, { Text = text })
+      table.insert(parts, "ResetAttributes")
+      width = width + wezterm.column_width(text)
+    end
+
+    local time_text = wezterm.strftime(" %H:%M ")
+    table.insert(parts, { Foreground = colors.activity })
+    table.insert(parts, { Text = time_text })
+    table.insert(parts, "ResetAttributes")
+    width = width + wezterm.column_width(time_text)
+
+    return parts, width
+  end
+
+  local parts, left_width = build_left_status()
+  local right_parts, right_width = build_right_status()
+
+  if available_cols and available_cols > left_width + right_width then
+    table.insert(parts, { Text = string.rep(" ", available_cols - left_width - right_width) })
+  end
+  for _, item in ipairs(right_parts) do
+    table.insert(parts, item)
+  end
+
+  return wezterm.format(parts)
+end
+
+function M.on_update_status(window, pane)
+  window:set_left_status("")
+
+  local session = pane:get_title():gsub("^%s", "")
+  local windows = tmux_windows_by_session[session]
+
+  if not windows or #windows == 0 then
+    window:set_right_status("")
+    return
+  end
+
+  local cols = pane:get_dimensions().cols
+  local tab_bar_width = compute_tab_bar_width(window)
+  local available_cols = math.max(cols - tab_bar_width, 0)
+  window:set_right_status(format_status(windows, available_cols, window))
 end
 
 return M

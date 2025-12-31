@@ -17,15 +17,32 @@ wezterm.on("gui-attached", function()
   end
 end)
 
-wezterm.on("user-var-changed", function(_, _, name, value)
+wezterm.on("user-var-changed", function(_, pane, name, value)
   if name == "wez_ime" and type(switch_ime) == "function" then
     switch_ime(value)
   end
-  tmux_windows.on_user_var_changed(name, value)
+  if name == "tmux_windows" or name == "tmux_stats" then
+    tmux_windows.on_user_var_changed(name, value)
+  end
 end)
 
 wezterm.on("update-status", function(window, pane)
   tmux_windows.on_update_status(window, pane)
+end)
+
+wezterm.on("format-tab-title", function(tab, tabs, panes, config, hover, max_width)
+  local function tab_title(tab_info)
+    local title = tab_info.tab_title
+    if title and #title > 0 then
+      return title
+    end
+    return tab_info.active_pane.title
+  end
+
+  local title = tab_title(tab)
+  title = " " .. title .. " "
+  title = wezterm.truncate_right(title, max_width)
+  return title
 end)
 
 local function switch_tab_and_ime(relative)
@@ -64,6 +81,8 @@ c.enable_tab_bar = true
 c.hide_tab_bar_if_only_one_tab = false
 c.use_fancy_tab_bar = false
 c.tab_max_width = 60
+c.show_new_tab_button_in_tab_bar = false
+c.show_tab_index_in_tab_bar = false
 
 c.window_decorations = "NONE"
 c.window_padding = {
