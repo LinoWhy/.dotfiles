@@ -3,7 +3,6 @@ local wezterm = require("wezterm")
 local M = {}
 
 local tmux_windows_by_session = {}
-local tmux_stats_text = ""
 
 local function parse_tmux_windows(value)
   local sessions = {}
@@ -38,8 +37,6 @@ function M.on_user_var_changed(name, value)
     for session, windows in pairs(parsed) do
       tmux_windows_by_session[session] = windows
     end
-  elseif name == "tmux_stats" then
-    tmux_stats_text = value or ""
   end
 end
 
@@ -65,12 +62,14 @@ local function format_status(windows, available_cols, window)
     active = { Color = scheme.ansi[7] },
     bell = { Color = scheme.ansi[4] },
     activity = { Color = scheme.ansi[6] },
-    low = { Color = scheme.ansi[3] },
-    medium = { Color = scheme.ansi[4] },
-    high = { Color = scheme.ansi[2] },
   }
 
   local function build_left_status()
+    if not windows or #windows == 0 then
+      window:set_right_status("")
+      return {}, 0
+    end
+
     local parts = {}
 
     local sep = " | "
@@ -112,40 +111,6 @@ local function format_status(windows, available_cols, window)
     local parts = {}
     local width = 0
 
-    local function level_color(value)
-      if value >= 80 then
-        return colors.high
-      end
-      if value >= 30 then
-        return colors.medium
-      end
-      return colors.low
-    end
-
-    local cpu = tmux_stats_text:match("cpu=([%d%.]+)")
-    local mem = tmux_stats_text:match("mem=([%d%.]+)")
-    if cpu or mem then
-      local cpu_value = cpu and tonumber(cpu) or nil
-      local mem_value = mem and tonumber(mem) or nil
-      if cpu_value then
-        local text = string.format("  %.1f%% ", cpu_value)
-        table.insert(parts, { Foreground = level_color(cpu_value) })
-        table.insert(parts, { Text = text })
-        table.insert(parts, "ResetAttributes")
-        width = width + wezterm.column_width(text)
-      end
-      if mem_value then
-        local text = string.format("  %.1f%% ", mem_value)
-        table.insert(parts, { Foreground = level_color(mem_value) })
-        table.insert(parts, { Text = text })
-        table.insert(parts, "ResetAttributes")
-        width = width + wezterm.column_width(text)
-      end
-      local sep = " | "
-      table.insert(parts, { Text = " | " })
-      width = width + wezterm.column_width(sep)
-    end
-
     local batteries = wezterm.battery_info()
     if #batteries > 0 then
       local text = string.format("  %.0f%% ", batteries[1].state_of_charge * 100)
@@ -182,11 +147,6 @@ function M.on_update_status(window, pane)
 
   local session = pane:get_title():gsub("^%s", "")
   local windows = tmux_windows_by_session[session]
-
-  if not windows or #windows == 0 then
-    window:set_right_status("")
-    return
-  end
 
   local cols = pane:get_dimensions().cols
   local tab_bar_width = compute_tab_bar_width(window)

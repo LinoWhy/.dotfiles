@@ -110,6 +110,13 @@ function bell_checked() {
     bell
   fi
 }
+
+function __tmux_wezterm_sync_cwd() {
+  if [[ -z "$TMUX" ]]; then
+    return
+  fi
+  "$HOME/.config/tmux/list_clients_windows_hook.sh" "$(tmux display-message -p "#{client_tty}")"
+}
 ################################################################################
 # Other tools
 ################################################################################
@@ -124,4 +131,4 @@ export LS_COLORS="$(vivid generate catppuccin-mocha)"
 
 eval "$(zoxide init --hook prompt bash)"
 eval "$(starship init bash)"
-PROMPT_COMMAND="bell_checked; $PROMPT_COMMAND"
+PROMPT_COMMAND="bell_checked; __tmux_wezterm_sync_cwd; $PROMPT_COMMAND"

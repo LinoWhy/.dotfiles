@@ -21,7 +21,7 @@ wezterm.on("user-var-changed", function(_, pane, name, value)
   if name == "wez_ime" and type(switch_ime) == "function" then
     switch_ime(value)
   end
-  if name == "tmux_windows" or name == "tmux_stats" then
+  if name == "tmux_windows" then
     tmux_windows.on_user_var_changed(name, value)
   end
 end)

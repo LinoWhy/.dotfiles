@@ -24,10 +24,15 @@ function bell_checked() {
   fi
 }
 
+function __tmux_wezterm_sync_cwd() {
+  "$HOME/.config/tmux/list_clients_windows_hook.sh" "$(tmux display-message -p "#{client_tty}")"
+}
+
 if [[ ! -v TMUX ]]; then
   precmd_functions+=(set_win_title)
 else
   preexec_functions+=(renv)
+  chpwd_functions+=(__tmux_wezterm_sync_cwd)
 fi
 
 precmd_functions+=(bell_checked)
