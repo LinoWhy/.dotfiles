@@ -145,7 +145,7 @@ end
 function M.on_update_status(window, pane)
   window:set_left_status("")
 
-  local session = pane:get_title():gsub("^%s", "")
+  local session = pane:get_title():gsub("^%s*", ""):gsub("%s@.*$", "")
   local windows = tmux_windows_by_session[session]
 
   local cols = pane:get_dimensions().cols
