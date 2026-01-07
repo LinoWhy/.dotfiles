@@ -59,9 +59,16 @@ end
 local function format_status(windows, available_cols, window)
   local scheme = wezterm.get_builtin_color_schemes()[window:effective_config().color_scheme]
   local colors = {
-    active = { Color = scheme.ansi[7] },
-    bell = { Color = scheme.ansi[4] },
-    activity = { Color = scheme.ansi[6] },
+    black = { Color = scheme.ansi[1] },
+    read = { Color = scheme.ansi[2] },
+    green = { Color = scheme.ansi[3] },
+    yellow = { Color = scheme.ansi[4] },
+    blue = { Color = scheme.ansi[5] },
+    magenta = { Color = scheme.ansi[6] },
+    cyan = { Color = scheme.ansi[7] },
+    white = { Color = scheme.ansi[8] },
+    active_fg = { Color = scheme.tab_bar.active_tab.fg_color },
+    active_bg = { Color = scheme.tab_bar.active_tab.bg_color },
   }
 
   local function build_left_status()
@@ -72,30 +79,31 @@ local function format_status(windows, available_cols, window)
 
     local parts = {}
 
-    local sep = " | "
+    local sep = ""
+    table.insert(parts, { Attribute = { Intensity = "Bold" } })
+    table.insert(parts, { Foreground = colors.active_bg })
     table.insert(parts, { Text = sep })
+    table.insert(parts, "ResetAttributes")
     local width = wezterm.column_width(sep)
 
-    for i, win in ipairs(windows) do
-      if i > 1 then
-        table.insert(parts, { Text = " " })
-        width = width + 1
-      end
+    for _, win in ipairs(windows) do
+      table.insert(parts, { Text = " " })
+      width = width + 1
       local flags = win.flags
       local label = string.format(" %s: %s%s", win.win_idx, win.path, flags)
 
       if win.active then
         table.insert(parts, { Attribute = { Intensity = "Bold" } })
         table.insert(parts, { Attribute = { Underline = "Single" } })
-        table.insert(parts, { Foreground = colors.active })
+        table.insert(parts, { Foreground = colors.cyan })
         table.insert(parts, { Text = label })
         table.insert(parts, "ResetAttributes")
       elseif win.bell then
-        table.insert(parts, { Foreground = colors.bell })
+        table.insert(parts, { Foreground = colors.yellow })
         table.insert(parts, { Text = label })
         table.insert(parts, "ResetAttributes")
       elseif win.activity then
-        table.insert(parts, { Foreground = colors.activity })
+        table.insert(parts, { Foreground = colors.magenta })
         table.insert(parts, { Text = label })
         table.insert(parts, "ResetAttributes")
       else
@@ -114,14 +122,14 @@ local function format_status(windows, available_cols, window)
     local batteries = wezterm.battery_info()
     if #batteries > 0 then
       local text = string.format("  %.0f%% ", batteries[1].state_of_charge * 100)
-      table.insert(parts, { Foreground = colors.active })
+      table.insert(parts, { Foreground = colors.cyan })
       table.insert(parts, { Text = text })
       table.insert(parts, "ResetAttributes")
       width = width + wezterm.column_width(text)
     end
 
     local time_text = wezterm.strftime(" %H:%M ")
-    table.insert(parts, { Foreground = colors.activity })
+    table.insert(parts, { Foreground = colors.active_bg })
     table.insert(parts, { Text = time_text })
     table.insert(parts, "ResetAttributes")
     width = width + wezterm.column_width(time_text)

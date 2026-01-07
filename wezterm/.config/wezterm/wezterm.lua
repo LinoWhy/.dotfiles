@@ -58,8 +58,15 @@ local use_color_scheme = true
 local function toggle_color_scheme()
   return wezterm.action_callback(function(window, _)
     use_color_scheme = not use_color_scheme
-    local scheme = use_color_scheme and c.color_scheme or ""
-    window:set_config_overrides({ color_scheme = scheme })
+    local overrides = window:get_config_overrides() or {}
+    if use_color_scheme then
+      overrides.color_scheme = c.color_scheme
+      overrides.colors = c.colors
+    else
+      overrides.color_scheme = nil
+      overrides.colors = wezterm.color.get_default_colors()
+    end
+    window:set_config_overrides(overrides)
   end)
 end
 
@@ -78,11 +85,21 @@ c.max_fps = 120
 -- Appearance
 c.color_scheme = "Catppuccin Macchiato"
 c.enable_tab_bar = true
+c.tab_bar_at_bottom = true
 c.hide_tab_bar_if_only_one_tab = false
 c.use_fancy_tab_bar = false
 c.tab_max_width = 60
 c.show_new_tab_button_in_tab_bar = false
 c.show_tab_index_in_tab_bar = false
+c.colors = {
+  tab_bar = {
+    background = "#24273a",
+    inactive_tab = {
+      bg_color = "#24273a",
+      fg_color = "#cad3f5",
+    },
+  },
+}
 
 c.window_decorations = "NONE"
 c.window_padding = {
