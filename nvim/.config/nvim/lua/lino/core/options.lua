@@ -22,6 +22,7 @@ opt.title = false -- leave title to be handled by terminal
 opt.pumheight = 15 -- maximum popup menu height
 opt.pumwidth = 15 -- minimum popup menu width
 opt.winminwidth = 5 -- hard minimum window width
+opt.winborder = "rounded" -- default border style of floating windows
 
 -- line & column
 opt.number = true
