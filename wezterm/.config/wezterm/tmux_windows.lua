@@ -56,7 +56,7 @@ local function compute_tab_bar_width(window)
   return width
 end
 
-local function format_status(windows, available_cols, window)
+local function format_status(windows, available_cols, total_cols, tab_bar_width, window)
   local scheme = wezterm.get_builtin_color_schemes()[window:effective_config().color_scheme]
   local colors = {
     black = { Color = scheme.ansi[1] },
@@ -78,13 +78,14 @@ local function format_status(windows, available_cols, window)
     end
 
     local parts = {}
+    local width = 0
 
-    local sep = ""
-    table.insert(parts, { Attribute = { Intensity = "Bold" } })
-    table.insert(parts, { Foreground = colors.active_bg })
-    table.insert(parts, { Text = sep })
-    table.insert(parts, "ResetAttributes")
-    local width = wezterm.column_width(sep)
+    -- local sep = ""
+    -- table.insert(parts, { Attribute = { Intensity = "Bold" } })
+    -- table.insert(parts, { Foreground = colors.active_bg })
+    -- table.insert(parts, { Text = sep })
+    -- table.insert(parts, "ResetAttributes")
+    -- width = wezterm.column_width(sep)
 
     for _, win in ipairs(windows) do
       table.insert(parts, { Text = " " })
@@ -140,9 +141,21 @@ local function format_status(windows, available_cols, window)
   local parts, left_width = build_left_status()
   local right_parts, right_width = build_right_status()
 
-  if available_cols and available_cols > left_width + right_width then
-    table.insert(parts, { Text = string.rep(" ", available_cols - left_width - right_width) })
+  -- center the window lists
+  if available_cols and available_cols > 0 then
+    local left_pad = 16
+    local desired_left_start = math.floor((total_cols - left_width) / 2) - tab_bar_width
+    if desired_left_start > 0 and desired_left_start + left_width + right_width <= available_cols then
+      left_pad = desired_left_start
+    end
+    table.insert(parts, 1, { Text = string.rep(" ", left_pad) })
+    left_width = left_width + left_pad
+    local middle_pad = available_cols - left_width - right_width
+    if middle_pad > 0 then
+      table.insert(parts, { Text = string.rep(" ", middle_pad) })
+    end
   end
+
   for _, item in ipairs(right_parts) do
     table.insert(parts, item)
   end
@@ -159,7 +172,7 @@ function M.on_update_status(window, pane)
   local cols = pane:get_dimensions().cols
   local tab_bar_width = compute_tab_bar_width(window)
   local available_cols = math.max(cols - tab_bar_width, 0)
-  window:set_right_status(format_status(windows, available_cols, window))
+  window:set_right_status(format_status(windows, available_cols, cols, tab_bar_width, window))
 end
 
 return M
