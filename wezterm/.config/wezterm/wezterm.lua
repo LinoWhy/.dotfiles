@@ -85,7 +85,7 @@ c.max_fps = 120
 -- Appearance
 c.color_scheme = "Catppuccin Macchiato"
 c.enable_tab_bar = true
-c.tab_bar_at_bottom = true
+c.tab_bar_at_bottom = false
 c.hide_tab_bar_if_only_one_tab = false
 c.use_fancy_tab_bar = false
 c.tab_max_width = 60
@@ -118,7 +118,7 @@ c.font = wezterm.font_with_fallback({
   { family = "Symbols Nerd Font Mono", scale = 0.75 },
   "Noto Color Emoji",
 })
-c.font_size = 10.5
+c.font_size = 11
 c.cell_width = 1.0
 
 c.warn_about_missing_glyphs = false
