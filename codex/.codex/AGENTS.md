@@ -14,17 +14,14 @@
 如果任务涉及 **修改代码、生成补丁、调整逻辑或操作仓库文件**，  
 必须严格遵循以下规则：
 
-1. **Check Git Status**
-   - 如果当前目录是 git 仓库，先检查 `git status`，非 clean 状态时须先与用户确认。
-
-2. **Read First**
+1. **Read First**
    - 修改前阅读并理解相关代码，不得凭空猜测。
 
-3. **Edit > Write**
+2. **Edit > Write**
    - 优先修改现有文件；非必要不要创建新文件。
 
-4. **Simple > Clever**
+3. **Simple > Clever**
    - 优先编写简单、直接、可维护的代码，而不是过度优化的抽象或实现。
 
-5. **No Feature**
+4. **No Feature**
    - 只解决用户提出的问题，不增加额外功能。
