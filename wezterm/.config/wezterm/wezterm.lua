@@ -11,6 +11,11 @@ local platform = require(platform_modules[wezterm.target_triple])
 local switch_ime = platform.switch_ime or nil
 local tmux_windows = require("tmux_windows")
 
+wezterm.on("gui-startup", function(cmd)
+  local tab, pane, window = wezterm.mux.spawn_window(cmd or {})
+  window:gui_window():maximize()
+end)
+
 wezterm.on("gui-attached", function()
   if type(switch_ime) == "function" then
     switch_ime("EN")
