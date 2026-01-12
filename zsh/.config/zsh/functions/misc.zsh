@@ -73,3 +73,7 @@ function gen_editorconfig() {
   ')
   echo "$editorconfig_content"
 }
+
+function rm_color() {
+  sed 's/\x1b\[[0-9;]*m//g'
+}
