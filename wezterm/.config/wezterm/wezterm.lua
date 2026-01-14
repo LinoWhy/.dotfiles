@@ -14,6 +14,9 @@ local tmux_windows = require("tmux_windows")
 wezterm.on("gui-startup", function(cmd)
   local tab, pane, window = wezterm.mux.spawn_window(cmd or {})
   window:gui_window():maximize()
+  if type(switch_ime) == "function" then
+    switch_ime("EN")
+  end
 end)
 
 wezterm.on("gui-attached", function()
