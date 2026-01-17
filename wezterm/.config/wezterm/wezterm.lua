@@ -140,7 +140,7 @@ c.keys = {
   -- spawn & close
   { key = "N", mods = "SHIFT|CTRL", action = act.SpawnWindow },
   { key = "T", mods = "SHIFT|CTRL", action = act.SpawnTab("CurrentPaneDomain") },
-  { key = "W", mods = "SHIFT|CTRL", action = act.CloseCurrentTab({ confirm = true }) },
+  { key = "W", mods = "SHIFT|CTRL", action = act.CloseCurrentTab({ confirm = false }) },
   -- tab navigate
   { key = "Tab", mods = "CTRL", action = switch_tab_and_ime(1) },
   { key = "Tab", mods = "SHIFT|CTRL", action = switch_tab_and_ime(-1) },
