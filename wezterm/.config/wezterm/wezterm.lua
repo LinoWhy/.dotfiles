@@ -125,6 +125,7 @@ c.font = wezterm.font_with_fallback({
   },
   { family = "Symbols Nerd Font Mono", scale = 0.75 },
   "Noto Color Emoji",
+  { family = "LXGW WenKai GB", scale = 1.1 },
 })
 c.font_size = 11
 c.cell_width = 1.0
