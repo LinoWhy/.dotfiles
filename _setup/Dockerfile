@@ -38,9 +38,9 @@ RUN sudo apt-get update && sudo apt-get install -y zsh pip python-is-python3 pyt
 # duf not on ubuntu 20.04
 
 # Install neovim & other cli tools
-RUN mkdir -p ~/self && mkdir -p ~/.local/bin && cd ~/self && \
+RUN mkdir -p ~/personal && mkdir -p ~/.local/bin && cd ~/personal && \
     wget ${GH_SITE}/neovim/neovim/releases/download/v0.10.4/nvim-linux-x86_64.tar.gz && \
-    tar xzf nvim-linux-x86_64.tar.gz && ln -sf ~/self/nvim-linux-x86_64/bin/nvim ~/.local/bin/nvim && \
+    tar xzf nvim-linux-x86_64.tar.gz && ln -sf ~/personal/nvim-linux-x86_64/bin/nvim ~/.local/bin/nvim && \
     rm nvim-linux-x86_64.tar.gz && \
     wget ${GH_SITE}/muesli/duf/releases/download/v0.8.1/duf_0.8.1_linux_amd64.deb && \
     sudo dpkg -i duf_0.8.1_linux_amd64.deb && \
@@ -57,12 +57,12 @@ RUN git clone https://github.com/LinoWhy/.dotfiles.git ~/.dotfiles && \
 
 # Install tmux manually
 RUN sudo apt install -y libevent-dev libncurses-dev libbison-dev && \
-    mkdir -p ~/self/tmux; cd ~/self/tmux && \
+    mkdir -p ~/personal/tmux; cd ~/personal/tmux && \
     wget https://github.com/tmux/tmux/releases/download/3.5a/tmux-3.5a.tar.gz && \
     tar xzvf tmux-3.5a.tar.gz && cd tmux-3.5a && ./configure && make -j8 && sudo make install
 
 # zsh & setup environment
-RUN cd ~/self && wget https://raw.githubusercontent.com/zap-zsh/zap/master/install.zsh && \
+RUN cd ~/personal && wget https://raw.githubusercontent.com/zap-zsh/zap/master/install.zsh && \
     touch ~/.zshrc && zsh install.zsh --branch release-v1 -k && \
     rm install.zsh && \
     mv ~/.bashrc ~/.bashrc.bak && cd ~/.dotfiles && ${STOW:-stow} -v */

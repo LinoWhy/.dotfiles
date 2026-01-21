@@ -14,7 +14,7 @@ export HOMEBREW_BOTTLE_DOMAIN="https://mirrors.tuna.tsinghua.edu.cn/homebrew-bot
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 brew bundle --file=~/.dotfiles/_setup/Brewfile_macOS
 
-mkdir -p ~/self && git clone git@github.com:LinoWhy/Recursive-Fonts.git
+mkdir -p ~/personal && git clone git@github.com:LinoWhy/Recursive-Fonts.git
 cd Recursive-Fonts && cp -r fonts/ ~/Library/Fonts/
 fc-cache -fv
 
