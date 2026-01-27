@@ -1,254 +1,75 @@
 ---
-description: Create detailed implementation plans through interactive research and iteration
+description: 生成计划前的询问与模板选择（默认简单 Plan，必要时引用 ExecPlan）
 ---
 
-# Implementation Plan
+# Plan Prompt
 
-You are tasked with creating detailed implementation plans through an interactive, iterative process. Be skeptical, thorough, and collaborative to produce high-quality technical specifications.
+你将先询问用户需求，再根据回答选择模板输出任务计划。
+默认使用“内部简单 Plan 模板”；只有在用户明确需要可接棒的执行计划时，才使用 ExecPlan，并指出其规范来源。
+**只创建任务计划，不实现计划里面的内容！**
 
-## Initial Response
+## 第一步：先问清楚
 
-1. If a file path or ticket reference is provided, read it fully and begin researching.
-2. If none provided, respond:
+请直接向用户发送以下问题（不加多余解释）：
 
 ```
-I'll help you create a detailed implementation plan. Let me start by understanding what we're building.
+请先告诉我你想做的具体任务（目标/范围/约束/期望交付），以及是否需要一份可接棒的执行计划（ExecPlan）。
 
-Please provide:
-1. The task/ticket description (or reference to a ticket file)
-2. Any relevant context, constraints, or specific requirements
-3. Links to related research or previous implementations
+如果你没有特别说明，我将默认使用“内部简单 Plan 模板”。
+如果你希望计划可以作为长期维护的执行规范（含进度、决策记录、验收、可重复执行步骤），请明确说明“使用 ExecPlan”。
+
+请回答（尽量简短即可）：
+1) 任务目标（1–2 句）
+2) 主要范围（做什么 / 不做什么）
+3) 是否需要 ExecPlan（是/否，默认否）
+4) 关键约束（时间/技术栈/路径/上线要求等）
 ```
 
-Then wait for input.
+## 第二步：根据用户回答选择模板
 
-## Process Steps
+### A) 默认：内部简单 Plan 模板
 
-### Step 1: Context Gathering & Initial Analysis
-
-1. Read all mentioned files fully (tickets, research docs, related plans, JSON/data, etc.). Do not spawn sub-tasks before reading them yourself.
-2. Run initial research to gather context:
-   - Find relevant source files/configs/tests
-   - Identify directories to focus on
-   - Trace data flow and key functions
-   - Return file:line references
-3. Read all files identified as relevant. Ensure complete understanding before proceeding.
-4. Analyze and verify understanding:
-   - Cross-reference requirements with actual code
-   - Identify discrepancies and assumptions
-   - Determine true scope
-5. Present informed understanding and focused questions:
-
-   ```
-   Based on the ticket and my research of the codebase, I understand we need to [accurate summary].
-
-   I've found that:
-   - [Current implementation detail with file:line reference]
-   - [Relevant pattern or constraint]
-   - [Potential complexity or edge case]
-
-   Questions my research couldn't answer:
-   - [Technical question needing judgment]
-   - [Business logic clarification]
-   - [Design preference]
-   ```
-
-   Only ask what cannot be answered from code.
-
-### Step 2: Research & Discovery
-
-1. If corrected by the user, verify by re-reading specified areas before proceeding.
-2. Create a research todo list to track exploration.
-3. Run targeted research tasks (can be parallel) to:
-   - Find files, understand implementation details, discover patterns
-   - Find relevant docs/notes, extract key insights
-   - Find related tickets/issues if applicable
-   - Return specific file:line references
-4. Wait for all tasks to complete before synthesis.
-5. Present findings and design options:
-
-   ```
-   Based on my research:
-
-   Current State:
-   - [Key discovery]
-   - [Pattern/convention]
-
-   Design Options:
-   1. [Option A] - [pros/cons]
-   2. [Option B] - [pros/cons]
-
-   Open Questions:
-   - [Technical uncertainty]
-   - [Design decision needed]
-   ```
-
-### Step 3: Plan Structure Development
-
-1. Propose structure:
-
-   ```
-   Here's my proposed plan structure:
-
-   ## Overview
-   [1-2 sentence summary]
-
-   ## Implementation Phases:
-   1. [Phase name] - [what it accomplishes]
-   2. [Phase name] - [what it accomplishes]
-   3. [Phase name] - [what it accomplishes]
-
-   Does this phasing make sense? Adjust order/granularity?
-   ```
-
-2. Get feedback before detailing.
-
-### Step 4: Detailed Plan Writing
-
-1. Write the plan to `prompts`-adjacent location as needed; filename suggestion: `YYYY-MM-DD-ENG-XXXX-description.md` (omit ENG-XXXX if no ticket).
-2. Use this template:
-
-````markdown
-# [Feature/Task Name] Implementation Plan
-
-## Overview
-
-[Brief description of what we're implementing and why]
-
-## Current State Analysis
-
-[What exists now, what's missing, key constraints]
-
-## Desired End State
-
-[Specification of the desired end state and how to verify it]
-
-### Key Discoveries:
-
-- [Finding with file:line]
-- [Pattern to follow]
-- [Constraint]
-
-## What We're NOT Doing
-
-[Out-of-scope items]
-
-## Implementation Approach
-
-[High-level strategy and reasoning]
-
-## Phase 1: [Descriptive Name]
-
-### Overview
-
-[What this phase accomplishes]
-
-### Changes Required:
-
-#### 1. [Component/File Group]
-
-**File**: `path/to/file.ext`
-**Changes**: [Summary]
-
-```[language]
-// Specific code to add/modify
-```
-
-### Success Criteria:
-
-#### Automated Verification:
-
-- [ ] <command placeholder>
-- [ ] <tests/typecheck/lint placeholder>
-
-#### Manual Verification:
-
-- [ ] <manual step>
-- [ ] <edge case>
-
-**Implementation Note**: After completing this phase and automated verification, pause for manual confirmation before proceeding to the next phase (unless instructed otherwise).
-
----
-
-## Phase 2: [Descriptive Name]
-
-[Repeat structure...]
-
-## Testing Strategy
-
-### Unit Tests:
-
-- [What to test]
-- [Key edge cases]
-
-### Integration Tests:
-
-- [End-to-end scenarios]
-
-### Manual Testing Steps:
-
-1. [Step]
-2. [Step]
-3. [Edge case]
-
-## Performance Considerations
-
-[If applicable]
-
-## Migration Notes
-
-[If applicable]
-
-## References
-
-- Ticket: `[path or id]`
-- Related research: `[path]`
-- Similar implementation: `[file:line]`
-````
-
-### Step 5: Review
-
-1. Present the draft plan location.
-2. Ask for feedback on scope, success criteria, technical details, and edge cases.
-3. Iterate until satisfied.
-
-## Important Guidelines
-
-- Be skeptical: question vague requirements, verify with code.
-- Be interactive: avoid one-shot plans; seek buy-in at major steps.
-- Be thorough: read context fully; include specific file paths/lines; measurable success criteria with automated vs manual split.
-- Be practical: incremental, testable changes; consider migration/rollback; include “what we're NOT doing”.
-- Track progress: maintain todos; update as research completes.
-- No open questions in final plan: resolve before finalizing; every decision made.
-
-## Success Criteria Guidelines
-
-- Separate automated vs manual verification.
-- Automated: runnable commands/tests/lints/type checks.
-- Manual: UI/UX, performance under real conditions, edge cases, user acceptance.
-
-**Format example:**
+如果用户未明确要求 ExecPlan，则使用以下模板输出计划：
 
 ```markdown
-### Success Criteria:
+# Plan
 
-#### Automated Verification:
+<1–3 句：要做什么、为什么、以及高层方法。>
 
-- [ ] Database migration runs successfully: `<command>`
-- [ ] All unit tests pass: `<command>`
-- [ ] No linting errors: `<command>`
-- [ ] API endpoint returns expected result: `<command>`
+## Scope
 
-#### Manual Verification:
+- In:
+- Out:
 
-- [ ] Feature appears correctly in UI
-- [ ] Performance acceptable with N items
-- [ ] Error messages are user-friendly
-- [ ] Works correctly on mobile devices
+## Action items
+
+[ ] <Step 1>
+[ ] <Step 2>
+[ ] <Step 3>
+[ ] <Step 4>
+[ ] <Step 5>
+[ ] <Step 6>
+
+## Open questions
+
+- <Question 1>
+- <Question 2>
+- <Question 3>
 ```
 
-## Common Patterns
+### B) 需要 ExecPlan（显式选择）
 
-- Database changes: schema/migration → store methods → business logic → API → clients.
-- New features: research patterns → data model → backend logic → API → UI last.
-- Refactoring: document current behavior → incremental changes → backwards compatibility → migration strategy.
+如果用户明确要求 ExecPlan，则：
+
+1. **先完整读取**并理解该规范文件：`~/.agent/PLANS.md`。
+2. 在计划开头声明将遵循仓库 ExecPlan 规范，并说明 ExecPlan 是需要持续维护的活文档。
+3. 生成完整 ExecPlan，并**写入一个文件**（优先采用用户要求的文件名，若没有定义则根据任务内容创建）。
+4. **最终只输出该文件路径与简要说明**。
+
+示例开头（可直接复用）：
+
+```
+我将使用 ExecPlan，并严格遵循仓库规范：~/.agent/PLANS.md。
+我会先完整阅读该规范文件，按其要求生成并维护 ExecPlan。
+我会把完整 ExecPlan 写入文件，完成后仅输出文件路径与简要说明。
+```
