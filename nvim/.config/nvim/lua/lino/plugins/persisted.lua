@@ -1,18 +1,9 @@
 return {
   "olimorris/persisted.nvim",
-  cmd = {
-    "SessionToggle",
-    "SessionStart",
-    "SessionStop",
-    "SessionSave",
-    "SessionLoad",
-    "SessionLoadLast",
-    "SessionLoadFromFile",
-    "SessionDelete",
-  },
+  cmd = { "Persisted" },
   keys = {
     -- stylua: ignore
-    { "<leader>Q", function() vim.cmd("SessionSave") vim.cmd("qa") end, desc = "Save Session & Quit" },
+    { "<leader>Q", function() vim.cmd("Persisted save") vim.cmd("qa") end, desc = "Save Session & Quit" },
   },
   config = function()
     require("persisted").setup({ autostart = false })

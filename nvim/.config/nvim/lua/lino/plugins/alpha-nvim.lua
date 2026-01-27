@@ -273,7 +273,7 @@ return {
           icons.ui.Gear .. "  Configuration",
           '<cmd>lua require("telescope.builtin").find_files({ cwd = vim.fn.stdpath("config") }) <cr>'
         ),
-        dashboard.button("s", icons.ui.BookMark .. "  Restore Session", [[<cmd>SessionLoad<cr>]]),
+        dashboard.button("s", icons.ui.BookMark .. "  Restore Session", [[<cmd>Persisted load<cr>]]),
         dashboard.button("l", icons.ui.Sleep .. "  Lazy", "<cmd>Lazy<cr>"),
         dashboard.button("m", icons.ui.Package .. "  Mason", "<cmd>Mason<cr>"),
         dashboard.button("q", icons.ui.Quit .. "  Quit", "<cmd>quit<cr>"),
