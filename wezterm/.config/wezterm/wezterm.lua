@@ -92,7 +92,7 @@ c.max_fps = 120
 
 -- Appearance
 c.color_scheme = "Catppuccin Macchiato"
-c.enable_tab_bar = true
+c.enable_tab_bar = false
 c.tab_bar_at_bottom = false
 c.hide_tab_bar_if_only_one_tab = false
 c.use_fancy_tab_bar = false
