@@ -1,6 +1,7 @@
 return {
   {
     "keaising/im-select.nvim",
+    enabled = not os.getenv("SSH_CONNECTION"),
     -- event = { "BufReadPost", "BufNewFile" },
     config = function()
       require("im_select").setup({
