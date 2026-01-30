@@ -4,6 +4,7 @@ palette = "catppuccin_macchiato"
 format = """
 $directory\
 ${custom.ssh}\
+$hostname\
 $shell\
 $git_branch\
 $git_commit\
@@ -31,6 +32,12 @@ read_only_style = "fg:yellow"
 when = ''' [[ $SSH_CONNECTION ]] '''
 symbol = " "
 format = '[$symbol](blue bold)'
+
+[hostname]
+ssh_only = false
+detect_env_vars = ['!TMUX']
+format = "[@$hostname](bold green) "
+disabled = false
 
 [shell]
 zsh_indicator = ""
