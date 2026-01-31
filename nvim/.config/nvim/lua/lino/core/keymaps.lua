@@ -145,6 +145,7 @@ local function toggle_option(option, values)
 end
 
 map("n", "<leader>tc", toggle_option("cursorcolumn"), { desc = "Toggle Cursor Column" })
+map("n", "<leader>tl", toggle_option("list"), { desc = "Toggle List (Whitespace)" })
 map("n", "<leader>ts", toggle_option("spell"), { desc = "Toggle Spell" })
 map("n", "<leader>tw", toggle_option("wrap"), { desc = "Toggle Word Wrap" })
 map("n", "<leader>tz", toggle_option("foldmethod", { "indent", "manual" }), { desc = "Toggle Fold Method" })
