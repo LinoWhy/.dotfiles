@@ -14,7 +14,11 @@ return {
         pyright = {},
         vimls = {},
         yamlls = {},
-        marksman = {},
+        marksman = {
+          server_attach = function()
+            Utils.diag.set_level(vim.diagnostic.severity.ERROR)()
+          end,
+        },
       },
     },
   },
