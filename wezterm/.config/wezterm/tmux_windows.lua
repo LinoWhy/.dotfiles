@@ -56,6 +56,20 @@ local function compute_tab_bar_width(window)
   return width
 end
 
+function M.format_tab_title(tab, max_width)
+  local function tab_title(tab_info)
+    local title = tab_info.tab_title
+    if title and #title > 0 then
+      return title
+    end
+    return tab_info.active_pane.title
+  end
+
+  local title = tab_title(tab)
+  title = " " .. title .. " "
+  return wezterm.truncate_right(title, max_width)
+end
+
 local function format_status(windows, available_cols, total_cols, tab_bar_width, window)
   local scheme = wezterm.get_builtin_color_schemes()[window:effective_config().color_scheme]
   local colors = {
@@ -173,6 +187,24 @@ function M.on_update_status(window, pane)
   local tab_bar_width = compute_tab_bar_width(window)
   local available_cols = math.max(cols - tab_bar_width, 0)
   window:set_right_status(format_status(windows, available_cols, cols, tab_bar_width, window))
+end
+
+function M.setup(c)
+  c.show_tab_index_in_tab_bar = false
+
+  wezterm.on("user-var-changed", function(_, _, name, value)
+    if name == "tmux_windows" then
+      M.on_user_var_changed(name, value)
+    end
+  end)
+
+  wezterm.on("update-status", function(window, pane)
+    M.on_update_status(window, pane)
+  end)
+
+  wezterm.on("format-tab-title", function(tab, _, _, _, _, max_width)
+    return M.format_tab_title(tab, max_width)
+  end)
 end
 
 return M
