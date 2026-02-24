@@ -44,7 +44,7 @@ alias gp='git pull'
 alias gpra='git pull --rebase --autostash'
 alias gr='git remote'
 alias gsh='git stash'
-alias gst='git status'
+alias gst='git status -sb'
 alias gsw='git switch'
 alias gwt='git worktree'
 
