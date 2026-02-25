@@ -59,6 +59,9 @@ return {
           end,
         },
       },
+      default_format_opts = {
+        lsp_format = "fallback",
+      },
     },
     init = function()
       -- formatexpr (i.e. gq), no opts?
