@@ -23,8 +23,24 @@ local keys = {
   { "<leader>gp", "<cmd>Gitsigns preview_hunk<cr>", desc = "Preview Hunk" },
   { "<leader>gq", "<cmd>Gitsigns setloclist<cr>", desc = "Hunks in Loclist" },
   { "<leader>gr", "<cmd>Gitsigns reset_hunk<cr>", desc = "Reset Hunk" },
+  {
+    "<leader>gr",
+    function()
+      require("gitsigns").reset_hunk({ vim.fn.line("."), vim.fn.line("v") })
+    end,
+    mode = "v",
+    desc = "Reset Hunk",
+  },
   { "<leader>gR", "<cmd>Gitsigns reset_buffer<cr>", desc = "Reset Buffer" },
   { "<leader>gs", "<cmd>Gitsigns stage_hunk<cr>", desc = "Stage Hunk" },
+  {
+    "<leader>gs",
+    function()
+      require("gitsigns").stage_hunk({ vim.fn.line("."), vim.fn.line("v") })
+    end,
+    mode = "v",
+    desc = "Stage Hunk",
+  },
   { "<leader>gS", "<cmd>Gitsigns stage_buffer<cr>", desc = "Stage Buffer" },
   { "<leader>gu", "<cmd>Gitsigns undo_stage_hunk<cr>", desc = "Undo Stage Hunk" },
   -- <leader>t
