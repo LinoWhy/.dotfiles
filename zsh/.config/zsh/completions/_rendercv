@@ -1,0 +1,7 @@
+#compdef rendercv
+
+_rendercv_completion() {
+  eval $(env _TYPER_COMPLETE_ARGS="${words[1,$CURRENT]}" _RENDERCV_COMPLETE=complete_zsh rendercv)
+}
+
+compdef _rendercv_completion rendercv
