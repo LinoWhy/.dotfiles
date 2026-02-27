@@ -21,19 +21,6 @@ HISTFILESIZE=2000
 ################################################################################
 # Aliases
 ################################################################################
-alias cat='bat -p'
-alias f='fzf'
-alias fdd='fd --hidden --no-ignore'
-alias g='git'
-alias hex='hexyl'
-alias lzd='lazydocker'
-alias lzg='lazygit'
-alias nv='nvim'
-alias open='xdg-open'
-alias sudoo='sudo -E'
-alias t='tmux'
-alias z='__zoxide_zi'
-
 # ls
 alias l='lsd -l'
 alias la='lsd -lA'
@@ -43,10 +30,6 @@ alias ls='lsd'
 alias lt='lsd --tree'
 alias lta='lsd --tree -a'
 alias ltt='lsd --tree --depth'
-
-# confirm before overwriting something
-# alias cp='cp -i'
-# alias mv='mv -i'
 
 # git
 git_log_format="%C(auto)%h%d %s %C(black)%C(bold)%cr%Creset %Cblue[%an]" # relative commit data & author name
@@ -110,25 +93,16 @@ function bell_checked() {
     bell
   fi
 }
-
-function __tmux_wezterm_sync_cwd() {
-  if [[ -z "$TMUX" ]]; then
-    return
-  fi
-  "$HOME/.config/tmux/list_clients_windows_hook.sh" "$(tmux display-message -p "#{client_tty}")"
-}
 ################################################################################
 # Other tools
 ################################################################################
-[ -f $HOME/.cargo/env ] && . "$HOME/.cargo/env"
+export PATH="$HOME/.local/bin:$PATH"
 
 eval "$(fzf --bash)"
-
-export PATH="$HOME/.local/bin:$PATH"
 
 # vivid to generate colorized output
 export LS_COLORS="$(vivid generate catppuccin-mocha)"
 
 eval "$(zoxide init --hook prompt bash)"
 eval "$(starship init bash)"
-PROMPT_COMMAND="bell_checked; __tmux_wezterm_sync_cwd; $PROMPT_COMMAND"
+PROMPT_COMMAND="bell_checked; $PROMPT_COMMAND"

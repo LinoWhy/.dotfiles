@@ -1,3 +1,4 @@
+alias bsh='env -i HOME="$HOME" TERM="$TERM" bash'
 alias cat='bat -p'
 alias f='fzf'
 alias fdd='fd --hidden --no-ignore'
