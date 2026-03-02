@@ -93,7 +93,9 @@ map({ "n", "x" }, "\\", "%")
 map("n", "<leader>w", "<cmd>w!<cr>", { desc = "Save" })
 map("n", "<leader>q", "<cmd>confirm q<cr>", { desc = "Quit" })
 map("n", "<leader>x", Utils.extra.execute_current_file, { desc = "Execute" })
-map("n", "<leader>c", function() Utils.buffer.remove_buffer() end, { desc = "Close Buffer" })
+map("n", "<leader>c", function()
+  Utils.buffer.remove_buffer()
+end, { desc = "Close Buffer" })
 map("i", "<C-l>", "<End>")
 
 -- Sudo write file
@@ -214,3 +216,15 @@ end, { desc = "Watch & Dispatch" })
 
 -- dec2hex the word under the cursor
 map("n", "<leader>N", Utils.number.show_number, { desc = "Show Number", silent = true })
+
+map("v", "<leader>y", function()
+  local start_line = vim.fn.line("v")
+  local end_line = vim.fn.line(".")
+  if start_line > end_line then
+    start_line, end_line = end_line, start_line
+  end
+  local path = vim.fn.expand("%")
+  local output = string.format("@%s#%d-%d", path, start_line, end_line)
+  vim.fn.setreg("+", output)
+  vim.notify(output, vim.log.levels.INFO)
+end, { desc = "Copy path with line range" })
