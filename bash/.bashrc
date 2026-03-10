@@ -93,11 +93,32 @@ function bell_checked() {
     bell
   fi
 }
+
+################################################################################
+# Environment
+################################################################################
+# XDG Paths
+export XDG_CONFIG_HOME=$HOME/.config
+export XDG_CACHE_HOME=$HOME/.cache
+export XDG_DATA_HOME=$HOME/.local/share
+export XDG_STATE_HOME=$HOME/.local/state
+
+# editor
+export EDITOR=nvim
+export VISUAL="nvim"
+export MANPAGER='nvim +Man!'
+
+export PATH="$HOME/.local/bin:$PATH"
+
+# ensure compile_commands.json is always generated
+export CMAKE_EXPORT_COMPILE_COMMANDS=1
+
+# ensure truecolor over SSH
+export COLORTERM=truecolor
+
 ################################################################################
 # Other tools
 ################################################################################
-export PATH="$HOME/.local/bin:$PATH"
-
 eval "$(fzf --bash)"
 
 # vivid to generate colorized output
