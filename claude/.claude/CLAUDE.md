@@ -13,4 +13,3 @@
 ## 3. Documentation Format
 
 在输出 markdown 文档之后，尝试一次使用 `prettier` 格式化。
-
