@@ -30,7 +30,7 @@ end
 
 -- Config LSP
 function M.config()
-  vim.lsp.set_log_level("ERROR")
+  vim.lsp.log.set_level("ERROR")
 end
 
 return M
