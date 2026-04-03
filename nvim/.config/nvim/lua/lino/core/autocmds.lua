@@ -2,7 +2,7 @@
 vim.api.nvim_create_autocmd("TextYankPost", {
   group = Utils.extra.augroup("highlight_yank"),
   callback = function()
-    vim.highlight.on_yank({ higroup = "Search" })
+    (vim.hl or vim.highlight).on_yank({ higroup = "Search" })
   end,
 })
 
