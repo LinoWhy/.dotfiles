@@ -75,31 +75,35 @@ return {
     opts = {
       servers = {
         rust_analyzer = {
-          server_skip = true, -- rustaceanvim configures lsp automatically
+          meta = {
+            skip = true, -- rustaceanvim configures lsp automatically
+          },
         },
         -- toml
         taplo = {
-          server_keys = {
-            ["K"] = {
-              mode = "n",
-              rhs = function()
-                if vim.fn.expand("%:t") == "Cargo.toml" and require("crates").popup_available() then
-                  require("crates").show_popup()
-                else
-                  vim.lsp.buf.hover()
-                end
-              end,
-              desc = "Show Hover",
-            },
-            ["<leader>rf"] = {
-              mode = "n",
-              rhs = "<cmd>lua require('crates').show_features_popup()<cr>",
-              desc = "[crates] show features",
-            },
-            ["<leader>rd"] = {
-              mode = "n",
-              rhs = "<cmd>lua require('crates').show_dependencies_popup()<cr>",
-              desc = "[crates] show dependencies",
+          meta = {
+            keys = {
+              ["K"] = {
+                mode = "n",
+                rhs = function()
+                  if vim.fn.expand("%:t") == "Cargo.toml" and require("crates").popup_available() then
+                    require("crates").show_popup()
+                  else
+                    vim.lsp.buf.hover()
+                  end
+                end,
+                desc = "Show Hover",
+              },
+              ["<leader>rf"] = {
+                mode = "n",
+                rhs = "<cmd>lua require('crates').show_features_popup()<cr>",
+                desc = "[crates] show features",
+              },
+              ["<leader>rd"] = {
+                mode = "n",
+                rhs = "<cmd>lua require('crates').show_dependencies_popup()<cr>",
+                desc = "[crates] show dependencies",
+              },
             },
           },
         },

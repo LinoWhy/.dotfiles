@@ -13,24 +13,24 @@ return {
     -- Other LSP servers are setup under "lang"
     servers = {
       lua_ls = {
-        -- merged with common_keys, key = { mode, rhs, desc }
-        -- NOTE: A key with different mode may be overridden
-        server_keys = {},
-        -- invoked after common_on_attach, nil or function(client, bufnr)
-        server_attach = nil,
-        -- merged with cmp capabilities
-        server_capabilities = {},
-        -- server sertup function, nil or functio(server_opts)
-        server_setup = nil,
-        -- true to skip the default server configuration
-        server_skip = false,
-        -- Below configs are passed to server.setup(), see lspconfig-setup
-        -- on_init settings
-        settings = {
-          Lua = {
-            workspace = { checkThirdParty = false },
-            completion = { callSnippet = "Replace" },
-            format = { enable = true },
+        meta = {
+          -- merged with common keys, key = { mode, rhs, desc }
+          -- NOTE: A key with different mode may be overridden
+          keys = {},
+          -- merged with cmp capabilities
+          capabilities = {},
+          -- server setup function, nil or function(lsp_opts)
+          setup = nil,
+          -- true to skip the default server configuration
+          skip = false,
+        },
+        lsp = {
+          settings = {
+            Lua = {
+              workspace = { checkThirdParty = false },
+              completion = { callSnippet = "Replace" },
+              format = { enable = true },
+            },
           },
         },
       },
@@ -44,7 +44,7 @@ return {
 
     -- Merge cmp & server configured capabilities
     local has_cmp, cmp_nvim_lsp = pcall(require, "cmp_nvim_lsp")
-    local capabilities = vim.tbl_deep_extend(
+    local base_capabilities = vim.tbl_deep_extend(
       "force",
       {},
       vim.lsp.protocol.make_client_capabilities(),
@@ -54,44 +54,46 @@ return {
 
     -- Setup server
     for server, server_opts in pairs(opts.servers) do
-      if server_opts.server_skip then
+      local meta = {}
+      local lsp_opts = {}
+
+      if next(server_opts or {}) ~= nil then
+        if server_opts.meta == nil and server_opts.lsp == nil then
+          error(("Invalid LSP config for %s: use {} for defaults or { meta = ..., lsp = ... }"):format(server))
+        end
+        meta = server_opts.meta or {}
+        lsp_opts = vim.tbl_deep_extend("force", {}, server_opts.lsp or {})
+      end
+
+      if meta.skip then
         goto continue
       end
 
-      -- Invoke common_on_attach first, then server specific callback if configured
-      local on_attach = function(client, bufnr)
+      local user_on_attach = lsp_opts.on_attach
+
+      lsp_opts.capabilities = vim.tbl_deep_extend(
+        "force",
+        vim.deepcopy(base_capabilities),
+        lsp_opts.capabilities or {},
+        meta.capabilities or {}
+      )
+
+      lsp_opts.on_attach = function(client, bufnr)
         common_config.on_attach(client, bufnr)
 
-        if type(server_opts.server_attach) == "function" then
-          server_opts.server_attach()
+        if type(user_on_attach) == "function" then
+          user_on_attach(client, bufnr)
         end
 
         -- Merge and setup buffer local keymaps
-        local keys = vim.tbl_deep_extend("keep", server_opts.server_keys or {}, common_config.keys)
+        local keys = vim.tbl_deep_extend("keep", meta.keys or {}, common_config.keys)
         common_config.buf_map(bufnr, keys)
       end
 
-      -- NOTE: The on_attach will override nvim-lspconfig's on_attach function. So create an autocmd to call the
-      -- on_attach function. Need to refine the complete lsp config later.
-      vim.api.nvim_create_autocmd("LspAttach", {
-        callback = function(args)
-          local buffer = args.buf ---@type number
-          local client = vim.lsp.get_client_by_id(args.data.client_id)
-          if client then
-            return on_attach(client, buffer)
-          end
-        end,
-      })
-
-      -- NOTE: deepcopy fix some weird behavior with cmp capabilities
-      local opt = vim.tbl_deep_extend("force", {
-        capabilities = vim.deepcopy(capabilities),
-      }, server_opts or {})
-
-      if type(server_opts.server_setup) == "function" then
-        server_opts.server_setup(opt)
+      if type(meta.setup) == "function" then
+        meta.setup(lsp_opts)
       else
-        vim.lsp.config(server, server_opts)
+        vim.lsp.config(server, lsp_opts)
         vim.lsp.enable(server)
       end
 

@@ -15,9 +15,11 @@ return {
         vimls = {},
         yamlls = {},
         marksman = {
-          server_attach = function()
-            Utils.diag.set_level(vim.diagnostic.severity.ERROR)()
-          end,
+          lsp = {
+            on_attach = function()
+              Utils.diag.set_level(vim.diagnostic.severity.ERROR)()
+            end,
+          },
         },
       },
     },
