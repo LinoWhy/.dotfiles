@@ -2,7 +2,6 @@
 
 !.gitignore
 !AGENTS.md
-!prompts/
 !skills
 !skills/**
 skills/.system
