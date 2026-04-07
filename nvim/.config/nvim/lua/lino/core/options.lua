@@ -50,6 +50,7 @@ opt.listchars:append("lead:⋅") -- ⋅🞄⚬
 opt.listchars:append("trail:●")
 opt.listchars:append("extends:>")
 opt.listchars:append("precedes:<")
+opt.fillchars:append({ eob = " " })
 
 -- fold
 opt.foldmethod = "indent"

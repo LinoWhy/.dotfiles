@@ -4,7 +4,7 @@ vim.g.maplocalleader = ","
 
 _G.Lino = {}
 
-Lino.colorscheme = "catppuccin-macchiato"
+Lino.colorscheme = "catppuccin-nvim"
 Lino.diagnose_virtual_text = false
 Lino.diagnose_severity_level = vim.diagnostic.severity.HINT
 Lino.inlay_hints = true
