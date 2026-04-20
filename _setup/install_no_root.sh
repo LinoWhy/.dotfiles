@@ -36,7 +36,7 @@ sudo apt install -y zsh
 cd ~/personal && wget https://raw.githubusercontent.com/zap-zsh/zap/master/install.zsh &&
   touch ~/.zshrc && zsh install.zsh --branch release-v1 -k &&
   rm install.zsh &&
-  mv ~/.bashrc ~/.bashrc.bak && mkdir -p ~/.cargo && cd ~/.dotfiles && ${STOW:-stow} -v */
+  mv ~/.bashrc ~/.bashrc.bak && cd ~/.dotfiles && STOW="${STOW:-stow}" ./stow-install.sh
 
 chsh -s $(which zsh)
 

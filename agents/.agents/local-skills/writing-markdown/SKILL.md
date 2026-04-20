@@ -50,7 +50,7 @@ display_width(字符串) = 各字符宽度之和
 写完后用脚本检测:
 
 ```bash
-python3 ~/.codex/skills/writing-markdown/check_alignment.py <file.md>
+python3 ~/.agents/local-skills/writing-markdown/check_alignment.py <file.md>
 ```
 
 ---
