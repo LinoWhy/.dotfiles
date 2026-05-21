@@ -130,10 +130,10 @@ c.keys = {
   -- pane & navigate
   { key = "_", mods = "SHIFT|CTRL", action = act.SplitVertical({ domain = "CurrentPaneDomain" }) },
   { key = "|", mods = "SHIFT|CTRL", action = act.SplitHorizontal({ domain = "CurrentPaneDomain" }) },
-  { key = "h", mods = "SHIFT|CTRL", action = act.ActivatePaneDirection("Left") },
-  { key = "l", mods = "SHIFT|CTRL", action = act.ActivatePaneDirection("Right") },
-  { key = "k", mods = "SHIFT|CTRL", action = act.ActivatePaneDirection("Up") },
-  { key = "j", mods = "SHIFT|CTRL", action = act.ActivatePaneDirection("Down") },
+  { key = "H", mods = "SHIFT|CTRL", action = act.ActivatePaneDirection("Left") },
+  { key = "L", mods = "SHIFT|CTRL", action = act.ActivatePaneDirection("Right") },
+  { key = "K", mods = "SHIFT|CTRL", action = act.ActivatePaneDirection("Up") },
+  { key = "J", mods = "SHIFT|CTRL", action = act.ActivatePaneDirection("Down") },
   -- command palette
   { key = "P", mods = "SHIFT|CTRL", action = act.ActivateCommandPalette },
   -- font size
@@ -145,6 +145,14 @@ c.keys = {
   -- toggle color scheme
   { key = "R", mods = "SHIFT|CTRL", action = toggle_color_scheme() },
   { key = "B", mods = "SHIFT|CTRL", action = toggle_tab_bar() },
+  -- quick select
+  { key = "Q", mods = "SHIFT|CTRL", action = act.QuickSelect },
+}
+
+-- Additional quick select patterns
+c.quick_select_patterns = {
+  '"[^"]+"', -- signle quote included
+  "'[^']+'", -- double quote included
 }
 
 -- tmux_windows.setup(c)
