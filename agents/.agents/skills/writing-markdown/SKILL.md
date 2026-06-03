@@ -1,6 +1,6 @@
 ---
 name: writing-markdown
-description: Use when creating, editing, or formatting Markdown documents. Always format Markdown with prettier after writing or changing it. If the document contains ASCII art, box-drawing diagrams, mixed CJK/ASCII aligned text, or the user reports terminal display alignment issues, also apply the alignment rules and validation workflow.
+description: "ALWAYS invoke after writing or modifying ANY .md file, regardless of the top-level task — including when markdown is a side-effect of code analysis, knowledge extraction, or any other workflow."
 ---
 
 # Markdown 文档写作规范
