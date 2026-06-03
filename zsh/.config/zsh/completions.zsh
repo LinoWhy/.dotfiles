@@ -10,7 +10,8 @@ fpath=("$ZDOTDIR/completions" $fpath)
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
 
 # load completion
+mkdir -p "$XDG_CACHE_HOME/zsh"
 autoload -U +X bashcompinit && bashcompinit
-autoload -Uz compinit && compinit
+autoload -Uz compinit && compinit -d "$XDG_CACHE_HOME/zsh/zcompdump"
 
 # Reference: https://zsh.sourceforge.io/Guide/zshguide06.html
