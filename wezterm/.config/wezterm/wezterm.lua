@@ -40,6 +40,15 @@ local function switch_tab_and_ime(relative)
   end)
 end
 
+local function spawn_tab_and_switch_ime()
+  return wezterm.action_callback(function(window, pane)
+    window:perform_action(act.SpawnTab("CurrentPaneDomain"), pane)
+    if type(switch_ime) == "function" then
+      switch_ime("EN")
+    end
+  end)
+end
+
 local use_color_scheme = true
 local function toggle_color_scheme()
   return wezterm.action_callback(function(window, _)
@@ -118,7 +127,7 @@ c.disable_default_key_bindings = true
 c.keys = {
   -- spawn & close
   { key = "N", mods = "SHIFT|CTRL", action = act.SpawnWindow },
-  { key = "T", mods = "SHIFT|CTRL", action = act.SpawnTab("CurrentPaneDomain") },
+  { key = "T", mods = "SHIFT|CTRL", action = spawn_tab_and_switch_ime() },
   { key = "W", mods = "SHIFT|CTRL", action = act.CloseCurrentTab({ confirm = false }) },
   -- tab navigate
   { key = "Tab", mods = "CTRL", action = switch_tab_and_ime(1) },
