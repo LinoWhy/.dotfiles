@@ -3,6 +3,8 @@ vim.cmd("setlocal wrap")
 vim.cmd("setlocal spell")
 vim.cmd("setlocal spelllang=en_us,cjk")
 
+Utils.diag.set_level(vim.diagnostic.severity.ERROR)()
+
 vim.opt_local.foldmethod = "expr"
 vim.opt_local.foldexpr = "v:lua.vim.treesitter.foldexpr()"
 
