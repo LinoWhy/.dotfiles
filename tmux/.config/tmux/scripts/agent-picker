@@ -1,0 +1,69 @@
+#!/usr/bin/env sh
+set -eu
+
+message() {
+    printf 'agent-picker: %s\n' "$1" >&2
+    tmux display-message "agent-picker: $1" 2>/dev/null || true
+}
+
+command -v fzf >/dev/null 2>&1 || {
+    message 'fzf not found'
+    exit 1
+}
+
+rows=$(
+    tmux list-panes -a \
+        -F '#{pane_id}|#{session_id}|#{window_id}|#{pane_current_command}|#{session_name}:#{window_index}.#{pane_index}|#{pane_current_path}' |
+        awk -F '|' -v home="${HOME:-}" '
+BEGIN {
+    split("claude codex", names, " ")
+    for (i in names) agents[names[i]] = 1
+}
+{
+    command = tolower($4)
+    sub(/^.*\//, "", command)
+    sub(/^-/, "", command)
+    path = $6
+    if (home != "") {
+        if (path == home)
+            path = "~"
+        else if (index(path, home "/") == 1)
+            path = "~" substr(path, length(home) + 1)
+    }
+
+    for (agent in agents) {
+        if (command == agent || index(command, agent "-") == 1) {
+            print $1 "|" $2 "|" $3 "|" agent " | " $5 " | " path
+            next
+        }
+    }
+}'
+)
+
+[ -n "$rows" ] || {
+    message 'no agent panes'
+    exit 0
+}
+
+selected=$(
+    printf '%s\n' "$rows" |
+        fzf \
+            --delimiter='|' \
+            --with-nth=4.. \
+            --layout=reverse \
+            --prompt='agent > ' || true
+)
+[ -n "$selected" ] || exit 0
+
+IFS='|' read -r pane session window _ <<EOF
+$selected
+EOF
+
+tmux display-message -p -t "$pane" '#{pane_id}' >/dev/null 2>&1 || {
+    message 'pane disappeared'
+    exit 0
+}
+
+tmux switch-client -t "$session"
+tmux select-window -t "$window"
+tmux select-pane -t "$pane"
