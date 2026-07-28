@@ -48,7 +48,7 @@ BEGIN {
     }
 }
 END {
-    format = "%-" agent_width "s | %-" target_width "s | %s\n"
+    format = "%-" agent_width "s │ %-" target_width "s │ %s\n"
     for (i = 1; i <= count; i++) {
         printf "%s%s%s%s%s%s", pane[i], tab, session[i], tab, window[i], tab
         printf format, agent_name[i], target[i], pane_path[i]
