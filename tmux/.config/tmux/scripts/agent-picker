@@ -16,6 +16,7 @@ rows=$(
         -F '#{pane_id}|#{session_id}|#{window_id}|#{pane_current_command}|#{session_name}:#{window_index}.#{pane_index}|#{pane_current_path}' |
         awk -F '|' -v home="${HOME:-}" '
 BEGIN {
+    tab = sprintf("%c", 9)
     split("claude codex", names, " ")
     for (i in names) agents[names[i]] = 1
 }
@@ -33,9 +34,24 @@ BEGIN {
 
     for (agent in agents) {
         if (command == agent || index(command, agent "-") == 1) {
-            print $1 "|" $2 "|" $3 "|" agent " | " $5 " | " path
+            count++
+            pane[count] = $1
+            session[count] = $2
+            window[count] = $3
+            agent_name[count] = agent
+            target[count] = $5
+            pane_path[count] = path
+            if (length(agent) > agent_width) agent_width = length(agent)
+            if (length($5) > target_width) target_width = length($5)
             next
         }
+    }
+}
+END {
+    format = "%-" agent_width "s | %-" target_width "s | %s\n"
+    for (i = 1; i <= count; i++) {
+        printf "%s%s%s%s%s%s", pane[i], tab, session[i], tab, window[i], tab
+        printf format, agent_name[i], target[i], pane_path[i]
     }
 }'
 )
@@ -48,14 +64,15 @@ BEGIN {
 selected=$(
     printf '%s\n' "$rows" |
         fzf \
-            --delimiter='|' \
+            --delimiter='\t' \
             --with-nth=4.. \
             --layout=reverse \
             --prompt='agent > ' || true
 )
 [ -n "$selected" ] || exit 0
 
-IFS='|' read -r pane session window _ <<EOF
+tab=$(printf '\t')
+IFS="$tab" read -r pane session window _ <<EOF
 $selected
 EOF
 
