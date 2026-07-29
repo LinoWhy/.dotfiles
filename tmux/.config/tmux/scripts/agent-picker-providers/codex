@@ -1,6 +1,12 @@
 #!/usr/bin/env sh
 set -eu
 
+file_mtime() {
+    stat -c '%Y' "$1" 2>/dev/null ||
+        stat -f '%m' "$1" 2>/dev/null ||
+        printf '0\n'
+}
+
 pane_rows=$(
     {
         tmux list-panes -a \
@@ -76,8 +82,11 @@ if [ -n "$pids" ] && command -v lsof >/dev/null 2>&1; then
     parts = split(uuid, segment, "-")
     if (parts == 5 && length(segment[1]) == 8 && length(segment[2]) == 4 && \
         length(segment[3]) == 4 && length(segment[4]) == 4 && length(segment[5]) == 12)
-        printf "%s\t%s\n", pid, uuid
-}'
+        printf "%s\t%s\t%s\n", pid, uuid, path
+}' |
+            while IFS="$(printf '\t')" read -r pid uuid path; do
+                printf '%s\t%s\t%s\n' "$pid" "$(file_mtime "$path")" "$uuid"
+            done
     )
 fi
 
@@ -96,7 +105,7 @@ fi
 
 {
     printf '%s\n' "$pane_rows" | awk -F '\t' 'NF >= 6 { print "pane\t" $0 }'
-    printf '%s\n' "$rollout_rows" | awk -F '\t' 'NF >= 2 { print "rollout\t" $0 }'
+    printf '%s\n' "$rollout_rows" | awk -F '\t' 'NF >= 3 { print "rollout\t" $0 }'
     printf '%s\n' "$name_rows" | awk -F '\t' 'NF >= 2 { print "name\t" $0 }'
 } |
     awk -F '\t' '
@@ -111,7 +120,10 @@ $1 == "pane" {
     next
 }
 $1 == "rollout" {
-    session_by_pid[$2] = $3
+    if (!($2 in newest_mtime) || $3 > newest_mtime[$2]) {
+        newest_mtime[$2] = $3
+        session_by_pid[$2] = $4
+    }
     next
 }
 $1 == "name" {
