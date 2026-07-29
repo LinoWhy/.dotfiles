@@ -1,0 +1,61 @@
+#!/usr/bin/env sh
+set -eu
+
+sessions_dir="${HOME:-}/.claude/sessions"
+[ -d "$sessions_dir" ] || exit 0
+command -v jq >/dev/null 2>&1 || {
+    printf 'agent-picker: jq not found; Claude sessions unavailable\n' >&2
+    exit 0
+}
+
+set -- "$sessions_dir"/*.json
+[ -f "$1" ] || exit 0
+
+{
+    tmux list-panes -a \
+        -F '#{pane_id}|#{session_id}|#{window_id}|#{pane_pid}|#{session_name}:#{window_index}.#{pane_index}|#{pane_current_path}' |
+        awk -F '|' '{ printf "pane\t%s\t%s\t%s\t%s\t%s\t%s\n", $1, $2, $3, $4, $5, $6 }'
+
+    ps -axo pid=,ppid= |
+        awk '{ printf "process\t%s\t%s\n", $1, $2 }'
+
+    jq -r '
+        [
+            "session",
+            (.pid | tostring),
+            ((.name // "") | gsub("[\\t\\r\\n]"; " "))
+        ] | @tsv
+    ' "$@"
+} |
+    awk -F '\t' '
+$1 == "pane" {
+    pane_by_pid[$5] = $2
+    pane_session[$2] = $3
+    pane_window[$2] = $4
+    pane_target[$2] = $6
+    pane_path[$2] = $7
+    next
+}
+$1 == "process" {
+    parent[$2] = $3
+    next
+}
+$1 == "session" {
+    session_count++
+    session_pid[session_count] = $2
+    session_name[session_count] = $3
+}
+END {
+    for (i = 1; i <= session_count; i++) {
+        pid = session_pid[i]
+        while (!(pid in pane_by_pid) && pid in parent && parent[pid] != pid && parent[pid] != 0)
+            pid = parent[pid]
+
+        if (pid in pane_by_pid) {
+            pane = pane_by_pid[pid]
+            printf "%s\t%s\t%s\tclaude\t%s\t%s\t%s\n", \
+                pane, pane_session[pane], pane_window[pane], \
+                session_name[i], pane_target[pane], pane_path[pane]
+        }
+    }
+}'
