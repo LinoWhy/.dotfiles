@@ -31,13 +31,6 @@ jq -sc \
             end;
         climb($pid);
 
-    def picker_status:
-        if . == "idle" then "idle"
-        elif . == "busy" or . == "shell" then "working"
-        elif . == "waiting" then "approval"
-        else "idle"
-        end;
-
     .[] |
     select(.pid != null) |
     (.pid | tostring) as $pid |
@@ -49,7 +42,6 @@ jq -sc \
         window_id: $pane.window_id,
         agent: "claude",
         name: (.name // ""),
-        status: ((.status // "") | picker_status),
         target: $pane.target,
         path: $pane.path
     }

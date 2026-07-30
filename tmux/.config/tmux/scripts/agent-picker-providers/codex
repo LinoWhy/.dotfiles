@@ -7,87 +7,6 @@ file_mtime() {
         printf '0\n'
 }
 
-rollout_status() {
-    source=$1
-
-    # Rollout files can be large. The current state is represented near the
-    # end, so parse a bounded snapshot instead of scanning the full session.
-    tail -n 600 "$source" 2>/dev/null |
-        jq -Rr '
-            def call_args:
-                (.payload.input // .payload.arguments // {}) |
-                if type == "string" then (try fromjson catch {}) else . end;
-            def requires_approval:
-                .payload.name == "request_user_input" or
-                (call_args.sandbox_permissions // "") == "require_escalated" or
-                (
-                    .payload.name == "exec" and
-                    ((.payload.input // "") | test(
-                        "sandbox_permissions[[:space:]]*:[[:space:]]*[\\\"\\x27]require_escalated"
-                    ))
-                );
-
-            fromjson? |
-            if .type == "event_msg" and .payload.type == "task_started" then
-                "working"
-            elif .type == "event_msg" and
-                 (.payload.type == "task_complete" or
-                  .payload.type == "turn_aborted" or
-                  .payload.type == "thread_rolled_back") then
-                "idle"
-            elif .type == "response_item" and
-                 (.payload.type == "function_call_output" or
-                  .payload.type == "custom_tool_call_output") then
-                ["resolved", (.payload.call_id // "")] | @tsv
-            elif .type == "response_item" and
-                 (.payload.type == "function_call" or
-                  .payload.type == "custom_tool_call") then
-                if requires_approval then
-                    ["approval", (.payload.call_id // "")] | @tsv
-                else
-                    "working"
-                end
-            elif .type == "response_item" and
-                 (.payload.type == "reasoning" or
-                  (.payload.type == "message" and
-                   (.payload.role == "assistant" or .payload.role == "user"))) then
-                "working"
-            elif .type == "event_msg" and
-                 (.payload.type == "agent_message" or
-                  .payload.type == "user_message") then
-                "working"
-            else
-                empty
-            end
-        ' 2>/dev/null |
-        awk -F '\t' '
-$1 == "idle" {
-    state = "idle"
-    delete pending
-    next
-}
-$1 == "working" {
-    state = "working"
-    next
-}
-$1 == "approval" {
-    state = "working"
-    if ($2 != "") pending[$2] = 1
-    next
-}
-$1 == "resolved" {
-    state = "working"
-    if ($2 != "") delete pending[$2]
-}
-END {
-    for (call_id in pending) {
-        print "approval"
-        exit
-    }
-    print (state == "" ? "idle" : state)
-}'
-}
-
 runtime_dir=${1:?usage: codex RUNTIME_DIR}
 panes_file="$runtime_dir/panes.jsonl"
 processes_file="$runtime_dir/processes.jsonl"
@@ -102,7 +21,6 @@ trap 'rm -rf "$work_dir"' EXIT HUP INT TERM
 candidates_file="$work_dir/candidates.jsonl"
 rollout_candidates_file="$work_dir/rollout-candidates.tsv"
 rollouts_file="$work_dir/rollouts.json"
-statuses_file="$work_dir/statuses.tsv"
 names_file="$work_dir/names.json"
 
 jq -cn \
@@ -175,12 +93,6 @@ jq -Rn '
     map(max_by(.mtime) | del(.mtime))
 ' "$rollout_candidates_file" >"$rollouts_file"
 
-: >"$statuses_file"
-jq -r '.[] | [.pid, .path] | @tsv' "$rollouts_file" |
-    while IFS="$(printf '\t')" read -r pid path; do
-        printf '%s\t%s\n' "$pid" "$(rollout_status "$path")" >>"$statuses_file"
-    done
-
 if [ -f "$index_file" ]; then
     jq -sc '
         reduce .[] as $session ({}; .[$session.id] = ($session.thread_name // ""))
@@ -192,14 +104,8 @@ fi
 jq -cn \
     --slurpfile candidates "$candidates_file" \
     --slurpfile rollouts "$rollouts_file" \
-    --rawfile statuses "$statuses_file" \
     --slurpfile names "$names_file" '
     ($rollouts[0] | map({key: .pid, value: .}) | from_entries) as $rollout_by_pid |
-    ($statuses |
-        split("\n") |
-        map(select(length > 0) | split("\t") | {key: .[0], value: .[1]}) |
-        from_entries
-    ) as $status_by_pid |
     ($names[0]) as $name_by_session |
 
     $candidates[] |
@@ -212,7 +118,6 @@ jq -cn \
         window_id: $pane.window_id,
         agent: "codex",
         name: ($name_by_session[$rollout_session] // ""),
-        status: ($status_by_pid[$pane.pid] // "idle"),
         target: $pane.target,
         path: $pane.path
     }

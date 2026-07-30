@@ -71,9 +71,8 @@ rows=$(
             select(type == "object") |
             . as $row |
             select(
-                (["pane_id", "session_id", "window_id", "agent", "name", "status", "target", "path"] | all(. as $key | $row[$key] | type == "string")) and
-                (.agent == "codex" or .agent == "claude") and
-                (.status == "idle" or .status == "working" or .status == "approval")
+                (["pane_id", "session_id", "window_id", "agent", "name", "target", "path"] | all(. as $key | $row[$key] | type == "string")) and
+                (.agent == "codex" or .agent == "claude")
             ) |
             .path as $path |
             if $home != "" and $path == $home then .path = "~"
@@ -83,27 +82,23 @@ rows=$(
             .name |= gsub("[\\t\\r\\n]"; " ") |
             .target |= gsub("[\\t\\r\\n]"; " ") |
             .path |= gsub("[\\t\\r\\n]"; " ") |
-            [.pane_id, .session_id, .window_id, .agent, .status, .name, .target, .path] | @tsv
+            [.pane_id, .session_id, .window_id, .agent, .name, .target, .path] | @tsv
         ' 2>/dev/null |
         awk -F '\t' -v codex_color="$codex_color" -v claude_color="$claude_color" '
 BEGIN {
     color["codex"] = codex_color
     color["claude"] = claude_color
-    symbol["idle"] = ""
-    symbol["working"] = ""
-    symbol["approval"] = "◐"
     reset = sprintf("%c[0m", 27)
 }
-NF >= 8 {
+NF >= 7 {
     count++
     pane[count] = $1
     session[count] = $2
     window[count] = $3
     agent[count] = $4
-    status[count] = $5
-    name[count] = $6
-    target[count] = $7
-    path[count] = $8
+    name[count] = $5
+    target[count] = $6
+    path[count] = $7
 
     if (length(agent[count]) > agent_width) agent_width = length(agent[count])
     if (length(name[count]) > name_width) name_width = length(name[count])
@@ -111,11 +106,11 @@ NF >= 8 {
 }
 END {
     tab = sprintf("%c", 9)
-    format = "%s %-" agent_width "s │ %-" name_width "s │ %-" target_width "s │ %s"
+    format = "%-" agent_width "s │ %-" name_width "s │ %-" target_width "s │ %s"
     for (i = 1; i <= count; i++) {
         printf "%s%s%s%s%s%s", pane[i], tab, session[i], tab, window[i], tab
         printf "%s", color[agent[i]]
-        printf format, symbol[status[i]], agent[i], name[i], target[i], path[i]
+        printf format, agent[i], name[i], target[i], path[i]
         printf "%s\n", reset
     }
 }'
