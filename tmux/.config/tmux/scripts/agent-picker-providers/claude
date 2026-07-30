@@ -1,48 +1,53 @@
 #!/usr/bin/env sh
 set -eu
 
-runtime_dir=${1:?usage: claude RUNTIME_DIR}
-panes_file="$runtime_dir/panes.jsonl"
-processes_file="$runtime_dir/processes.jsonl"
 sessions_dir="${HOME:-}/.claude/sessions"
 
-[ -f "$panes_file" ] || exit 0
-[ -f "$processes_file" ] || exit 0
 [ -d "$sessions_dir" ] || exit 0
 command -v jq >/dev/null 2>&1 || exit 0
 
 set -- "$sessions_dir"/*.json
 [ -f "$1" ] || exit 0
 
-jq -sc \
-    --slurpfile panes "$panes_file" \
-    --slurpfile processes "$processes_file" '
-    ($panes | map({key: .pane_pid, value: .}) | from_entries) as $pane_by_pid |
-    ($processes | map({key: .pid, value: .ppid}) | from_entries) as $parent_by_pid |
+{
+    cat
+    jq -r '
+        [
+            "session",
+            (.pid | tostring),
+            ((.name // "") | gsub("[\\t\\r\\n]"; " "))
+        ] | @tsv
+    ' "$@"
+} |
+    awk -F '\t' '
+$1 == "pane" {
+    pane_by_pid[$5] = $2
+    pane_session[$2] = $3
+    pane_window[$2] = $4
+    pane_target[$2] = $7
+    pane_path[$2] = $8
+    next
+}
+$1 == "process" {
+    parent[$2] = $3
+    next
+}
+$1 == "session" {
+    session_count++
+    session_pid[session_count] = $2
+    session_name[session_count] = $3
+}
+END {
+    for (i = 1; i <= session_count; i++) {
+        pid = session_pid[i]
+        while (!(pid in pane_by_pid) && pid in parent && parent[pid] != pid && parent[pid] != 0)
+            pid = parent[pid]
 
-    def pane_for_pid($pid):
-        def climb($current):
-            if $pane_by_pid[$current] then $pane_by_pid[$current]
-            elif $parent_by_pid[$current]? and
-                 $parent_by_pid[$current] != $current and
-                 $parent_by_pid[$current] != "0" then
-                climb($parent_by_pid[$current])
-            else null
-            end;
-        climb($pid);
-
-    .[] |
-    select(.pid != null) |
-    (.pid | tostring) as $pid |
-    pane_for_pid($pid) as $pane |
-    select($pane != null) |
-    {
-        pane_id: $pane.pane_id,
-        session_id: $pane.session_id,
-        window_id: $pane.window_id,
-        agent: "claude",
-        name: (.name // ""),
-        target: $pane.target,
-        path: $pane.path
+        if (pid in pane_by_pid) {
+            pane = pane_by_pid[pid]
+            printf "%s\t%s\t%s\tclaude\t%s\t%s\t%s\n", \
+                pane, pane_session[pane], pane_window[pane], \
+                session_name[i], pane_target[pane], pane_path[pane]
+        }
     }
-' "$@"
+}'

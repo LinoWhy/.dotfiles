@@ -7,32 +7,24 @@ message() {
 }
 
 build_runtime() {
-    snapshot_dir=$1
-    panes_file="$snapshot_dir/panes.jsonl"
-    processes_file="$snapshot_dir/processes.jsonl"
     separator=$(printf '\034')
     format="#{pane_id}${separator}#{session_id}${separator}#{window_id}${separator}#{pane_pid}${separator}#{pane_current_command}${separator}#{session_name}${separator}#{window_index}${separator}#{pane_index}${separator}#{pane_current_path}"
 
     tmux list-panes -a -F "$format" |
-        jq -Rrc --arg separator "$separator" '
-            split($separator) |
-            select(length == 9) |
-            {
-                pane_id: .[0],
-                session_id: .[1],
-                window_id: .[2],
-                pane_pid: .[3],
-                command: .[4],
-                target: (.[5] + ":" + .[6] + "." + .[7]),
-                path: .[8]
-            }
-        ' >"$panes_file"
+        awk -F "$separator" 'BEGIN { OFS = "\t" }
+        NF == 9 {
+            gsub(/[\t\r\n]/, " ", $5)
+            gsub(/[\t\r\n]/, " ", $6)
+            gsub(/[\t\r\n]/, " ", $9)
+            print "pane", $1, $2, $3, $4, $5, $6 ":" $7 "." $8, $9
+        }'
 
     ps -axo pid=,ppid=,comm= |
-        jq -Rrc '
-            capture("^\\s*(?<pid>[0-9]+)\\s+(?<ppid>[0-9]+)\\s+(?<command>\\S+)") |
-            {pid, ppid, command}
-        ' >"$processes_file"
+        awk 'BEGIN { OFS = "\t" }
+        NF >= 3 {
+            gsub(/[\t\r\n]/, " ", $3)
+            print "process", $1, $2, $3
+        }'
 }
 
 command -v fzf >/dev/null 2>&1 || {
@@ -46,15 +38,15 @@ command -v jq >/dev/null 2>&1 || {
 
 script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 provider_dir="$script_dir/agent-picker-providers"
-runtime_dir=$(mktemp -d "${TMPDIR:-/tmp}/agent-picker.XXXXXX")
-trap 'rm -rf "$runtime_dir"' EXIT HUP INT TERM
-
-build_runtime "$runtime_dir"
+runtime_rows=$(build_runtime)
 
 raw_rows=$(
-    # Provider contract: PROVIDER RUNTIME_DIR -> one agent record per JSONL line.
+    # Runtime input (TSV):
+    #   pane, pane_id, session_id, window_id, pane_pid, command, target, path
+    #   process, pid, ppid, command
+    # Provider output (TSV): pane_id, session_id, window_id, agent, name, target, path
     for provider in codex claude; do
-        "$provider_dir/$provider" "$runtime_dir"
+        printf '%s\n' "$runtime_rows" | "$provider_dir/$provider"
     done
 )
 
@@ -64,33 +56,16 @@ claude_color=$(printf '\033[38;2;%d;%d;%dm' 0xF5 0xA9 0x7F)
 
 rows=$(
     printf '%s\n' "$raw_rows" |
-        jq -Rr \
-            --arg home "${HOME:-}" \
-            '
-            fromjson? |
-            select(type == "object") |
-            . as $row |
-            select(
-                (["pane_id", "session_id", "window_id", "agent", "name", "target", "path"] | all(. as $key | $row[$key] | type == "string")) and
-                (.agent == "codex" or .agent == "claude")
-            ) |
-            .path as $path |
-            if $home != "" and $path == $home then .path = "~"
-            elif $home != "" and ($path | startswith($home + "/")) then .path = "~" + ($path | ltrimstr($home))
-            else .
-            end |
-            .name |= gsub("[\\t\\r\\n]"; " ") |
-            .target |= gsub("[\\t\\r\\n]"; " ") |
-            .path |= gsub("[\\t\\r\\n]"; " ") |
-            [.pane_id, .session_id, .window_id, .agent, .name, .target, .path] | @tsv
-        ' 2>/dev/null |
-        awk -F '\t' -v codex_color="$codex_color" -v claude_color="$claude_color" '
+        awk -F '\t' \
+            -v home="${HOME:-}" \
+            -v codex_color="$codex_color" \
+            -v claude_color="$claude_color" '
 BEGIN {
     color["codex"] = codex_color
     color["claude"] = claude_color
     reset = sprintf("%c[0m", 27)
 }
-NF >= 7 {
+NF == 7 && ($4 == "codex" || $4 == "claude") {
     count++
     pane[count] = $1
     session[count] = $2
@@ -99,6 +74,16 @@ NF >= 7 {
     name[count] = $5
     target[count] = $6
     path[count] = $7
+
+    gsub(/[\t\r\n]/, " ", name[count])
+    gsub(/[\t\r\n]/, " ", target[count])
+    gsub(/[\t\r\n]/, " ", path[count])
+    if (home != "") {
+        if (path[count] == home)
+            path[count] = "~"
+        else if (index(path[count], home "/") == 1)
+            path[count] = "~" substr(path[count], length(home) + 1)
+    }
 
     if (length(agent[count]) > agent_width) agent_width = length(agent[count])
     if (length(name[count]) > name_width) name_width = length(name[count])
