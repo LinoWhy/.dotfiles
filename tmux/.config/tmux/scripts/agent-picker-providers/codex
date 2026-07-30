@@ -7,68 +7,141 @@ file_mtime() {
         printf '0\n'
 }
 
-pane_rows=$(
-    {
-        tmux list-panes -a \
-            -F '#{pane_id}|#{session_id}|#{window_id}|#{pane_pid}|#{pane_current_command}|#{session_name}:#{window_index}.#{pane_index}|#{pane_current_path}' |
-            awk -F '|' '{ printf "pane\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n", $1, $2, $3, $4, $5, $6, $7 }'
+rollout_status() {
+    source=$1
 
-        ps -axo pid=,ppid=,comm= |
-            awk '{ printf "process\t%s\t%s\t%s\n", $1, $2, $3 }'
-    } |
+    # Rollout files can be large. The current state is represented near the
+    # end, so parse a bounded snapshot instead of scanning the full session.
+    tail -n 600 "$source" 2>/dev/null |
+        jq -Rr '
+            def call_args:
+                (.payload.input // .payload.arguments // {}) |
+                if type == "string" then (try fromjson catch {}) else . end;
+            def requires_approval:
+                .payload.name == "request_user_input" or
+                (call_args.sandbox_permissions // "") == "require_escalated" or
+                (
+                    .payload.name == "exec" and
+                    ((.payload.input // "") | test(
+                        "sandbox_permissions[[:space:]]*:[[:space:]]*[\\\"\\x27]require_escalated"
+                    ))
+                );
+
+            fromjson? |
+            if .type == "event_msg" and .payload.type == "task_started" then
+                "working"
+            elif .type == "event_msg" and
+                 (.payload.type == "task_complete" or
+                  .payload.type == "turn_aborted" or
+                  .payload.type == "thread_rolled_back") then
+                "idle"
+            elif .type == "response_item" and
+                 (.payload.type == "function_call_output" or
+                  .payload.type == "custom_tool_call_output") then
+                ["resolved", (.payload.call_id // "")] | @tsv
+            elif .type == "response_item" and
+                 (.payload.type == "function_call" or
+                  .payload.type == "custom_tool_call") then
+                if requires_approval then
+                    ["approval", (.payload.call_id // "")] | @tsv
+                else
+                    "working"
+                end
+            elif .type == "response_item" and
+                 (.payload.type == "reasoning" or
+                  (.payload.type == "message" and
+                   (.payload.role == "assistant" or .payload.role == "user"))) then
+                "working"
+            elif .type == "event_msg" and
+                 (.payload.type == "agent_message" or
+                  .payload.type == "user_message") then
+                "working"
+            else
+                empty
+            end
+        ' 2>/dev/null |
         awk -F '\t' '
-$1 == "pane" {
-    command = tolower($6)
-    sub(/^.*\//, "", command)
-    sub(/^-/, "", command)
-    if (command != "codex" && index(command, "codex-") != 1)
-        next
-
-    pane_count++
-    pane_order[pane_count] = $2
-    pane_by_pid[$5] = $2
-    pane_session[$2] = $3
-    pane_window[$2] = $4
-    pane_target[$2] = $7
-    pane_path[$2] = $8
+$1 == "idle" {
+    state = "idle"
+    delete pending
     next
 }
-$1 == "process" {
-    parent[$2] = $3
-    command = tolower($4)
-    sub(/^.*\//, "", command)
-    if (command == "codex" || index(command, "codex-") == 1)
-        codex_process[$2] = 1
+$1 == "working" {
+    state = "working"
+    next
+}
+$1 == "approval" {
+    state = "working"
+    if ($2 != "") pending[$2] = 1
+    next
+}
+$1 == "resolved" {
+    state = "working"
+    if ($2 != "") delete pending[$2]
 }
 END {
-    for (pid in codex_process) {
-        ancestor = pid
-        while (!(ancestor in pane_by_pid) && ancestor in parent && parent[ancestor] != ancestor && parent[ancestor] != 0)
-            ancestor = parent[ancestor]
-
-        if (ancestor in pane_by_pid)
-            pane_codex_pid[pane_by_pid[ancestor]] = pid
+    for (call_id in pending) {
+        print "approval"
+        exit
     }
-
-    for (i = 1; i <= pane_count; i++) {
-        pane = pane_order[i]
-        printf "%s\t%s\t%s\t%s\t%s\t%s\n", \
-            pane, pane_session[pane], pane_window[pane], pane_codex_pid[pane], \
-            pane_target[pane], pane_path[pane]
-    }
+    print (state == "" ? "idle" : state)
 }'
-)
+}
 
-pids=$(
-    printf '%s\n' "$pane_rows" |
-        awk -F '\t' '$4 != "" && !seen[$4]++ { pids = pids separator $4; separator = "," } END { print pids }'
-)
+runtime_dir=${1:?usage: codex RUNTIME_DIR}
+panes_file="$runtime_dir/panes.jsonl"
+processes_file="$runtime_dir/processes.jsonl"
+index_file="${HOME:-}/.codex/session_index.jsonl"
 
-rollout_rows=''
+[ -f "$panes_file" ] || exit 0
+[ -f "$processes_file" ] || exit 0
+command -v jq >/dev/null 2>&1 || exit 0
+
+work_dir=$(mktemp -d "${TMPDIR:-/tmp}/agent-picker-codex.XXXXXX")
+trap 'rm -rf "$work_dir"' EXIT HUP INT TERM
+candidates_file="$work_dir/candidates.jsonl"
+rollout_candidates_file="$work_dir/rollout-candidates.tsv"
+rollouts_file="$work_dir/rollouts.json"
+statuses_file="$work_dir/statuses.tsv"
+names_file="$work_dir/names.json"
+
+jq -cn \
+    --slurpfile panes "$panes_file" \
+    --slurpfile processes "$processes_file" '
+    def codex_command:
+        split("/") | last | ascii_downcase | test("^codex(-|$)");
+
+    ($panes | map({key: .pane_pid, value: .}) | from_entries) as $pane_by_pid |
+    ($processes | map({key: .pid, value: .ppid}) | from_entries) as $parent_by_pid |
+
+    def pane_for_pid($pid):
+        def climb($current; $seen):
+            if $pane_by_pid[$current] then $pane_by_pid[$current]
+            elif ($seen | index($current)) then null
+            elif $parent_by_pid[$current]? and
+                 $parent_by_pid[$current] != $current and
+                 $parent_by_pid[$current] != "0" then
+                climb($parent_by_pid[$current]; $seen + [$current])
+            else null
+            end;
+        climb($pid; []);
+
+    ([ $processes[] |
+       select(.command | codex_command) |
+       {pid, pane: pane_for_pid(.pid)} |
+       select(.pane != null)
+     ] | reduce .[] as $match ({}; .[$match.pane.pane_id] = $match.pid)) as $pid_by_pane |
+
+    $panes[] |
+    select(.command | codex_command) |
+    . + {pid: ($pid_by_pane[.pane_id] // "")}
+' >"$candidates_file"
+
+pids=$(jq -sr '[.[] | .pid | select(. != "")] | unique | join(",")' "$candidates_file")
+: >"$rollout_candidates_file"
 if [ -n "$pids" ] && command -v lsof >/dev/null 2>&1; then
-    rollout_rows=$(
-        lsof -nP -Fpn -p "$pids" 2>/dev/null |
-            awk '
+    lsof -nP -Fpn -p "$pids" 2>/dev/null |
+        awk '
 /^p[0-9]+$/ {
     pid = substr($0, 2)
     next
@@ -84,57 +157,63 @@ if [ -n "$pids" ] && command -v lsof >/dev/null 2>&1; then
         length(segment[3]) == 4 && length(segment[4]) == 4 && length(segment[5]) == 12)
         printf "%s\t%s\t%s\n", pid, uuid, path
 }' |
-            while IFS="$(printf '\t')" read -r pid uuid path; do
-                printf '%s\t%s\t%s\n' "$pid" "$(file_mtime "$path")" "$uuid"
-            done
-    )
+        while IFS="$(printf '\t')" read -r pid session_id path; do
+            [ -n "$pid" ] || continue
+            printf '%s\t%s\t%s\t%s\n' \
+                "$pid" "$session_id" "$path" "$(file_mtime "$path")" \
+                >>"$rollout_candidates_file"
+        done
 fi
 
-name_rows=''
-index_file="${HOME:-}/.codex/session_index.jsonl"
-if [ -f "$index_file" ] && command -v jq >/dev/null 2>&1; then
-    name_rows=$(
-        jq -r '
-            [
-                .id,
-                ((.thread_name // "") | gsub("[\\t\\r\\n]"; " "))
-            ] | @tsv
-        ' "$index_file" 2>/dev/null || true
-    )
+jq -Rn '
+    [inputs |
+        split("\t") |
+        select(length == 4) |
+        {pid: .[0], session_id: .[1], path: .[2], mtime: (.[3] | tonumber)}
+    ] |
+    group_by(.pid) |
+    map(max_by(.mtime) | del(.mtime))
+' "$rollout_candidates_file" >"$rollouts_file"
+
+: >"$statuses_file"
+jq -r '.[] | [.pid, .path] | @tsv' "$rollouts_file" |
+    while IFS="$(printf '\t')" read -r pid path; do
+        printf '%s\t%s\n' "$pid" "$(rollout_status "$path")" >>"$statuses_file"
+    done
+
+if [ -f "$index_file" ]; then
+    jq -sc '
+        reduce .[] as $session ({}; .[$session.id] = ($session.thread_name // ""))
+    ' "$index_file" 2>/dev/null >"$names_file" || printf '{}\n' >"$names_file"
+else
+    printf '{}\n' >"$names_file"
 fi
 
-{
-    printf '%s\n' "$pane_rows" | awk -F '\t' 'NF >= 6 { print "pane\t" $0 }'
-    printf '%s\n' "$rollout_rows" | awk -F '\t' 'NF >= 3 { print "rollout\t" $0 }'
-    printf '%s\n' "$name_rows" | awk -F '\t' 'NF >= 2 { print "name\t" $0 }'
-} |
-    awk -F '\t' '
-$1 == "pane" {
-    pane_count++
-    pane[pane_count] = $2
-    pane_session[$2] = $3
-    pane_window[$2] = $4
-    pane_pid[$2] = $5
-    pane_target[$2] = $6
-    pane_path[$2] = $7
-    next
-}
-$1 == "rollout" {
-    if (!($2 in newest_mtime) || $3 > newest_mtime[$2]) {
-        newest_mtime[$2] = $3
-        session_by_pid[$2] = $4
+jq -cn \
+    --slurpfile candidates "$candidates_file" \
+    --slurpfile rollouts "$rollouts_file" \
+    --rawfile statuses "$statuses_file" \
+    --slurpfile names "$names_file" '
+    ($rollouts[0] | map({key: .pid, value: .}) | from_entries) as $rollout_by_pid |
+    ($statuses |
+        split("\n") |
+        map(select(length > 0) | split("\t") | {key: .[0], value: .[1]}) |
+        from_entries
+    ) as $status_by_pid |
+    ($names[0]) as $name_by_session |
+
+    $candidates[] |
+    . as $pane |
+    ($rollout_by_pid[$pane.pid] // {}) as $rollout |
+    ($rollout.session_id // "") as $rollout_session |
+    {
+        pane_id: $pane.pane_id,
+        session_id: $pane.session_id,
+        window_id: $pane.window_id,
+        agent: "codex",
+        name: ($name_by_session[$rollout_session] // ""),
+        status: ($status_by_pid[$pane.pid] // "idle"),
+        target: $pane.target,
+        path: $pane.path
     }
-    next
-}
-$1 == "name" {
-    name_by_session[$2] = $3
-}
-END {
-    for (i = 1; i <= pane_count; i++) {
-        current_pane = pane[i]
-        session = session_by_pid[pane_pid[current_pane]]
-        printf "%s\t%s\t%s\tcodex\t%s\t%s\t%s\n", \
-            current_pane, pane_session[current_pane], pane_window[current_pane], \
-            name_by_session[session], pane_target[current_pane], pane_path[current_pane]
-    }
-}'
+'
