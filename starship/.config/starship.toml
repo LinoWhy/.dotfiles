@@ -19,6 +19,8 @@ $jobs\
 $sudo\
 $character"""
 
+right_format = """$time"""
+
 command_timeout = 1000
 
 [directory]
@@ -31,7 +33,7 @@ read_only_style = "fg:yellow"
 [custom.ssh]
 when = ''' [[ $SSH_CONNECTION ]] '''
 symbol = " "
-format = '[$symbol](blue bold)'
+format = '[$symbol](bold blue)'
 
 [hostname]
 ssh_only = false
@@ -43,7 +45,7 @@ disabled = false
 zsh_indicator = ""
 bash_indicator = "bsh "
 powershell_indicator = "psh "
-format = '[$indicator](blue bold)'
+format = '[$indicator](bold blue)'
 disabled = false
 
 [git_branch]
@@ -101,6 +103,11 @@ symbol = "󰀄 "
 success_symbol = "[](bold green)"
 error_symbol = "[](bold red)"
 vimcmd_symbol = "[](bold green)"
+
+[time]
+disabled = false
+format = '[$time](bold subtext0)'
+time_format = '%H:%M'
 
 # palette tables should be last in the config ⚓️
 [palettes.catppuccin_macchiato]
