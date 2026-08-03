@@ -125,5 +125,6 @@ eval "$(fzf --bash)"
 export LS_COLORS="$(vivid generate catppuccin-mocha)"
 
 eval "$(zoxide init --hook prompt bash)"
+export STARSHIP_CONFIG="$XDG_CONFIG_HOME/starship-bash.toml"
 eval "$(starship init bash)"
 PROMPT_COMMAND="bell_checked; $PROMPT_COMMAND"

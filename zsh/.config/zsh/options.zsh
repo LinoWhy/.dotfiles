@@ -3,6 +3,8 @@ setopt AUTO_CD
 setopt NUMERIC_GLOB_SORT         # Sort file10 after file9, not after file1.
 # setopt GLOB_DOTS                 # Match filename with leading "."
 
+ZLE_RPROMPT_INDENT=0             # right prompt configured by starship
+
 # History
 HISTFILE="$XDG_STATE_HOME/zsh/history"
 HISTSIZE=100000
