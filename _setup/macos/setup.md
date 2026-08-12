@@ -12,7 +12,7 @@ export HOMEBREW_API_DOMAIN="https://mirrors.tuna.tsinghua.edu.cn/homebrew-bottle
 export HOMEBREW_BOTTLE_DOMAIN="https://mirrors.tuna.tsinghua.edu.cn/homebrew-bottles"
 
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-brew bundle --file=~/.dotfiles/_setup/Brewfile_macOS
+brew bundle --file=~/.dotfiles/_setup/macos/Brewfile
 
 mkdir -p ~/personal && git clone git@github.com:LinoWhy/Recursive-Fonts.git
 cd Recursive-Fonts && cp -r fonts/ ~/Library/Fonts/
@@ -28,6 +28,20 @@ direnv allow ~
 bat cache --build
 tldr -u
 ```
+
+## System Settings
+
+手动备份和恢复个人 macOS 设置：
+
+```sh
+# 旧 Mac：更新备份
+~/.dotfiles/_setup/macos/preferences.sh backup
+
+# 新 Mac：确认后恢复
+~/.dotfiles/_setup/macos/preferences.sh restore
+```
+
+备份保存在 `_setup/macos/preferences/`。
 
 ## Other software
 

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>AppWindowGroupingBehavior</key>
+	<integer>1</integer>
+	<key>AutoHide</key>
+	<false/>
+	<key>EnableTiledWindowMargins</key>
+	<false/>
+	<key>GloballyEnabled</key>
+	<false/>
+	<key>GloballyEnabledEver</key>
+	<true/>
+	<key>HasDisplayedShowDesktopEducation</key>
+	<true/>
+	<key>HideDesktop</key>
+	<true/>
+	<key>LastHeartbeatDateString.daily</key>
+	<string>2026-08-12T02:07:24Z</string>
+	<key>StageManagerHideWidgets</key>
+	<false/>
+	<key>StandardHideDesktopIcons</key>
+	<false/>
+	<key>StandardHideWidgets</key>
+	<false/>
+</dict>
+</plist>
