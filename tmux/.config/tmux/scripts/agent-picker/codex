@@ -21,75 +21,37 @@ class Pane:
     pane_id: str
     session_id: str
     window_id: str
-    shell_pid: int
     target: str
     path: str
-    codex_pid: int | None = None
     thread_id: str = ""
 
 
 def process_name(command: str) -> str:
-    return os.path.basename(command).removeprefix("-").lower()
+    name = os.path.basename(command)
+    if name.startswith("-"):
+        name = name[1:]
+    return name.lower()
 
 
-def read_runtime() -> tuple[list[Pane], dict[int, int], list[int]]:
+def read_panes() -> list[Pane]:
     panes: list[Pane] = []
-    parents: dict[int, int] = {}
-    codex_pids: list[int] = []
 
     for line in sys.stdin:
         fields = line.rstrip("\n").split("\t")
         if fields[0] == "pane" and len(fields) >= 8:
             if process_name(fields[5]) != "codex":
                 continue
-            try:
-                shell_pid = int(fields[4])
-            except ValueError:
-                continue
             panes.append(
                 Pane(
                     pane_id=fields[1],
                     session_id=fields[2],
                     window_id=fields[3],
-                    shell_pid=shell_pid,
                     target=fields[6],
                     path=fields[7],
                 )
             )
-        elif fields[0] == "process" and len(fields) >= 4:
-            try:
-                pid = int(fields[1])
-                parents[pid] = int(fields[2])
-            except ValueError:
-                continue
-            if process_name(fields[3]) == "codex":
-                codex_pids.append(pid)
 
-    return panes, parents, codex_pids
-
-
-def map_codex_processes(
-    panes: list[Pane], parents: dict[int, int], codex_pids: list[int]
-) -> None:
-    pane_by_shell_pid = {pane.shell_pid: pane for pane in panes}
-    best_distance: dict[str, int] = {}
-
-    for codex_pid in codex_pids:
-        ancestor = codex_pid
-        distance = 0
-        while ancestor not in pane_by_shell_pid and distance < 64:
-            parent = parents.get(ancestor)
-            if parent is None or parent in (0, ancestor):
-                break
-            ancestor = parent
-            distance += 1
-
-        pane = pane_by_shell_pid.get(ancestor)
-        if pane is None:
-            continue
-        if pane.pane_id not in best_distance or distance < best_distance[pane.pane_id]:
-            best_distance[pane.pane_id] = distance
-            pane.codex_pid = codex_pid
+    return panes
 
 
 def bind_thread_ids(panes: list[Pane]) -> None:
@@ -101,8 +63,7 @@ def bind_thread_ids(panes: list[Pane]) -> None:
                 "-a",
                 "-F",
                 f"#{{pane_id}}{TMUX_SEPARATOR}"
-                f"#{{@agent_picker_codex_session_id}}{TMUX_SEPARATOR}"
-                "#{@agent_picker_codex_pid}",
+                "#{@agent_picker_codex_session_id}",
             ],
             check=False,
             stdout=subprocess.PIPE,
@@ -112,23 +73,17 @@ def bind_thread_ids(panes: list[Pane]) -> None:
     except OSError:
         return
 
-    bindings: dict[str, tuple[str, int]] = {}
+    bindings: dict[str, str] = {}
     # str.splitlines() also treats U+001C as a line boundary, but U+001C is
     # deliberately our field separator. Split only on the actual newline.
     for line in result.stdout.split("\n"):
         fields = line.split(TMUX_SEPARATOR)
-        if len(fields) != 3:
+        if len(fields) != 2 or not fields[1]:
             continue
-        try:
-            saved_pid = int(fields[2])
-        except ValueError:
-            continue
-        bindings[fields[0]] = (fields[1], saved_pid)
+        bindings[fields[0]] = fields[1]
 
     for pane in panes:
-        binding = bindings.get(pane.pane_id)
-        if binding is not None and pane.codex_pid == binding[1]:
-            pane.thread_id = binding[0]
+        pane.thread_id = bindings.get(pane.pane_id, "")
 
 
 def send(process: subprocess.Popen[bytes], message: dict[str, object]) -> None:
@@ -256,11 +211,10 @@ def output(panes: list[Pane], names: dict[str, str]) -> None:
 
 
 def main() -> int:
-    panes, parents, codex_pids = read_runtime()
+    panes = read_panes()
     if not panes:
         return 0
 
-    map_codex_processes(panes, parents, codex_pids)
     bind_thread_ids(panes)
     thread_ids = list(dict.fromkeys(pane.thread_id for pane in panes if pane.thread_id))
     try:
