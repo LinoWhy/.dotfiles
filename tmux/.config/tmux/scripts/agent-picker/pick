@@ -37,7 +37,6 @@ command -v jq >/dev/null 2>&1 || {
 }
 
 script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
-provider_dir="$script_dir/agent-picker-providers"
 runtime_rows=$(build_runtime)
 
 raw_rows=$(
@@ -46,7 +45,7 @@ raw_rows=$(
     #   process, pid, ppid, command
     # Provider output (TSV): pane_id, session_id, window_id, agent, name, target, path
     for provider in codex claude; do
-        printf '%s\n' "$runtime_rows" | "$provider_dir/$provider"
+        printf '%s\n' "$runtime_rows" | "$script_dir/$provider"
     done
 )
 

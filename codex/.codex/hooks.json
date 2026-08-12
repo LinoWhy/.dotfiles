@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume|clear",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.config/tmux/scripts/agent-picker/codex-hook",
+            "timeout": 1
+          }
+        ]
+      }
+    ]
+  }
+}
