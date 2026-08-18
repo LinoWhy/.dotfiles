@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -e
+
+script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+env_home=$(cd -- "$script_dir/.." && pwd -P)
+
+exec bash --rcfile "$env_home/etc/bashrc" -i "$@"
