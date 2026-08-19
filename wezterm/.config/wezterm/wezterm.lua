@@ -162,6 +162,7 @@ c.keys = {
 c.quick_select_patterns = {
   '"[^"]+"', -- signle quote included
   "'[^']+'", -- double quote included
+  "(?<=\\()[^()]+(?=\\))", -- parentheses
 }
 
 -- tmux_windows.setup(c)
