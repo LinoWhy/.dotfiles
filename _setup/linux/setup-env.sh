@@ -50,15 +50,17 @@ if ! $DRY_RUN; then
   mkdir -p \
     "${DEST}/bin" \
     "${DEST}/config/lsd" \
+    "${DEST}/config/tmux" \
     "${DEST}/etc" \
     "${DEST}/cache" \
     "${DEST}/share" \
     "${DEST}/state"
 
-  cp "${SRC}/etc/bashrc"              "${DEST}/etc/bashrc"
-  cp "${SRC}/bin/env-bash"            "${DEST}/bin/env-bash"
-  cp "${SRC}/config/starship.toml"    "${DEST}/config/starship.toml"
-  cp "${SRC}/config/lsd/config.yaml"  "${DEST}/config/lsd/config.yaml"
+  cp "${SRC}/etc/bashrc"                "${DEST}/etc/bashrc"
+  cp "${SRC}/bin/env-bash"              "${DEST}/bin/env-bash"
+  cp "${SRC}/config/starship.toml"      "${DEST}/config/starship.toml"
+  cp "${SRC}/config/lsd/config.yaml"    "${DEST}/config/lsd/config.yaml"
+  cp "${SRC}/config/tmux/tmux.conf"     "${DEST}/config/tmux/tmux.conf"
   chmod +x "${DEST}/bin/env-bash"
 
   ok "config files deployed to ${DEST}"
