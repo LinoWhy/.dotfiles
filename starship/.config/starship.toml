@@ -6,6 +6,7 @@ $directory\
 ${custom.ssh}\
 $hostname\
 $shell\
+${custom.git_worktree}\
 $git_branch\
 $git_commit\
 $git_state\
@@ -47,6 +48,12 @@ bash_indicator = "bsh "
 powershell_indicator = "psh "
 format = '[$indicator](bold blue)'
 disabled = false
+
+[custom.git_worktree]
+when = ''' test "$(git worktree list 2>/dev/null | wc -l)" -gt 1 '''
+command = "printf ''"
+symbol = " "
+format = "[$symbol](bold mauve)"
 
 [git_branch]
 only_attached = true
