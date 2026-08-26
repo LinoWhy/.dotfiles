@@ -20,8 +20,6 @@ Run these commands:
 
 ```bash
 git status --short
-git diff --stat
-git diff --cached
 git diff
 git log -n 20 --no-merges --format='%s%n%b%x00'
 ```
@@ -35,18 +33,17 @@ one grouped clarification before committing.
 
 Use the actual diff to group changes by logical intent, with one commit for each group. Preserve
 user exclusions, unrelated existing index entries, secrets, and credentials outside the selected
-group. The selected paths define the commit boundary. Stage them explicitly and inspect their
-staged diff:
+group. The selected paths define the commit boundary. Stage them explicitly, then confirm that
+those paths are staged:
 
 ```bash
 git add -- path/to/file1 path/to/file2
-git diff --cached --name-only -- path/to/file1 path/to/file2
 git diff --cached -- path/to/file1 path/to/file2
 ```
 
-Continue when the listed staged paths exactly match the selected group. Existing index entries
-outside the group remain untouched and outside the commit. When the selected staged diff is not
-ready, resolve the boundary with the user before committing.
+Review this staged diff once and continue when it contains exactly the selected group. Existing
+index entries outside the group remain untouched and outside the commit. The commit command repeats
+the selected paths to preserve this boundary.
 
 ### 3. Draft the complete commit message
 
@@ -69,8 +66,7 @@ request, present it before committing unless the user requested an unattended co
 
 ### 4. Commit the selected group
 
-After the staged-path check passes, pass the complete drafted message as one standard-input stream
-and keep the selected path list on the commit command:
+Pass the final message as one complete, already formatted text block through standard input:
 
 ```bash
 git commit --file=- -- path/to/file1 path/to/file2 <<'EOF'
@@ -94,10 +90,17 @@ git diff-tree --root --no-commit-id --name-status -r "$commit_hash"
 git status --short
 ```
 
-Check that the hash identifies the new commit, the subject and raw message match the drafted
-message plus any documented hook-generated content, the paragraph structure is intentional, the
-committed paths exactly match the selected group, and the status output accounts for every
-remaining change. Report the commit as complete after these checks pass.
+Pipe the raw message from the new commit through the checker in this skill's `scripts/` directory:
+
+```bash
+git show -s --format='%B' "$commit_hash" | scripts/check_message.sh
+```
+
+The checker reads from standard input and returns a failure when the saved message violates the
+message format. Check that the hash identifies the new commit, the subject and raw message match
+the drafted message plus any documented hook-generated content, the committed paths exactly match
+the selected group, and the status output accounts for every remaining change. Report the commit as
+complete after the checker and these inspections pass.
 
 This workflow creates the requested commit while preserving repository configuration, normal
 hooks, existing history, and remote state. Configuration changes, remote operations, or history
