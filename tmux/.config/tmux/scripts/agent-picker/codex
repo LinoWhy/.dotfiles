@@ -23,7 +23,7 @@ class Pane:
     window_id: str
     target: str
     path: str
-    thread_id: str = ""
+    thread_ids: tuple[str, ...] = ()
 
 
 def process_name(command: str) -> str:
@@ -63,7 +63,8 @@ def bind_thread_ids(panes: list[Pane]) -> None:
                 "-a",
                 "-F",
                 f"#{{pane_id}}{TMUX_SEPARATOR}"
-                "#{@agent_picker_codex_session_id}",
+                f"#{{@agent_picker_codex_session_id}}{TMUX_SEPARATOR}"
+                "#{@agent_picker_codex_session_ids}",
             ],
             check=False,
             stdout=subprocess.PIPE,
@@ -73,17 +74,32 @@ def bind_thread_ids(panes: list[Pane]) -> None:
     except OSError:
         return
 
-    bindings: dict[str, str] = {}
+    bindings: dict[str, tuple[str, ...]] = {}
     # str.splitlines() also treats U+001C as a line boundary, but U+001C is
     # deliberately our field separator. Split only on the actual newline.
     for line in result.stdout.split("\n"):
         fields = line.split(TMUX_SEPARATOR)
-        if len(fields) != 2 or not fields[1]:
+        if len(fields) != 3:
             continue
-        bindings[fields[0]] = fields[1]
+
+        thread_ids: list[str] = []
+        try:
+            history = json.loads(fields[2]) if fields[2] else []
+        except (json.JSONDecodeError, TypeError):
+            history = []
+        if isinstance(history, list):
+            thread_ids.extend(
+                thread_id
+                for thread_id in history
+                if isinstance(thread_id, str) and thread_id
+            )
+        if fields[1] and fields[1] not in thread_ids:
+            thread_ids.append(fields[1])
+        if thread_ids:
+            bindings[fields[0]] = tuple(thread_ids[:8])
 
     for pane in panes:
-        pane.thread_id = bindings.get(pane.pane_id, "")
+        pane.thread_ids = bindings.get(pane.pane_id, ())
 
 
 def send(process: subprocess.Popen[bytes], message: dict[str, object]) -> None:
@@ -181,9 +197,10 @@ def query_names(thread_ids: list[str]) -> dict[str, str]:
         for request_id, thread_id in request_threads.items():
             result = responses.get(request_id, {}).get("result")
             thread = result.get("thread") if isinstance(result, dict) else None
-            name = thread.get("name") if isinstance(thread, dict) else None
-            if isinstance(name, str):
-                names[thread_id] = " ".join(name.split())
+            if not isinstance(thread, dict):
+                continue
+            name = thread.get("name")
+            names[thread_id] = " ".join(name.split()) if isinstance(name, str) else ""
         return names
     finally:
         reader.close()
@@ -198,12 +215,16 @@ def query_names(thread_ids: list[str]) -> dict[str, str]:
 
 def output(panes: list[Pane], names: dict[str, str]) -> None:
     for pane in panes:
+        name = next(
+            (names[thread_id] for thread_id in pane.thread_ids if thread_id in names),
+            "",
+        )
         fields = (
             pane.pane_id,
             pane.session_id,
             pane.window_id,
             "codex",
-            names.get(pane.thread_id, ""),
+            name,
             pane.target,
             pane.path,
         )
@@ -216,7 +237,9 @@ def main() -> int:
         return 0
 
     bind_thread_ids(panes)
-    thread_ids = list(dict.fromkeys(pane.thread_id for pane in panes if pane.thread_id))
+    thread_ids = list(
+        dict.fromkeys(thread_id for pane in panes for thread_id in pane.thread_ids)
+    )
     try:
         names = query_names(thread_ids)
     except (OSError, BrokenPipeError, subprocess.SubprocessError):

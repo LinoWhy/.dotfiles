@@ -23,5 +23,18 @@ session_id=$(
     ' 2>/dev/null
 ) || exit 0
 
+session_ids=$(tmux show-options -p -t "$TMUX_PANE" -v @agent_picker_codex_session_ids 2>/dev/null) \
+    || session_ids='[]'
+session_ids=$(
+    printf '%s\n' "${session_ids:-[]}" \
+        | jq -cer --arg session_id "$session_id" '
+            (if type == "array" then . else [] end)
+            | [$session_id] + [.[] | select(type == "string" and . != $session_id)]
+            | .[:8]
+        ' 2>/dev/null
+) || exit 0
+
+tmux set-option -p -t "$TMUX_PANE" @agent_picker_codex_session_ids "$session_ids" 2>/dev/null \
+    || exit 0
 tmux set-option -p -t "$TMUX_PANE" @agent_picker_codex_session_id "$session_id" 2>/dev/null || exit 0
 exit 0
