@@ -14,4 +14,9 @@ mkdir -p "$XDG_CACHE_HOME/zsh"
 autoload -U +X bashcompinit && bashcompinit
 autoload -Uz compinit && compinit -d "$XDG_CACHE_HOME/zsh/zcompdump"
 
+# Parse --help lazily for commands that do not provide a completion function.
+# Native and hand-written completions in fpath still take precedence.
+autoload -Uz _gnu_generic
+compdef _gnu_generic -default-
+
 # Reference: https://zsh.sourceforge.io/Guide/zshguide06.html

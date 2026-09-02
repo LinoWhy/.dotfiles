@@ -23,11 +23,6 @@ done
 # Git commands with fzf
 plug "wfxr/forgit"
 
-# use gencomp <cmd> to generate completion functions from getopt-style help texts
-GENCOMPL_FPATH="$ZDOTDIR/completions"
-zstyle :plugin:zsh-completion-generator programs btm duf fzf hexyl lsd procs yazi
-plug "RobSis/zsh-completion-generator"
-
 # Set, load and initialise completion system
 source "$ZDOTDIR/completions.zsh"
 
