@@ -1,0 +1,66 @@
+#!/usr/bin/env python3
+"""Render Agent Picker rows with terminal-aware column widths."""
+
+from __future__ import annotations
+
+import sys
+import unicodedata
+
+
+RESET = "\033[0m"
+
+
+def display_width(value: str) -> int:
+    width = 0
+    for character in value:
+        if unicodedata.category(character) in ("Cc", "Cf", "Mn", "Me"):
+            continue
+        width += 2 if unicodedata.east_asian_width(character) in ("W", "F") else 1
+    return width
+
+
+def pad(value: str, width: int) -> str:
+    return value + " " * (width - display_width(value))
+
+
+def main() -> int:
+    home = sys.argv[1]
+    colors = {"codex": sys.argv[2], "claude": sys.argv[3]}
+    rows: list[list[str]] = []
+
+    for line in sys.stdin:
+        fields = line.rstrip("\n").split("\t")
+        if len(fields) != 7 or fields[3] not in colors:
+            continue
+
+        for index in (4, 5, 6):
+            fields[index] = fields[index].replace("\r", " ").replace("\n", " ")
+
+        path = fields[6]
+        if home and path == home:
+            fields[6] = "~"
+        elif home and path.startswith(home + "/"):
+            fields[6] = "~" + path[len(home) :]
+        rows.append(fields)
+
+    if not rows:
+        return 0
+
+    widths = [max(display_width(row[index]) for row in rows) for index in (3, 4, 5)]
+    for row in rows:
+        pane, session, window, agent, name, target, path = row
+        visible = " │ ".join(
+            (
+                pad(agent, widths[0]),
+                pad(name, widths[1]),
+                pad(target, widths[2]),
+                path,
+            )
+        )
+        print("\t".join((pane, session, window, colors[agent] + visible + RESET)))
+
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

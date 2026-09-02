@@ -55,49 +55,7 @@ claude_color=$(printf '\033[38;2;%d;%d;%dm' 0xF5 0xA9 0x7F)
 
 rows=$(
     printf '%s\n' "$raw_rows" |
-        awk -F '\t' \
-            -v home="${HOME:-}" \
-            -v codex_color="$codex_color" \
-            -v claude_color="$claude_color" '
-BEGIN {
-    color["codex"] = codex_color
-    color["claude"] = claude_color
-    reset = sprintf("%c[0m", 27)
-}
-NF == 7 && ($4 == "codex" || $4 == "claude") {
-    count++
-    pane[count] = $1
-    session[count] = $2
-    window[count] = $3
-    agent[count] = $4
-    name[count] = $5
-    target[count] = $6
-    path[count] = $7
-
-    gsub(/[\t\r\n]/, " ", name[count])
-    gsub(/[\t\r\n]/, " ", target[count])
-    gsub(/[\t\r\n]/, " ", path[count])
-    if (home != "") {
-        if (path[count] == home)
-            path[count] = "~"
-        else if (index(path[count], home "/") == 1)
-            path[count] = "~" substr(path[count], length(home) + 1)
-    }
-
-    if (length(agent[count]) > agent_width) agent_width = length(agent[count])
-    if (length(name[count]) > name_width) name_width = length(name[count])
-    if (length(target[count]) > target_width) target_width = length(target[count])
-}
-END {
-    tab = sprintf("%c", 9)
-    format = "%-" agent_width "s │ %-" name_width "s │ %-" target_width "s │ %s"
-    for (i = 1; i <= count; i++) {
-        printf "%s%s%s%s%s%s", pane[i], tab, session[i], tab, window[i], tab
-        printf "%s", color[agent[i]]
-        printf format, agent[i], name[i], target[i], path[i]
-        printf "%s\n", reset
-    }
-}'
+        "$script_dir/render" "${HOME:-}" "$codex_color" "$claude_color"
 )
 
 [ -n "$rows" ] || {
