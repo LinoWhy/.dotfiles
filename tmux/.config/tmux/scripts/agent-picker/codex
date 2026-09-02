@@ -21,8 +21,11 @@ class Pane:
     pane_id: str
     session_id: str
     window_id: str
+    pid: str
+    command: str
     target: str
     path: str
+    codex_home: str = ""
     thread_ids: tuple[str, ...] = ()
 
 
@@ -34,24 +37,40 @@ def process_name(command: str) -> str:
 
 
 def read_panes() -> list[Pane]:
-    panes: list[Pane] = []
+    panes_by_pid: dict[str, Pane] = {}
+    parents: dict[str, str] = {}
+    codex_pids: list[str] = []
 
     for line in sys.stdin:
         fields = line.rstrip("\n").split("\t")
         if fields[0] == "pane" and len(fields) >= 8:
-            if process_name(fields[5]) != "codex":
-                continue
-            panes.append(
-                Pane(
-                    pane_id=fields[1],
-                    session_id=fields[2],
-                    window_id=fields[3],
-                    target=fields[6],
-                    path=fields[7],
-                )
+            panes_by_pid[fields[4]] = Pane(
+                pane_id=fields[1],
+                session_id=fields[2],
+                window_id=fields[3],
+                pid=fields[4],
+                command=fields[5],
+                target=fields[6],
+                path=fields[7],
             )
+        elif fields[0] == "process" and len(fields) >= 4:
+            parents[fields[1]] = fields[2]
+            if process_name(fields[3]) == "codex":
+                codex_pids.append(fields[1])
 
-    return panes
+    panes: dict[str, Pane] = {
+        pane.pane_id: pane
+        for pane in panes_by_pid.values()
+        if process_name(pane.command) == "codex"
+    }
+    for pid in codex_pids:
+        while pid not in panes_by_pid and pid in parents and parents[pid] != pid:
+            pid = parents[pid]
+        if pid in panes_by_pid:
+            pane = panes_by_pid[pid]
+            panes[pane.pane_id] = pane
+
+    return list(panes.values())
 
 
 def bind_thread_ids(panes: list[Pane]) -> None:
@@ -64,7 +83,8 @@ def bind_thread_ids(panes: list[Pane]) -> None:
                 "-F",
                 f"#{{pane_id}}{TMUX_SEPARATOR}"
                 f"#{{@agent_picker_codex_session_id}}{TMUX_SEPARATOR}"
-                "#{@agent_picker_codex_session_ids}",
+                f"#{{@agent_picker_codex_session_ids}}{TMUX_SEPARATOR}"
+                "#{@agent_picker_codex_home}",
             ],
             check=False,
             stdout=subprocess.PIPE,
@@ -74,12 +94,12 @@ def bind_thread_ids(panes: list[Pane]) -> None:
     except OSError:
         return
 
-    bindings: dict[str, tuple[str, ...]] = {}
+    bindings: dict[str, tuple[tuple[str, ...], str]] = {}
     # str.splitlines() also treats U+001C as a line boundary, but U+001C is
     # deliberately our field separator. Split only on the actual newline.
     for line in result.stdout.split("\n"):
         fields = line.split(TMUX_SEPARATOR)
-        if len(fields) != 3:
+        if len(fields) != 4:
             continue
 
         thread_ids: list[str] = []
@@ -96,10 +116,16 @@ def bind_thread_ids(panes: list[Pane]) -> None:
         if fields[1] and fields[1] not in thread_ids:
             thread_ids.append(fields[1])
         if thread_ids:
-            bindings[fields[0]] = tuple(thread_ids[:8])
+            bindings[fields[0]] = (tuple(thread_ids[:8]), fields[3])
 
     for pane in panes:
-        pane.thread_ids = bindings.get(pane.pane_id, ())
+        binding = bindings.get(pane.pane_id)
+        if binding:
+            pane.thread_ids, pane.codex_home = binding
+        if not pane.codex_home:
+            pane.codex_home = os.environ.get(
+                "CODEX_HOME", os.path.join(os.path.expanduser("~"), ".codex")
+            )
 
 
 def send(process: subprocess.Popen[bytes], message: dict[str, object]) -> None:
@@ -147,12 +173,15 @@ class JsonLineReader:
         return responses
 
 
-def query_names(thread_ids: list[str]) -> dict[str, str]:
+def query_names(codex_home: str, thread_ids: list[str]) -> dict[str, str]:
     if not thread_ids:
         return {}
 
+    environment = os.environ.copy()
+    environment["CODEX_HOME"] = codex_home
     process = subprocess.Popen(
         ["codex", "app-server"],
+        env=environment,
         stdin=subprocess.PIPE,
         stdout=subprocess.PIPE,
         stderr=subprocess.DEVNULL,
@@ -213,10 +242,50 @@ def query_names(thread_ids: list[str]) -> dict[str, str]:
             process.wait()
 
 
-def output(panes: list[Pane], names: dict[str, str]) -> None:
+def query_all_names(panes: list[Pane]) -> dict[tuple[str, str], str]:
+    groups: dict[str, list[str]] = {}
+    for pane in panes:
+        groups.setdefault(pane.codex_home, []).extend(pane.thread_ids)
+
+    names: dict[tuple[str, str], str] = {}
+    if len(groups) == 1:
+        codex_home, thread_ids = next(iter(groups.items()))
+        try:
+            result = query_names(codex_home, list(dict.fromkeys(thread_ids)))
+        except (OSError, BrokenPipeError, subprocess.SubprocessError):
+            return names
+        names.update(
+            ((codex_home, thread_id), name) for thread_id, name in result.items()
+        )
+        return names
+
+    from concurrent.futures import ThreadPoolExecutor
+
+    with ThreadPoolExecutor(max_workers=len(groups)) as executor:
+        requests = {
+            executor.submit(query_names, codex_home, list(dict.fromkeys(thread_ids))):
+            codex_home
+            for codex_home, thread_ids in groups.items()
+        }
+        for request, codex_home in requests.items():
+            try:
+                result = request.result()
+            except (OSError, BrokenPipeError, subprocess.SubprocessError):
+                continue
+            names.update(
+                ((codex_home, thread_id), name) for thread_id, name in result.items()
+            )
+    return names
+
+
+def output(panes: list[Pane], names: dict[tuple[str, str], str]) -> None:
     for pane in panes:
         name = next(
-            (names[thread_id] for thread_id in pane.thread_ids if thread_id in names),
+            (
+                names[(pane.codex_home, thread_id)]
+                for thread_id in pane.thread_ids
+                if (pane.codex_home, thread_id) in names
+            ),
             "",
         )
         fields = (
@@ -237,13 +306,7 @@ def main() -> int:
         return 0
 
     bind_thread_ids(panes)
-    thread_ids = list(
-        dict.fromkeys(thread_id for pane in panes for thread_id in pane.thread_ids)
-    )
-    try:
-        names = query_names(thread_ids)
-    except (OSError, BrokenPipeError, subprocess.SubprocessError):
-        names = {}
+    names = query_all_names(panes)
     output(panes, names)
     return 0
 
