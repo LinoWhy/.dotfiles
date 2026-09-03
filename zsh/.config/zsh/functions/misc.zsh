@@ -1,15 +1,60 @@
 # Run command on each remote host concurrently using parallel
 function ssh-run() {
+  local OPTIND opt ssh_user timeout
+  while getopts ":u:t:" opt; do
+    case "$opt" in
+      u) ssh_user="$OPTARG" ;;
+      t) timeout="$OPTARG" ;;
+      *) echo "Usage: ssh-run [-u user] [-t timeout] <command>"; return 1 ;;
+    esac
+  done
+  shift $((OPTIND - 1))
+
   local command="$*"
 
   if [[ -z "$command" ]]; then
-    echo "Usage: ssh-run <command>"
+    echo "Usage: ssh-run [-u user] [-t timeout] <command>"
     return 1
   fi
 
-  local hosts=$(rg '^Host ' ~/.ssh/config | awk '{print $2}')
-  echo "$hosts" | parallel -j0 --keep-order \
-    'ssh -n {} "'"$command"'" 2>&1 | awk "NF {if(!header) {print \"\"; print \"\033[1;34m{}\033[0m\"; header=1} print}"'
+  local hosts
+  if [[ -n "$ssh_user" ]]; then
+    hosts=$(awk -v user="$ssh_user" '
+      tolower($1) == "host" { host = $2 }
+      tolower($1) == "user" && $2 == user && host !~ /[*?]/ {
+        print host
+      }
+    ' ~/.ssh/config)
+  else
+    hosts=$(rg '^Host ' ~/.ssh/config | awk '{print $2}')
+  fi
+
+  local -a parallel_options=(-j0 --keep-order)
+  [[ -n "$timeout" ]] && parallel_options+=(--timeout "$timeout")
+
+  local job='ssh -n {} "'"$command"'" 2>&1 | awk "NF {if(!header) {print \"\"; print \"\033[1;34m{}\033[0m\"; header=1} print}"'
+  local timeout_marker="__SSH_RUN_TIMEOUT__:"
+  if [[ -n "$timeout" ]]; then
+    job="trap 'printf \"${timeout_marker}%s\\n\" \"{}\"' TERM; $job"
+  fi
+
+  echo "$hosts" | parallel "${parallel_options[@]}" "$job" 2>/dev/null | awk -v marker="$timeout_marker" '
+    index($0, marker) == 1 {
+      timeouts[++timeout_count] = substr($0, length(marker) + 1)
+      next
+    }
+    { print }
+    END {
+      if (timeout_count) {
+        print ""
+        for (i = 1; i <= timeout_count; i++) {
+          printf "\033[1;31m%s timeout\033[0m\n", timeouts[i]
+        }
+      }
+    }
+  '
+  local parallel_status=$pipestatus[2]
+  return $parallel_status
 }
 
 # Select SSH host from ~/.ssh/config using fzf
