@@ -14,11 +14,7 @@ typeset -ar PREFERENCE_SPECS=(
   "com.apple.symbolichotkeys:com.apple.symbolichotkeys.plist"
   "com.apple.dock:com.apple.dock.plist"
   "com.apple.finder:com.apple.finder.plist"
-  "com.apple.controlcenter:com.apple.controlcenter.plist"
-  "com.apple.spaces:com.apple.spaces.plist"
   "com.apple.WindowManager:com.apple.WindowManager.plist"
-  "com.apple.screencapture:com.apple.screencapture.plist"
-  "com.apple.HIToolbox:com.apple.HIToolbox.plist"
   "com.apple.AppleMultitouchTrackpad:com.apple.AppleMultitouchTrackpad.plist"
   "com.apple.driver.AppleBluetoothMultitouch.trackpad:com.apple.driver.AppleBluetoothMultitouch.trackpad.plist"
   "com.apple.AppleMultitouchMouse:com.apple.AppleMultitouchMouse.plist"
@@ -28,8 +24,38 @@ typeset -ar PREFERENCE_SPECS=(
   "com.apple.keyboard.preferences:com.apple.keyboard.preferences.plist"
 )
 
+typeset -ar SELECTED_DOMAINS=(
+  "com.apple.HIToolbox"
+  "com.apple.spaces"
+)
+
 usage() {
   print -u2 "Usage: ${0:t} <backup|restore>"
+}
+
+backup_selected_preferences() {
+  local source_path backup_path temporary_path value
+
+  source_path="${USER_PREFERENCES_DIR}/com.apple.HIToolbox.plist"
+  backup_path="${BACKUP_DIR}/com.apple.HIToolbox.plist"
+  temporary_path="$(mktemp "${BACKUP_DIR}/.com.apple.HIToolbox.plist.XXXXXX")"
+  plutil -create xml1 "${temporary_path}"
+  value="$(plutil -extract AppleFnUsageType raw -o - "${source_path}")"
+  plutil -insert AppleFnUsageType -integer "${value}" "${temporary_path}"
+  plutil -insert AppleGlobalTextInputProperties -dictionary "${temporary_path}"
+  value="$(plutil -extract AppleGlobalTextInputProperties.TextInputGlobalPropertyPerContextInput raw -o - "${source_path}")"
+  plutil -insert AppleGlobalTextInputProperties.TextInputGlobalPropertyPerContextInput -bool "${value}" "${temporary_path}"
+  mv -f "${temporary_path}" "${backup_path}"
+  print "backup  com.apple.HIToolbox (selected keys)"
+
+  source_path="${USER_PREFERENCES_DIR}/com.apple.spaces.plist"
+  backup_path="${BACKUP_DIR}/com.apple.spaces.plist"
+  temporary_path="$(mktemp "${BACKUP_DIR}/.com.apple.spaces.plist.XXXXXX")"
+  plutil -create xml1 "${temporary_path}"
+  value="$(plutil -extract spans-displays raw -o - "${source_path}")"
+  plutil -insert spans-displays -bool "${value}" "${temporary_path}"
+  mv -f "${temporary_path}" "${backup_path}"
+  print "backup  com.apple.spaces (selected keys)"
 }
 
 backup_preferences() {
@@ -68,6 +94,9 @@ backup_preferences() {
     (( saved += 1 ))
   done
 
+  backup_selected_preferences
+  (( saved += ${#SELECTED_DOMAINS[@]} ))
+
   print
   print "Saved ${saved} preference domains to ${BACKUP_DIR} (${skipped} skipped)."
   print "Review the XML plist changes before committing them."
@@ -79,7 +108,7 @@ restore_preferences() {
     return 1
   fi
 
-  local spec domain backup_path answer process
+  local spec domain backup_path answer process value
   local available=0
   local restored=0
 
@@ -89,6 +118,13 @@ restore_preferences() {
     backup_path="${BACKUP_DIR}/${domain}.plist"
     if [[ -f "${backup_path}" ]]; then
       print "  ${domain}"
+      (( available += 1 ))
+    fi
+  done
+  for domain in "${SELECTED_DOMAINS[@]}"; do
+    backup_path="${BACKUP_DIR}/${domain}.plist"
+    if [[ -f "${backup_path}" ]]; then
+      print "  ${domain} (selected keys)"
       (( available += 1 ))
     fi
   done
@@ -120,8 +156,26 @@ restore_preferences() {
     (( restored += 1 ))
   done
 
+  backup_path="${BACKUP_DIR}/com.apple.HIToolbox.plist"
+  if [[ -f "${backup_path}" ]]; then
+    value="$(plutil -extract AppleFnUsageType raw -o - "${backup_path}")"
+    defaults write com.apple.HIToolbox AppleFnUsageType -int "${value}"
+    value="$(plutil -extract AppleGlobalTextInputProperties.TextInputGlobalPropertyPerContextInput raw -o - "${backup_path}")"
+    defaults write com.apple.HIToolbox AppleGlobalTextInputProperties -dict-add TextInputGlobalPropertyPerContextInput -bool "${value}"
+    print "restore com.apple.HIToolbox (selected keys)"
+    (( restored += 1 ))
+  fi
+
+  backup_path="${BACKUP_DIR}/com.apple.spaces.plist"
+  if [[ -f "${backup_path}" ]]; then
+    value="$(plutil -extract spans-displays raw -o - "${backup_path}")"
+    defaults write com.apple.spaces spans-displays -bool "${value}"
+    print "restore com.apple.spaces (selected keys)"
+    (( restored += 1 ))
+  fi
+
   # Restart only processes owned by the current user. No sudo is used.
-  for process in cfprefsd Dock Finder ControlCenter SystemUIServer; do
+  for process in cfprefsd Dock Finder SystemUIServer; do
     killall "${process}" >/dev/null 2>&1 || true
   done
 

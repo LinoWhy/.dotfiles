@@ -2,8 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>ACDMonthlyAnalyticsLastPosted</key>
-	<real>804413052.92019296</real>
 	<key>AKLastIDMSEnvironment</key>
 	<integer>0</integer>
 	<key>AKLastLocale</key>
@@ -59,7 +57,7 @@
 	<key>NSLinguisticDataAssetsRequestLastInterval</key>
 	<real>86400</real>
 	<key>NSLinguisticDataAssetsRequestTime</key>
-	<date>2026-08-12T03:11:02Z</date>
+	<date>2026-09-03T03:03:15Z</date>
 	<key>NSLinguisticDataAssetsRequested</key>
 	<array>
 		<string>zh</string>
