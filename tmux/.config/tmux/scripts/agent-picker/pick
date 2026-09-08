@@ -43,7 +43,7 @@ raw_rows=$(
     # Runtime input (TSV):
     #   pane, pane_id, session_id, window_id, pane_pid, command, target, path
     #   process, pid, ppid, command
-    # Provider output (TSV): pane_id, session_id, window_id, agent, name, target, path
+    # Provider output (TSV): pane_id, session_id, window_id, agent, name, target, path, wrapped
     for provider in codex claude; do
         printf '%s\n' "$runtime_rows" | "$script_dir/$provider"
     done
@@ -70,6 +70,7 @@ selected=$(
             --delimiter='\t' \
             --with-nth=4.. \
             --layout=reverse \
+            --cycle \
             --prompt='agent > ' || true
 )
 [ -n "$selected" ] || exit 0

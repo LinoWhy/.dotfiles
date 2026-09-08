@@ -23,6 +23,10 @@ def pad(value: str, width: int) -> str:
     return value + " " * (width - display_width(value))
 
 
+def agent_label(row: list[str]) -> str:
+    return row[3] + ("˚" if row[7] == "1" else "")
+
+
 def main() -> int:
     home = sys.argv[1]
     colors = {"codex": sys.argv[2], "claude": sys.argv[3]}
@@ -30,7 +34,7 @@ def main() -> int:
 
     for line in sys.stdin:
         fields = line.rstrip("\n").split("\t")
-        if len(fields) != 7 or fields[3] not in colors:
+        if len(fields) != 8 or fields[3] not in colors:
             continue
 
         for index in (4, 5, 6):
@@ -46,12 +50,15 @@ def main() -> int:
     if not rows:
         return 0
 
-    widths = [max(display_width(row[index]) for row in rows) for index in (3, 4, 5)]
+    agent_width = max(display_width(agent_label(row)) for row in rows)
+    widths = (agent_width,) + tuple(
+        max(display_width(row[index]) for row in rows) for index in (4, 5)
+    )
     for row in rows:
-        pane, session, window, agent, name, target, path = row
+        pane, session, window, agent, name, target, path, _ = row
         visible = " │ ".join(
             (
-                pad(agent, widths[0]),
+                pad(agent_label(row), widths[0]),
                 pad(name, widths[1]),
                 pad(target, widths[2]),
                 path,

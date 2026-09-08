@@ -24,6 +24,7 @@ $1 == "pane" {
     pane_by_pid[$5] = $2
     pane_session[$2] = $3
     pane_window[$2] = $4
+    pane_command[$2] = $6
     pane_target[$2] = $7
     pane_path[$2] = $8
     next
@@ -45,9 +46,13 @@ END {
 
         if (pid in pane_by_pid) {
             pane = pane_by_pid[pid]
-            printf "%s\t%s\t%s\tclaude\t%s\t%s\t%s\n", \
+            command = pane_command[pane]
+            sub(/^.*\//, "", command)
+            sub(/^-/, "", command)
+            wrapped = (tolower(command) == "claude" ? "0" : "1")
+            printf "%s\t%s\t%s\tclaude\t%s\t%s\t%s\t%s\n", \
                 pane, pane_session[pane], pane_window[pane], \
-                session_name[i], pane_target[pane], pane_path[pane]
+                session_name[i], pane_target[pane], pane_path[pane], wrapped
         }
     }
 }'
