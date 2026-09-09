@@ -69,8 +69,11 @@ selected=$(
             --ansi \
             --delimiter='\t' \
             --with-nth=4.. \
+            --height=100% \
             --layout=reverse \
             --cycle \
+            --preview='tmux capture-pane -eJp -S -100 -t {1} 2>/dev/null' \
+            --preview-window='down,70%,wrap,follow' \
             --prompt='agent > ' || true
 )
 [ -n "$selected" ] || exit 0
