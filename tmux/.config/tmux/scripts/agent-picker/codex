@@ -5,14 +5,11 @@ from __future__ import annotations
 
 import json
 import os
-import selectors
 import subprocess
 import sys
-import time
 from dataclasses import dataclass
 
 
-APP_SERVER_TIMEOUT_SECONDS = 1.5
 TMUX_SEPARATOR = "\x1c"
 
 
@@ -128,153 +125,46 @@ def bind_thread_ids(panes: list[Pane]) -> None:
             )
 
 
-def send(process: subprocess.Popen[bytes], message: dict[str, object]) -> None:
-    assert process.stdin is not None
-    process.stdin.write(json.dumps(message, separators=(",", ":")).encode() + b"\n")
-    process.stdin.flush()
-
-
-class JsonLineReader:
-    def __init__(self, process: subprocess.Popen[bytes]) -> None:
-        assert process.stdout is not None
-        self.stdout = process.stdout
-        self.buffer = bytearray()
-        self.selector = selectors.DefaultSelector()
-        self.selector.register(self.stdout, selectors.EVENT_READ)
-
-    def close(self) -> None:
-        self.selector.close()
-
-    def receive(
-        self, deadline: float, expected_ids: set[int]
-    ) -> dict[int, dict[str, object]]:
-        responses: dict[int, dict[str, object]] = {}
-        while expected_ids - responses.keys():
-            while b"\n" in self.buffer:
-                line, _, remainder = self.buffer.partition(b"\n")
-                self.buffer = bytearray(remainder)
-                try:
-                    message = json.loads(line)
-                except (json.JSONDecodeError, TypeError, UnicodeDecodeError):
-                    continue
-                response_id = message.get("id")
-                if isinstance(response_id, int) and response_id in expected_ids:
-                    responses[response_id] = message
-
-            if not expected_ids - responses.keys():
-                break
-            remaining = deadline - time.monotonic()
-            if remaining <= 0 or not self.selector.select(remaining):
-                break
-            chunk = os.read(self.stdout.fileno(), 65536)
-            if not chunk:
-                break
-            self.buffer.extend(chunk)
-        return responses
-
-
-def query_names(codex_home: str, thread_ids: list[str]) -> dict[str, str]:
+def read_names(codex_home: str, thread_ids: list[str]) -> dict[str, str]:
+    """Read the latest names for the requested IDs from Codex's JSONL index."""
     if not thread_ids:
         return {}
 
-    environment = os.environ.copy()
-    environment["CODEX_HOME"] = codex_home
-    process = subprocess.Popen(
-        ["codex", "app-server"],
-        env=environment,
-        stdin=subprocess.PIPE,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.DEVNULL,
-    )
-    reader = JsonLineReader(process)
-    deadline = time.monotonic() + APP_SERVER_TIMEOUT_SECONDS
-
+    index_path = os.path.join(codex_home, "session_index.jsonl")
+    requested = set(thread_ids)
+    names: dict[str, str] = {}
     try:
-        send(
-            process,
-            {
-                "id": 0,
-                "method": "initialize",
-                "params": {
-                    "clientInfo": {
-                        "name": "agent_picker",
-                        "title": "Agent Picker",
-                        "version": "1.0.0",
-                    }
-                },
-            },
-        )
-        initialized = reader.receive(deadline, {0})
-        if 0 not in initialized or "error" in initialized[0]:
-            return {}
-
-        send(process, {"method": "initialized", "params": {}})
-        request_threads: dict[int, str] = {}
-        for request_id, thread_id in enumerate(thread_ids, start=1):
-            request_threads[request_id] = thread_id
-            send(
-                process,
-                {
-                    "id": request_id,
-                    "method": "thread/read",
-                    "params": {"threadId": thread_id, "includeTurns": False},
-                },
-            )
-
-        responses = reader.receive(deadline, set(request_threads))
-        names: dict[str, str] = {}
-        for request_id, thread_id in request_threads.items():
-            result = responses.get(request_id, {}).get("result")
-            thread = result.get("thread") if isinstance(result, dict) else None
-            if not isinstance(thread, dict):
-                continue
-            name = thread.get("name")
-            names[thread_id] = " ".join(name.split()) if isinstance(name, str) else ""
-        return names
-    finally:
-        reader.close()
-        if process.poll() is None:
-            process.terminate()
-        try:
-            process.wait(timeout=0.2)
-        except subprocess.TimeoutExpired:
-            process.kill()
-            process.wait()
+        with open(index_path, encoding="utf-8", errors="replace") as index:
+            for line in index:
+                try:
+                    record = json.loads(line)
+                except (json.JSONDecodeError, TypeError):
+                    continue
+                if not isinstance(record, dict):
+                    continue
+                thread_id = record.get("id")
+                if thread_id not in requested:
+                    continue
+                name = record.get("thread_name")
+                names[thread_id] = (
+                    " ".join(name.split()) if isinstance(name, str) else ""
+                )
+    except OSError:
+        return {}
+    return names
 
 
-def query_all_names(panes: list[Pane]) -> dict[tuple[str, str], str]:
+def read_all_names(panes: list[Pane]) -> dict[tuple[str, str], str]:
     groups: dict[str, list[str]] = {}
     for pane in panes:
         groups.setdefault(pane.codex_home, []).extend(pane.thread_ids)
 
     names: dict[tuple[str, str], str] = {}
-    if len(groups) == 1:
-        codex_home, thread_ids = next(iter(groups.items()))
-        try:
-            result = query_names(codex_home, list(dict.fromkeys(thread_ids)))
-        except (OSError, BrokenPipeError, subprocess.SubprocessError):
-            return names
+    for codex_home, thread_ids in groups.items():
+        result = read_names(codex_home, list(dict.fromkeys(thread_ids)))
         names.update(
             ((codex_home, thread_id), name) for thread_id, name in result.items()
         )
-        return names
-
-    from concurrent.futures import ThreadPoolExecutor
-
-    with ThreadPoolExecutor(max_workers=len(groups)) as executor:
-        requests = {
-            executor.submit(query_names, codex_home, list(dict.fromkeys(thread_ids))):
-            codex_home
-            for codex_home, thread_ids in groups.items()
-        }
-        for request, codex_home in requests.items():
-            try:
-                result = request.result()
-            except (OSError, BrokenPipeError, subprocess.SubprocessError):
-                continue
-            names.update(
-                ((codex_home, thread_id), name) for thread_id, name in result.items()
-            )
     return names
 
 
@@ -307,7 +197,7 @@ def main() -> int:
         return 0
 
     bind_thread_ids(panes)
-    names = query_all_names(panes)
+    names = read_all_names(panes)
     output(panes, names)
     return 0
 
