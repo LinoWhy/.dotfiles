@@ -1,16 +1,19 @@
 #!/usr/bin/env python3
-"""Provide Codex panes and names to Agent Picker."""
+"""Provide Codex panes and status-line names to Agent Picker."""
 
 from __future__ import annotations
 
-import json
 import os
+import re
 import subprocess
 import sys
 from dataclasses import dataclass
 
 
-TMUX_SEPARATOR = "\x1c"
+STATUS_SEPARATOR = " · "
+ANSI_ESCAPE = re.compile(
+    r"\x1b(?:\[[0-?]*[ -/]*[@-~]|\][^\x07]*(?:\x07|\x1b\\)|[@-_])"
+)
 
 
 @dataclass
@@ -22,8 +25,6 @@ class Pane:
     command: str
     target: str
     path: str
-    codex_home: str = ""
-    thread_ids: tuple[str, ...] = ()
 
 
 def process_name(command: str) -> str:
@@ -70,120 +71,38 @@ def read_panes() -> list[Pane]:
     return list(panes.values())
 
 
-def bind_thread_ids(panes: list[Pane]) -> None:
+def read_statusline_name(pane_id: str) -> str:
     try:
         result = subprocess.run(
-            [
-                "tmux",
-                "list-panes",
-                "-a",
-                "-F",
-                f"#{{pane_id}}{TMUX_SEPARATOR}"
-                f"#{{@agent_picker_codex_session_id}}{TMUX_SEPARATOR}"
-                f"#{{@agent_picker_codex_session_ids}}{TMUX_SEPARATOR}"
-                "#{@agent_picker_codex_home}",
-            ],
+            ["tmux", "capture-pane", "-pJ", "-t", pane_id],
             check=False,
             stdout=subprocess.PIPE,
             stderr=subprocess.DEVNULL,
             text=True,
         )
     except OSError:
-        return
+        return ""
 
-    bindings: dict[str, tuple[tuple[str, ...], str]] = {}
-    # str.splitlines() also treats U+001C as a line boundary, but U+001C is
-    # deliberately our field separator. Split only on the actual newline.
-    for line in result.stdout.split("\n"):
-        fields = line.split(TMUX_SEPARATOR)
-        if len(fields) != 4:
-            continue
+    if result.returncode:
+        return ""
 
-        thread_ids: list[str] = []
-        try:
-            history = json.loads(fields[2]) if fields[2] else []
-        except (json.JSONDecodeError, TypeError):
-            history = []
-        if isinstance(history, list):
-            thread_ids.extend(
-                thread_id
-                for thread_id in history
-                if isinstance(thread_id, str) and thread_id
-            )
-        if fields[1] and fields[1] not in thread_ids:
-            thread_ids.append(fields[1])
-        if thread_ids:
-            bindings[fields[0]] = (tuple(thread_ids[:8]), fields[3])
+    lines = result.stdout.splitlines()
+    if not lines:
+        return ""
+    fields = ANSI_ESCAPE.sub("", lines[-1]).split(STATUS_SEPARATOR)
+    if len(fields) < 2:
+        return ""
+    return " ".join(fields[1].split())
 
+
+def output(panes: list[Pane]) -> None:
     for pane in panes:
-        binding = bindings.get(pane.pane_id)
-        if binding:
-            pane.thread_ids, pane.codex_home = binding
-        if not pane.codex_home:
-            pane.codex_home = os.environ.get(
-                "CODEX_HOME", os.path.join(os.path.expanduser("~"), ".codex")
-            )
-
-
-def read_names(codex_home: str, thread_ids: list[str]) -> dict[str, str]:
-    """Read the latest names for the requested IDs from Codex's JSONL index."""
-    if not thread_ids:
-        return {}
-
-    index_path = os.path.join(codex_home, "session_index.jsonl")
-    requested = set(thread_ids)
-    names: dict[str, str] = {}
-    try:
-        with open(index_path, encoding="utf-8", errors="replace") as index:
-            for line in index:
-                try:
-                    record = json.loads(line)
-                except (json.JSONDecodeError, TypeError):
-                    continue
-                if not isinstance(record, dict):
-                    continue
-                thread_id = record.get("id")
-                if thread_id not in requested:
-                    continue
-                name = record.get("thread_name")
-                names[thread_id] = (
-                    " ".join(name.split()) if isinstance(name, str) else ""
-                )
-    except OSError:
-        return {}
-    return names
-
-
-def read_all_names(panes: list[Pane]) -> dict[tuple[str, str], str]:
-    groups: dict[str, list[str]] = {}
-    for pane in panes:
-        groups.setdefault(pane.codex_home, []).extend(pane.thread_ids)
-
-    names: dict[tuple[str, str], str] = {}
-    for codex_home, thread_ids in groups.items():
-        result = read_names(codex_home, list(dict.fromkeys(thread_ids)))
-        names.update(
-            ((codex_home, thread_id), name) for thread_id, name in result.items()
-        )
-    return names
-
-
-def output(panes: list[Pane], names: dict[tuple[str, str], str]) -> None:
-    for pane in panes:
-        name = next(
-            (
-                names[(pane.codex_home, thread_id)]
-                for thread_id in pane.thread_ids
-                if (pane.codex_home, thread_id) in names
-            ),
-            "",
-        )
         fields = (
             pane.pane_id,
             pane.session_id,
             pane.window_id,
             "codex",
-            name,
+            read_statusline_name(pane.pane_id),
             pane.target,
             pane.path,
             "0" if process_name(pane.command) == "codex" else "1",
@@ -196,9 +115,7 @@ def main() -> int:
     if not panes:
         return 0
 
-    bind_thread_ids(panes)
-    names = read_all_names(panes)
-    output(panes, names)
+    output(panes)
     return 0
 
 
