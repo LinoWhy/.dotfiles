@@ -7,6 +7,8 @@ bindkey -s '^[l' 'clear^M'
 
 # backward-kill-line rather than kill-whole-line
 bindkey \^U backward-kill-line
+# [Alt-K] - cut till end of line
+bindkey '^[k' kill-line
 
 # [PageUp] - Up a line of history
 bindkey -M emacs "${terminfo[kpp]}" up-line-or-history
