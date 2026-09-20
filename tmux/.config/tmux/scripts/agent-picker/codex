@@ -74,7 +74,7 @@ def read_panes() -> list[Pane]:
 def read_statusline_name(pane_id: str) -> str:
     try:
         result = subprocess.run(
-            ["tmux", "capture-pane", "-pJ", "-t", pane_id],
+            ["tmux", "capture-pane", "-pJ", "-S", "-100", "-t", pane_id],
             check=False,
             stdout=subprocess.PIPE,
             stderr=subprocess.DEVNULL,
@@ -86,13 +86,15 @@ def read_statusline_name(pane_id: str) -> str:
     if result.returncode:
         return ""
 
-    lines = result.stdout.splitlines()
-    if not lines:
-        return ""
-    fields = ANSI_ESCAPE.sub("", lines[-1]).split(STATUS_SEPARATOR)
-    if len(fields) < 2:
-        return ""
-    return " ".join(fields[1].split())
+    for line in reversed(result.stdout.splitlines()):
+        line = ANSI_ESCAPE.sub("", line).strip()
+        if not line:
+            continue
+        fields = line.split(STATUS_SEPARATOR)
+        if len(fields) < 2:
+            return ""
+        return " ".join(fields[1].split())
+    return ""
 
 
 def output(panes: list[Pane]) -> None:
