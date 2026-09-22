@@ -3,11 +3,15 @@
 # Detect environment first
 source "$ZDOTDIR/env.zsh"
 
-# Homebrew shellenv
-if command -v brew >/dev/null 2>&1; then
-  eval "$($(brew --prefix)/bin/brew shellenv)"
-elif [[ -f /home/linuxbrew/.linuxbrew/bin/brew ]]; then
-  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+# Avoid reinitializing Homebrew and moving its paths to the front again.
+if [[ -z ${HOMEBREW_PREFIX:-} ||
+      ${path[(Ie)${HOMEBREW_PREFIX}/bin]} -eq 0 ||
+      ${path[(Ie)${HOMEBREW_PREFIX}/sbin]} -eq 0 ]]; then
+  if command -v brew >/dev/null 2>&1; then
+    eval "$($(brew --prefix)/bin/brew shellenv)"
+  elif [[ -f /home/linuxbrew/.linuxbrew/bin/brew ]]; then
+    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+  fi
 fi
 
 # Personal configurations
