@@ -1,0 +1,24 @@
+{
+  "firstTranslationLanguage": "en",
+  "secondTranslationLanguage": "de",
+  "thirdTranslationLanguage": null,
+  "globalShortcut": "command",
+  "showWindowOn": "screenWithFrontmost",
+  "calendarEnabled": false,
+  "showAllDayEvents": false,
+  "launchAtLogin": true,
+  "mediaKeyForwardingEnabled": false,
+  "showUpcomingEvent": false,
+  "scratchPadColor": "SYSTEM",
+  "searchFolders": [],
+  "searchEngine": "google",
+  "customSearchUrl": "",
+  "shortcuts": {
+    "clipboard_manager": "command+option+c"
+  },
+  "showInAppBrowserBookMarks": false,
+  "hasDismissedGettingStarted": true,
+  "hyperKeyEnabled": false,
+  "customItems": [],
+  "disabledItemIds": []
+}
