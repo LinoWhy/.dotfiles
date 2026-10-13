@@ -24,10 +24,12 @@
 
 ## Codex
 
-### 终端响铃
-
-在 `config.toml` 中添加以下配置，在 Codex 发出通知时响铃：
+在 `config.toml` 中添加以下配置，开启桌面通知：
 
 ```toml
-notify = ["bash", "-c", "printf '\\a'"]
+[tui]
+notifications = true
+notification_method = "osc9"
 ```
+
+tmux 需设置 `set -g allow-passthrough all`，允许后台窗口透传通知。
