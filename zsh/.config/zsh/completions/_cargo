@@ -1,4 +1,7 @@
 #compdef cargo
-if command -v rustc >/dev/null 2>&1; then
-	source "$(rustc --print sysroot)"/share/zsh/site-functions/_cargo
-fi
+
+local sysroot completion_script
+sysroot=$(command rustc --print sysroot) || return
+completion_script=$(<"$sysroot/share/zsh/site-functions/_cargo") || return
+[[ -n $completion_script ]] || return
+eval "$completion_script"

@@ -1,7 +1,6 @@
 #compdef rendercv
 
-_rendercv_completion() {
-  eval $(env _TYPER_COMPLETE_ARGS="${words[1,$CURRENT]}" _RENDERCV_COMPLETE=complete_zsh rendercv)
-}
-
-compdef _rendercv_completion rendercv
+local completion_script
+completion_script=$(env _TYPER_COMPLETE_ARGS="${words[1,$CURRENT]}" _RENDERCV_COMPLETE=complete_zsh rendercv) || return
+[[ -n $completion_script ]] || return
+eval "$completion_script"
