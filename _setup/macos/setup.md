@@ -47,3 +47,4 @@ tldr -u
 
 - flameshot
 - nomachine
+- Raycast, config with password 'qwer1234'
