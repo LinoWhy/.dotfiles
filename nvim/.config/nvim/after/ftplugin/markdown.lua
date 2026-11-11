@@ -1,7 +1,7 @@
 vim.cmd("setlocal nolist")
 vim.cmd("setlocal wrap")
-vim.cmd("setlocal spell")
-vim.cmd("setlocal spelllang=en_us,cjk")
+-- vim.cmd("setlocal spell")
+-- vim.cmd("setlocal spelllang=en_us,cjk")
 
 Utils.diag.set_level(vim.diagnostic.severity.ERROR)()
 
