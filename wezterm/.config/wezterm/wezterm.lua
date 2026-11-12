@@ -10,6 +10,7 @@ local platform_modules = {
 local platform = require(platform_modules[wezterm.target_triple])
 local switch_ime = platform.switch_ime or nil
 local tmux_windows = require("tmux_windows")
+local agent_picker = require("agent_picker")
 
 wezterm.on("gui-startup", function(cmd)
   local tab, pane, window = wezterm.mux.spawn_window(cmd or {})
@@ -133,6 +134,7 @@ c.keys = {
   { key = "Tab", mods = "CTRL", action = switch_tab_and_ime(1) },
   { key = "Tab", mods = "SHIFT|CTRL", action = switch_tab_and_ime(-1) },
   { key = "S", mods = "SHIFT|CTRL", action = act.ShowLauncherArgs({ flags = "FUZZY|TABS", title = "Tabs" }) },
+  { key = "A", mods = "SHIFT|CTRL", action = agent_picker.action() },
   -- copy & paste
   { key = "C", mods = "SHIFT|CTRL", action = act.CopyTo("Clipboard") },
   { key = "V", mods = "SHIFT|CTRL", action = act.PasteFrom("Clipboard") },

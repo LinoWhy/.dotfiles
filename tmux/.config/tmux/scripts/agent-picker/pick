@@ -49,6 +49,11 @@ raw_rows=$(
     done
 )
 
+if [ "${1:-}" = --list ]; then
+    printf '%s\n' "$raw_rows"
+    exit 0
+fi
+
 # Catppuccin Macchiato green (#A6DA95) and peach (#F5A97F).
 codex_color=$(printf '\033[38;2;%d;%d;%dm' 0xA6 0xDA 0x95)
 claude_color=$(printf '\033[38;2;%d;%d;%dm' 0xF5 0xA9 0x7F)
