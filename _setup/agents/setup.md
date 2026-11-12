@@ -30,6 +30,11 @@
 [tui]
 notifications = true
 notification_method = "osc9"
+status_line = ["model-with-reasoning", "thread-title", "current-dir", "five-hour-limit", "weekly-limit"]
+status_line_use_colors = true
+screen_reader_detection_done = true
+theme = "catppuccin-macchiato"
+alternate_screen = "never"
 ```
 
 tmux 需设置 `set -g allow-passthrough all`，允许后台窗口透传通知。
