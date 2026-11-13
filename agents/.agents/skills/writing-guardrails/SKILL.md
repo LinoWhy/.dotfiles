@@ -1,22 +1,27 @@
 ---
 name: writing-guardrails
-description: Use when drafting, substantively revising, or reviewing complete texts, including technical documentation and presentation content, or creating or editing Markdown file content.
+description: Guide clear expression and content organization when drafting, revising, or reviewing documents, presentation content, interface copy, or Markdown files.
 ---
 
 # Writing and Revision
 
-- Place necessary background and prerequisites before the relevant content, and scope and uncertainty near the conclusions.
-- Preserve meaning, key conditions, and causal relationships when shortening or rewriting. Distinguish facts, inferences, and recommendations.
+- Place necessary background and prerequisites before the relevant content. **Integrate scope and uncertainty into the claims they qualify**, using precise wording instead of repeated caveats.
+- **Preserve meaning, key conditions, and causal relationships** when shortening or rewriting. Distinguish facts, inferences, and recommendations.
 - Revise the requested issues while preserving correct content. Integrate additions and corrections into the original text and remove superseded statements.
+
+## Expression and Supporting Copy
+
+- **State concrete actors, actions, and relationships.** When identifying a difference or dependency, name the parties and explain the relationship rather than merely announcing that one exists. Prefer direct affirmative wording; use negation when a specific limitation, correction, or distinction matters.
+- Remove local restatements of titles, labels, values, or preceding sentences that add neither needed information nor a distinct function. **Add supporting copy only for a clear reader need**; retain useful summaries, navigation, status feedback, units, scope, and consequences.
 
 ## Structure by Purpose
 
-- For technical documentation, match the structure to the reader's task: tutorials guide an achievable learn-by-doing path; how-to guides provide steps and validation for a specific task; reference material makes facts easy to locate; explanations develop concepts, causes, and trade-offs. Separate sections or cross-link material when these purposes interfere. Do not impose this classification on ordinary articles or reports.
-- For presentation content pages that communicate analysis or conclusions, prefer a precise takeaway in the title and support it with relevant data, diagrams, code, or examples. Retain qualifications when evidence is limited. Cover, agenda, transition, and interactive-question slides need not follow this structure.
+- For technical documentation, **match the structure to the reader's task**: tutorials guide an achievable learn-by-doing path; how-to guides provide steps and validation for a specific task; reference material makes facts easy to locate; explanations develop concepts, causes, and trade-offs. Separate sections or cross-link material when these purposes interfere. Do not impose this classification on ordinary articles or reports.
+- For presentation content pages that communicate analysis or conclusions, prefer **a precise takeaway in the title** and support it with relevant data, diagrams, code, or examples. Retain qualifications when evidence is limited. Cover, agenda, transition, and interactive-question slides need not follow this structure.
 
 ## Markdown Formatting
 
-After creating or editing Markdown files, format only the files changed in this task. Prefer the project's existing formatter command; otherwise run:
+After creating or editing Markdown files, **format only the files changed in this task**. Prefer the project's existing formatter command; otherwise run:
 
 ```bash
 prettier --write <file.md>
