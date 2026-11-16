@@ -1,37 +1,23 @@
 ---
 name: html-guardrails
-description: Use when creating, editing, or reviewing HTML to improve reading order, visual hierarchy, control relevance, and mathematical typesetting.
+description: 创建、修改或评审 HTML 时使用，避免重复呈现并规范内容渲染。
 ---
 
-# HTML Presentation Guardrails
+# HTML 约束
 
-This skill addresses redundant content, unnecessary controls, unclear reading order and hierarchy, and mathematical typesetting in HTML.
+每次开始 HTML 任务时，**先询问用户是否使用 [writing-guardrails](../writing-guardrails/SKILL.md) 技能，并等待答复**；仅在用户同意后调用。
 
-When wording or content organization is involved, **read and follow [writing-guardrails](../writing-guardrails/SKILL.md)**.
+## 避免重复
 
-**Explicit user requirements and applicable project conventions take precedence.** These constraints take precedence over general HTML design and template guidance only for the issues they explicitly address. Choose the overall visual direction to suit the audience, purpose, and subject, using the relevant design skill.
+- **大标题下不要再放重复其意思的小标题或说明**；同一信息不在标题、引言、卡片、图表之间无意义地重复。
+- 模板中的眉题、副标题和尾注按需使用，删除无用位置和占位符；不为填满版式补写内容或重组主体。
+- **控件必须服务明确任务**，不添加重复或无用的控件；实现能力不自动成为页面功能，例如打印样式不意味着需要打印按钮。
 
-## Feature Scope
+## 渲染规范
 
-- **Every visible control must serve a clear reader task or user requirement.** Capabilities and implementation guidance mentioned in a skill do not automatically become page features; print styles, for example, do not require a print button. Omit controls without a clear purpose in the task.
+除明确展示源码的示例外，交付内容应呈现渲染结果。
 
-## Information and Reading Order
-
-- Decide what each content area helps readers understand, decide, or accomplish before choosing its primary form. Do not automatically repeat the same information as a heading, introduction, card, and flowchart. When prose, diagrams, tables, or lists coexist, give each a complementary role.
-- For reading pages, use headings that help readers locate information and prose that develops it coherently; for presentations, emphasize the main idea and key evidence. Organize implementation entry points, derivations, and supplementary material for consultation as needed. Keep the premises and evidence needed to understand a conclusion on the main reading path.
-- Treat eyebrows, subtitles, descriptive lines, and endnotes in templates as optional. Remove unused slots and their placeholders instead of adding text to fill the layout. When simplifying an existing page, preserve effective layout and navigation, adapting them when the task calls for a different structure.
-
-## Visual Hierarchy
-
-- Use consistent visual roles for headings, body text, and supporting information, and style content at the same level consistently. **Give each area a clear primary focus**, with type size, weight, color, spacing, and grouping supporting the reading order.
-- Use labels, background fills, and callouts selectively for grouping, navigation, comparison, emphasis, or state. Visual rhythm and a coherent identity suited to the subject are also valid design goals. Reduce competing emphasis that obscures hierarchy.
-- Use code styling for identifiers, commands, and paths that readers need to identify precisely or copy, not to emphasize ordinary technical terms.
-
-## Mathematical Notation
-
-- **Write formulas in LaTeX and render them as mathematical notation.** Retain necessary variable definitions and units; do not deliver raw markup or manually assembled mathematical characters as the finished display. Keep code examples styled as code.
-- Math rendering must also meet the artifact's offline and asset packaging requirements.
-
-## Final Review
-
-Review the final page against its audience and purpose, including how readily readers grasp the main points, follow the reading or task flow, and locate details. Check control relevance, complementary representations, visual hierarchy, and mathematical rendering. Remove redundancy and strengthen or add structure where grouping, navigation, or emphasis is insufficient.
+- **公式用 LaTeX 渲染**，保留符号、变量定义和单位。
+- **代码使用行内代码或代码块**，保留内容、缩进和换行，按需提供语法高亮。
+- **Mermaid 渲染为图表**。
+- 渲染依赖应满足产物的离线使用和资源打包要求。

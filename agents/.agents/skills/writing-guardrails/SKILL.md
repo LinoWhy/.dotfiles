@@ -1,30 +1,14 @@
 ---
 name: writing-guardrails
-description: Guide clear expression and content organization when drafting, revising, or reviewing documents, presentation content, interface copy, or Markdown files.
+description: 仅在用户或其他技能显式调用时，用于内容撰写、修订和审阅。
+disable-model-invocation: true
 ---
 
-# Writing and Revision
+# 写作
 
-- Place necessary background and prerequisites before the relevant content. **Integrate scope and uncertainty into the claims they qualify**, using precise wording instead of repeated caveats.
-- **Preserve meaning, key conditions, and causal relationships** when shortening or rewriting. Distinguish facts, inferences, and recommendations.
-- Revise the requested issues while preserving correct content. Integrate additions and corrections into the original text and remove superseded statements.
-
-## Expression and Supporting Copy
-
-- **State concrete actors, actions, and relationships.** When identifying a difference or dependency, name the parties and explain the relationship rather than merely announcing that one exists. Prefer direct affirmative wording; use negation when a specific limitation, correction, or distinction matters.
-- Remove local restatements of titles, labels, values, or preceding sentences that add neither needed information nor a distinct function. **Add supporting copy only for a clear reader need**; retain useful summaries, navigation, status feedback, units, scope, and consequences.
-
-## Structure by Purpose
-
-- For technical documentation, **match the structure to the reader's task**: tutorials guide an achievable learn-by-doing path; how-to guides provide steps and validation for a specific task; reference material makes facts easy to locate; explanations develop concepts, causes, and trade-offs. Separate sections or cross-link material when these purposes interfere. Do not impose this classification on ordinary articles or reports.
-- For presentation content pages that communicate analysis or conclusions, prefer **a precise takeaway in the title** and support it with relevant data, diagrams, code, or examples. Retain qualifications when evidence is limited. Cover, agenda, transition, and interactive-question slides need not follow this structure.
-
-## Markdown Formatting
-
-After creating or editing Markdown files, **format only the files changed in this task**. Prefer the project's existing formatter command; otherwise run:
-
-```bash
-prettier --write <file.md>
-```
-
-Review the diff after formatting to check for unintended content changes. If formatting cannot be run, state the reason in the final response.
+- 围绕**读者要理解、决定或完成的事**选择内容和详略，在需要的位置补充必要的背景和前提。
+- **先回答核心问题或表达主要观点**，再展开支撑内容。结构服务读者的任务，不为填满模板而补写内容。
+- 使用具体主语、动作和关系，行文自然，术语一致。直接陈述事实，避免反驳假想误解，同时保留必要的限制和纠正。
+- **每段推进一个问题**，按内容关系选择段落、列表或表格。标题简短、准确，说明主题、任务或结论。
+- 辅助文案和重复信息应有明确用途，例如提供背景、导航、状态、单位或无障碍支持。让文字和视觉内容互补，解释仅凭图示无法传达的关系。
+- 针对要求修订，保留正确内容；**将纠正融入原文**，删除失效表述、无必要的复述和无关的写作过程说明。

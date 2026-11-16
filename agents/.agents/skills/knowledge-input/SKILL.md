@@ -1,29 +1,22 @@
 ---
 name: knowledge-input
-description: Use only when explicitly invoked to distill user-selected sources into knowledge notes and add or update them in a knowledge base.
+description: 仅在用户或其他技能显式调用时，将指定来源蒸馏为新文章，忠实保留入选内容和原文主体大纲。
 disable-model-invocation: true
 ---
 
-# Knowledge Input
+# 知识蒸馏
 
-Distill the selected sources into standalone, reusable notes. Follow the user's requirements and the knowledge base's existing conventions for destination, directory structure, and naming.
+默认生成可独立阅读的新文章；用户要求更新已有文章时再进行更新。遵循用户的交付要求，以及目标位置的命名和附件约定。
 
-## Extract and Merge
+## 理解与取舍
 
-- Read the relevant text, figures, and existing notes. Preserve mechanisms, evidence, applicable conditions, and necessary formulas and examples. State any coverage gaps that affect the conclusions.
-- Ground the notes in the sources. Distinguish general knowledge from specific cases; do not turn facts about a particular project into universal rules.
-- Prefer updating existing notes on the same topic. Preserve differences in versions, conditions, and viewpoints when merging sources. Split notes only when each can be understood and maintained independently; do not impose a fixed count.
-- Keep diagrams and charts that aid understanding. Inspect images directly and follow the knowledge base's existing attachment directories and reference conventions.
+- **先理解，再取舍。** 阅读来源的文字、公式和图片，理解核心知识及其展开方式。根据用户希望文章表达的内容选材；用户未指定侧重点时，沿用原文主旨。
+- **保护核心及其必要支撑。** 将理解和支持核心所必需的前提、推理、证据、示例和图片一并保留。按实际作用判断内容的重要性，示例或背景也可能属于核心。外围内容按其对解释的贡献取舍，不设固定压缩比例。
+- **忠实保留入选内容。** 忠实摘录或翻译，保留符号、公式、推导步骤、图片内容和图文对应关系；直接查看图片。除下文明示允许的调整外，不改写或扩写入选的来源内容，不引入新知识，不将具体案例泛化为通用结论。
+- **沿用原文主体大纲。** 保留主体标题、层级和论述顺序。在主体解释及其依赖关系完整的前提下，可以删去外围章节、示例、重复说明和过渡语句；不围绕入选材料另拟大纲。
+- **只做必要的衔接调整。** 删节后，最小限度地调整过渡语句、编号和指代，使其准确连贯；格式转换应保留原意和对应关系。遇到需要技术解释才能补足的缺口，优先恢复必要原文；无法解决时说明来源缺口，不自行编写解释。
 
-## De-identification
+## 交付
 
-Determine what needs de-identification from the user's requirements and the target knowledge base's confidentiality rules. When de-identification is needed:
-
-- Preserve mechanisms and technical meaning while removing identifying details, internal source locations, private deployment details, and business data. Use role or concept names for necessary entities; do not keep a reversible alias mapping.
-- Replace private measurements and configurations with the necessary trends, relative relationships, or orders of magnitude. Retain public facts and generic technical constants. State any loss of key evidence; do not invent replacement facts.
-- Apply the same checks to image content, filenames, and source links. Redraw or omit figures containing private information, and check whether combining notes could reveal private information.
-- Process source material that has not been de-identified in a temporary directory, clean it up afterward, and do not write it to the target knowledge base.
-
-## Write and Verify
-
-Check conclusions and necessary details against the sources. Verify that links and attachments work and meet de-identification requirements. Save only the needed notes and attachments; do not automatically create process logs or indexes.
+- 保留来源归属和不同来源之间的重要差异。仅保存文章和必要附件，不自动创建过程日志或索引。
+- 仅在用户或目标位置要求时脱敏，并覆盖文字、图片、文件名和链接。保留技术含义，不编造替代事实；说明关键证据的损失，不将未经脱敏的私有材料写入目标位置。
