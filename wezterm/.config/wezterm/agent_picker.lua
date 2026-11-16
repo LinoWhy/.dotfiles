@@ -121,7 +121,8 @@ local function collect()
     source.color = colors[(index - 1) % #colors + 1]
     local home
     local clients, rows, locations = {}, {}, {}
-    for line in run(source, query):gmatch("[^\n]+") do
+    local ok, output = pcall(run, source, query)
+    for line in (ok and output or ""):gmatch("[^\n]+") do
       local fields = {}
       for value in (line .. "\t"):gmatch("(.-)\t") do
         table.insert(fields, value)
