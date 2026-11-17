@@ -1,0 +1,282 @@
+/* Obsidian reading styles, using this vault's appearance.json and snippets. */
+:root {
+        --font-text-override:
+                Arial, "Recursive Mono Casual Static Freeze", "HYTangMeiRen";
+        --font-text:
+                var(--font-text-override), ui-sans-serif, -apple-system,
+                BlinkMacSystemFont, system-ui, "Segoe UI", sans-serif;
+        --font-monospace:
+                "Recursive Mono Casual Static Freeze", "Noto Sans Symbols 2",
+                ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        --file-line-width: 700px;
+        --file-margins: 32px;
+}
+
+html body {
+        --text-normal: #222;
+        --text-muted: #5c5c5c;
+        --background-primary: #fff;
+        --background-primary-alt: #fafafa;
+        --background-modifier-border: #e4e4e4;
+        --interactive-accent: hsl(258, 88%, 66%);
+        --blockquote-border-color: hsl(257, 88.88%, 70.95%);
+        font-family: var(--font-text);
+        color: var(--text-normal);
+        background-color: var(--background-primary);
+}
+
+html body[data-preview-theme="dark"] {
+        --text-normal: #dadada;
+        --text-muted: #b3b3b3;
+        --background-primary: #1c1c1c;
+        --background-primary-alt: #232323;
+        --background-modifier-border: #333;
+        --interactive-accent: hsl(255, 89.76%, 75.9%);
+        --blockquote-border-color: hsl(258, 88%, 66%);
+}
+
+/* Include padding outside the 700px readable line width. */
+body.preview-container .crossnote.markdown-preview[data-for="preview"],
+body.preview-container .crossnote.markdown-preview.hidden-preview {
+        box-sizing: border-box;
+        width: 100%;
+        max-width: calc(var(--file-line-width) + 2 * var(--file-margins));
+        margin-inline: auto;
+        padding: var(--file-margins);
+}
+
+.crossnote.markdown-preview {
+        font-family: var(--font-text);
+        font-size: 16px;
+        font-weight: 400;
+        line-height: 1.5;
+        color: var(--text-normal);
+        background-color: var(--background-primary);
+
+        > :first-child {
+                margin-top: 0;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+                font-family: inherit;
+                color: inherit;
+                margin-top: 1rem;
+                margin-bottom: 16px;
+                padding: 0;
+                border: 0;
+        }
+
+        h1 {
+                font-size: 1.618em;
+                font-weight: 700;
+                line-height: 1.2;
+        }
+        h2 {
+                font-size: 1.462em;
+                font-weight: 680;
+                line-height: 1.2;
+        }
+        h3 {
+                font-size: 1.318em;
+                font-weight: 660;
+                line-height: 1.3;
+        }
+        h4 {
+                font-size: 1.188em;
+                font-weight: 640;
+                line-height: 1.4;
+        }
+        h5 {
+                font-size: 1.076em;
+                font-weight: 620;
+                line-height: 1.5;
+        }
+        h6 {
+                font-size: 1em;
+                font-weight: 600;
+                line-height: 1.5;
+        }
+
+        :is(p, pre, table, ul, ol) + :is(h1, h2, h3, h4, h5, h6) {
+                margin-top: 2.5rem;
+        }
+
+        p,
+        blockquote,
+        ul,
+        ol,
+        dl,
+        table,
+        pre {
+                margin-top: 0;
+                margin-bottom: 16px;
+        }
+
+        ul,
+        ol {
+                padding-left: 2em;
+
+                ul,
+                ol {
+                        margin-block: 0;
+                }
+        }
+
+        strong {
+                font-weight: 600;
+                color: inherit;
+        }
+
+        a {
+                color: var(--interactive-accent);
+                text-decoration: underline;
+        }
+
+        blockquote {
+                margin-inline: 0;
+                padding: 0 0 0 24px;
+                color: inherit;
+                background: transparent;
+                border-left: 2px solid var(--blockquote-border-color);
+        }
+
+        hr {
+                height: 0;
+                margin-block: 20px;
+                border: 0;
+                border-top: 2px solid var(--background-modifier-border);
+        }
+
+        pre,
+        code,
+        kbd {
+                font-family: var(--font-monospace);
+                text-shadow: none;
+        }
+
+        code {
+                padding: 0.15em 0.3em;
+                font-size: 87.5%;
+                background: var(--background-primary-alt);
+                border-radius: 4px;
+        }
+
+        pre {
+                padding: 12px 16px;
+                overflow: auto;
+                font-size: 87.5%;
+                line-height: 1.5;
+                background: var(--background-primary-alt);
+                border: 0;
+                border-radius: 4px;
+
+                code {
+                        padding: 0;
+                        font-size: inherit;
+                        line-height: inherit;
+                        background: transparent;
+                        border: 0;
+                }
+        }
+
+        kbd {
+                padding: 2px 4px;
+                font-size: 87.5%;
+                background: var(--background-primary-alt);
+                border: 1px solid var(--background-modifier-border);
+                border-radius: 3px;
+        }
+
+        table {
+                display: block;
+                max-width: 100%;
+                overflow: auto;
+                border-collapse: collapse;
+                border-spacing: 0;
+        }
+
+        table tr,
+        table tr:nth-child(2n) {
+                background: transparent;
+        }
+
+        th,
+        td {
+                padding: 4px 8px;
+                border: 1px solid var(--background-modifier-border);
+                vertical-align: top;
+        }
+
+        th {
+                font-weight: 600;
+        }
+
+        /* Adapt .obsidian/snippets/images.css to Crossnote's image markup. */
+        img {
+                max-width: 100%;
+                max-height: 30vh;
+                object-fit: contain;
+                display: block;
+                margin-inline: auto;
+        }
+
+        img:not([height]) {
+                height: auto;
+        }
+
+        /* Adapt the ordinary task checkboxes from snippets/checkbox.css. */
+        .task-list-item {
+                list-style: none;
+        }
+
+        .task-list-item-checkbox {
+                appearance: none;
+                box-sizing: border-box;
+                position: relative;
+                width: 16px;
+                height: 16px;
+                margin: 0 4px 2px 0;
+                vertical-align: middle;
+                border: 1px solid var(--text-normal);
+                border-radius: 4px;
+                background: transparent;
+                cursor: pointer;
+
+                &:checked {
+                        border-color: var(--interactive-accent);
+                        background: var(--interactive-accent);
+                }
+
+                &:checked::after {
+                        display: none;
+                }
+
+                &:checked::before {
+                        content: "";
+                        position: absolute;
+                        left: 4px;
+                        top: 1px;
+                        width: 4px;
+                        height: 8px;
+                        border: solid white;
+                        border-width: 0 2px 2px 0;
+                        transform: rotate(45deg);
+                }
+        }
+}
+
+body.preview-container.show-sidebar-toc .md-sidebar-toc {
+        font-family: var(--font-text);
+        color: var(--text-muted);
+        background: var(--background-primary);
+        border-color: var(--background-modifier-border);
+
+        a {
+                color: inherit;
+        }
+}
