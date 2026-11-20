@@ -1,73 +1,23 @@
 ---
 name: ssh-board
-description: Use when connecting to embedded board targets (avm, xvm, hvm, hvm_x) over SSH. Triggers on any mention of board SSH, jump host connections, uploading scripts to boards, or collecting test results from boards. Provides topology rules, connection commands, and a testing workflow.
+description: Connect to embedded boards (avm, xvm, hvm, hvm_x) over SSH from a lab host. Use for board access, uploading test scripts, and collecting results.
 ---
 
-# SSH Target Access
+# SSH 上板
 
-用于开发环境通过 SSH 上板测试。
+## 连板
 
-## 触发条件
+1. 核对本地 `~/.ssh/config` 中的上位机 alias，再用 SSH 登录上位机。连接信息不足以确定目标时，请用户补充上位机或板卡目录。
+2. 在上位机用板端 alias 连板，例如 `ssh avm` 或 `ssh hvm`。用户给出板卡目录时，先 `cd` 到该目录，再在同一个远端 shell 里连板。单次 SSH 调用用 `&&` 把 `cd` 和连板命令写在同一条远端命令里。
+3. 上板测试优先使用交互式 TTY，遵循用户指定的 SSH 认证选项。登录后用 `hostname`、`pwd` 等轻量命令验证通路，有板卡标识时一并核对。
 
-当用户提到以下内容时自动激活：
+板卡目录由 direnv 管理时，可以在交互会话中等环境自动加载，或在该目录用 `direnv exec . ssh avm` 为单次命令显式加载环境。
 
-- 连接 avm、xvm、hvm、hvm_x 等板子
-- 通过跳板机/上位机 SSH 连接
-- 上板测试、拷贝脚本到板子、回收测试结果
-- `SSH_JUMP`、`ssh -J` 相关操作
+## 上板测试
 
-## 规则
+在本地准备测试脚本，经上位机传到板端，执行后把结果回收到本地。上位机与板端之间的传输沿用连板时的工作目录和板端 alias。
 
-1. 先看 `~/.ssh/config`，不要凭记忆猜拓扑。
-2. `avm`、`xvm`、`hvm`、`hvm_x` 是板子目标；其他 alias 默认按上位机处理。
-3. 如果用户没有明确说上位机（跳板机）是谁，先确认再连接。
-4. 如果 `~/.ssh/config` 已经约定通过 `SSH_JUMP` 控制外层跳板，优先使用 `SSH_JUMP=<jump> ssh <target>`。
-5. 否则，从开发环境上板使用 `ssh -J <jump> <target>` 或 `~/.ssh/config` 中已经定义好的 alias。
-6. 上板测试时优先使用交互式 TTY 会话。
-7. 登录后先执行必要的轻量命令验证通路和环境，例如 `hostname`、`date`、`pwd`、`ps`。
-8. 测试脚本先在本地准备好，再拷到板子执行，保证多轮测试口径一致。
-9. 测试结束后，把结果回收到本地，不要只留在板端临时目录。
-10. 用户明确说"不要 batchmode"时，不要再默认加 `BatchMode=yes`。
-11. 如果使用 `SSH_JUMP`，其值必须与 `~/.ssh/config` 中的上位机 alias 完全一致。
+## 环境排查
 
-## 推荐流程
-
-1. 查看 `~/.ssh/config`
-2. 判断目标是板子还是上位机
-3. 如果跳板机不明确，先问用户
-4. 优先判断是否支持 `SSH_JUMP=<jump> ssh <target>`
-5. 建立交互式 SSH 会话
-6. 执行轻量验证命令
-7. 本地准备测试脚本
-8. 拷贝脚本到板子
-9. 在板子上执行测试
-10. 回收结果到本地
-
-## 快速参考
-
-连板（优先 SSH_JUMP）：
-
-```bash
-SSH_JUMP=<jump> ssh avm
-SSH_JUMP=<jump> ssh hvm
-```
-
-无 SSH_JUMP 时用显式 `-J`：
-
-```bash
-ssh -J <jump> avm
-```
-
-拷贝脚本到板子：
-
-```bash
-scp -J <jump> ./script.sh avm:/tmp/
-# 或
-SSH_JUMP=<jump> scp ./script.sh avm:/tmp/
-```
-
-回收结果：
-
-```bash
-ssh -J <jump> avm 'tar -C /tmp -cf - result_dir' | tar -C ./local_dir -xf -
-```
+- 核对网络或串口配置时，查看板卡目录中已有的 `.envrc` 和相关环境变量。需要经过 `BOARD_NETNS` 指定的网络命名空间时，确认连板命令实际在该命名空间内运行。
+- 定位正在使用的串口时，用 `tmux list-panes -a -F '#{session_name}:#{window_index}.#{pane_index} #{pane_tty} #{pane_current_command}'` 列出窗格，按终端设备号对照 `ps -C minicom -o pid,tty,args`。窗格显示 `sudo` 时也能找到对应的 minicom 进程。
