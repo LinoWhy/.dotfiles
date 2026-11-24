@@ -31,6 +31,7 @@ PACKAGES=(
   cargo
   claude/skills
   codex/skills
+  gemini/config/skills
 )
 
 # only link subfolders
