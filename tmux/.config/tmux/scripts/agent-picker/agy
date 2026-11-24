@@ -1,0 +1,100 @@
+#!/usr/bin/env python3
+"""Provide Antigravity panes and their native conversation titles."""
+
+import ast
+import json
+import re
+import sqlite3
+import subprocess
+import sys
+from contextlib import closing
+from pathlib import Path
+
+
+def conversation_title(root, session_id):
+    try:
+        annotation = (root / "annotations" / f"{session_id}.pbtxt").read_text(encoding="utf-8")
+        custom = re.search(r'^title:\s*("(?:\\.|[^"\\])+")', annotation, re.MULTILINE)
+        if custom:
+            return ast.literal_eval(custom[1])
+    except (OSError, ValueError, SyntaxError):
+        pass
+
+    uri = (root / "conversation_summaries.db").as_uri() + "?mode=ro"
+    try:
+        with closing(sqlite3.connect(uri, uri=True, timeout=0.2)) as db:
+            row = db.execute(
+                "SELECT title FROM conversation_summaries WHERE conversation_id = ?", (session_id,)
+            ).fetchone()
+        if row is not None:
+            return row[0]
+    except sqlite3.Error:
+        pass
+
+    try:
+        cached = json.loads((root / "cache/conversation_metadata.json").read_bytes())["conversations"]
+    except (OSError, ValueError, KeyError):
+        return None
+    return (cached.get(session_id, {}).get("summary") or {}).get("Title")
+
+
+def session_titles():
+    root = Path.home() / ".gemini/antigravity-cli"
+    try:
+        locks = subprocess.run(
+            ["lsof", "-nP", "-a", "-c", "agy", "-Fpn", "+d", str(root / "presence")],
+            stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, text=True,
+        )
+    except OSError:
+        return {}
+
+    titles = {}
+    pid = ""
+    for line in locks.stdout.splitlines():
+        if line.startswith("p"):
+            pid = line[1:]
+        elif line.startswith("n") and line.endswith(".lock"):
+            title = conversation_title(root, Path(line[1:]).stem)
+            if title:
+                titles[pid] = title
+    return titles
+
+
+def is_agy(command):
+    return Path(command).name.lstrip("-").lower() == "agy"
+
+
+def main():
+    panes, parents, candidates = {}, {}, []
+    for line in sys.stdin:
+        kind, *fields = line.rstrip("\n").split("\t")
+        if kind == "pane" and len(fields) >= 7:
+            pane, session, window, pid, command, target, path = fields[:7]
+            direct = is_agy(command)
+            panes[pid] = (pane, session, window, target, path, "0" if direct else "1")
+            if direct:
+                candidates.append(pid)
+        elif kind == "process" and len(fields) >= 3:
+            pid, parent, command = fields[:3]
+            parents[pid] = parent
+            if is_agy(command):
+                candidates.append(pid)
+
+    if not candidates:
+        return
+    titles = session_titles()
+    matches = {}
+    for pid in candidates:
+        root = pid
+        while root not in panes and root in parents and parents[root] != root:
+            root = parents[root]
+        if root in panes:
+            matches[root] = matches.get(root) or titles.get(pid, "")
+
+    for root, title in matches.items():
+        pane, session, window, target, path, wrapped = panes[root]
+        print("\t".join((pane, session, window, "agy", " ".join(title.split()), target, path, wrapped)))
+
+
+if __name__ == "__main__":
+    main()

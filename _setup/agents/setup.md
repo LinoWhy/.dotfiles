@@ -1,4 +1,4 @@
-# Claude Code 与 Codex 配置
+# Claude Code、Codex 与 Antigravity CLI 配置
 
 ## Claude Code
 
@@ -38,3 +38,11 @@ alternate_screen = "never"
 ```
 
 tmux 需设置 `set -g allow-passthrough all`，允许后台窗口透传通知。
+
+## Antigravity CLI
+
+用 Stow 安装 `gemini` 后，在 `agy` 中启用状态栏。
+
+```text
+/statusline ~/.gemini/config/agy-statusline.sh
+```

@@ -44,7 +44,7 @@ raw_rows=$(
     #   pane, pane_id, session_id, window_id, pane_pid, command, target, path
     #   process, pid, ppid, command
     # Provider output (TSV): pane_id, session_id, window_id, agent, name, target, path, wrapped
-    for provider in codex claude; do
+    for provider in codex claude agy; do
         printf '%s\n' "$runtime_rows" | "$script_dir/$provider"
     done
 )
@@ -54,13 +54,14 @@ if [ "${1:-}" = --list ]; then
     exit 0
 fi
 
-# Catppuccin Macchiato green (#A6DA95) and peach (#F5A97F).
+# Catppuccin Macchiato green, peach and blue.
 codex_color=$(printf '\033[38;2;%d;%d;%dm' 0xA6 0xDA 0x95)
 claude_color=$(printf '\033[38;2;%d;%d;%dm' 0xF5 0xA9 0x7F)
+agy_color=$(printf '\033[38;2;%d;%d;%dm' 0x8A 0xAD 0xF4)
 
 rows=$(
     printf '%s\n' "$raw_rows" |
-        "$script_dir/render" "${HOME:-}" "$codex_color" "$claude_color"
+        "$script_dir/render" "${HOME:-}" "$codex_color" "$claude_color" "$agy_color"
 )
 
 [ -n "$rows" ] || {
