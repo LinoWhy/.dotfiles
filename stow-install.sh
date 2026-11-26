@@ -26,17 +26,17 @@ done
 
 cd "$(dirname "$0")"
 
-PACKAGES=(
-  agents
+TARGET_DIRS=(
+  agents/skills
   cargo
   claude/skills
-  codex/skills
-  gemini/config/skills
+  codex
+  gemini/config
 )
 
-# only link subfolders
-for PKG in "${PACKAGES[@]}"; do
-  mkdir -p "$HOME/.${PKG}"
+# Keep these directories available for other installers and client state.
+for target_dir in "${TARGET_DIRS[@]}"; do
+  mkdir -p "$HOME/.$target_dir"
 done
 
 stow "${stow_args[@]}" */
