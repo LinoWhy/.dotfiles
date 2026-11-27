@@ -42,7 +42,7 @@ def session_titles():
     root = Path.home() / ".gemini/antigravity-cli"
     try:
         locks = subprocess.run(
-            ["lsof", "-nP", "-a", "-c", "agy", "-Fpn", "+d", str(root / "presence")],
+            ["lsof", "-nP", "-a", "-c", "antigravity", "-Fpn", "+d", str(root / "presence")],
             stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, text=True,
         )
     except OSError:
@@ -61,7 +61,7 @@ def session_titles():
 
 
 def is_agy(command):
-    return Path(command).name.lstrip("-").lower() == "agy"
+    return Path(command).name.lstrip("-").lower() == "antigravity"
 
 
 def main():
