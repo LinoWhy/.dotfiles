@@ -5,10 +5,10 @@ exec jq -r '
     strings | select(length > 0) | gsub("[[:cntrl:]]+"; " ")
     | if $color and (env.NO_COLOR // "") == "" then "\u001b[\($color)m\(.)\u001b[0m" else . end;
 
-  def remaining($label):
+  def remaining($prefix):
     select(. and (.disabled != true))
     | ((.remaining_fraction | numbers | "\(. * 100 | round)%") // .remaining_amount // empty)
-    | "\($label) \(.)" | field(35);
+    | "\($prefix) \(.)" | field(35);
 
   (.model.display_name // .model.id // "") as $model
   | (.model.effort // "") as $effort
